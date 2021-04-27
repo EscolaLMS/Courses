@@ -2,8 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use App\Http\Requests\CreateCourseAPIRequest;
-use App\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use Illuminate\Http\Request;

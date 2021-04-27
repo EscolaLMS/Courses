@@ -2,8 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use App\Http\Requests\CreateTopicRichTextAPIRequest;
-use App\Http\Requests\UpdateTopicRichTextAPIRequest;
+use EscolaLms\Courses\Http\Requests\CreateTopicRichTextAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateTopicRichTextAPIRequest;
 use EscolaLms\Courses\Models\TopicRichText;
 use EscolaLms\Courses\Repositories\TopicRichTextRepository;
 use Illuminate\Http\Request;

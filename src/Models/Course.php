@@ -55,7 +55,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Course extends Model
 {
-
     use HasFactory;
 
     public $table = 'courses';
@@ -121,5 +120,10 @@ class Course extends Model
     public function lessons()
     {
         return $this->hasMany(\App\Models\Lesson::class, 'course_id');
+    }
+
+    protected static function newFactory()
+    {
+        return \EscolaLms\Courses\Database\Factories\CourseFactory::new();
     }
 }

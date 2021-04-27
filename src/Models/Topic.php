@@ -45,7 +45,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Topic extends Model
 {
-
     use HasFactory;
 
     public $table = 'topics';
@@ -105,5 +104,10 @@ class Topic extends Model
     public function topicRichtexts()
     {
         return $this->hasMany(\App\Models\TopicRichtext::class, 'topic_id');
+    }
+
+    protected static function newFactory()
+    {
+        return \EscolaLms\Courses\Database\Factories\TopicFactory::new();
     }
 }

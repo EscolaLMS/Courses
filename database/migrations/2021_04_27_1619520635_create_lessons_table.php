@@ -10,6 +10,7 @@ class CreateLessonsTable extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->timestamps();
             $table->string('title');
             $table->string('duration')->nullable();
             $table->integer('order')->unsigned()->default(0);

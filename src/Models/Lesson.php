@@ -97,4 +97,9 @@ class Lesson extends Model
     {
         return $this->hasMany(\App\Models\Topic::class, 'lesson_id');
     }
+
+    protected static function newFactory()
+    {
+        return \EscolaLms\Courses\Database\Factories\LessonFactory::new();
+    }
 }

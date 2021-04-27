@@ -1,8 +1,10 @@
 <?php
 
-namespace Database\Factories;
+namespace EscolaLms\Courses\Database\Factories;
 
-use App\Models\Lesson;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Course;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LessonFactory extends Factory
@@ -23,9 +25,9 @@ class LessonFactory extends Factory
     {
         return [
             'title' => $this->faker->word,
-        'duration' => $this->faker->word,
-        'order' => $this->faker->randomDigitNotNull,
-        'course_id' => $this->faker->word
+            'duration' => rand(2, 10)." hours",
+            'order' => $this->faker->randomDigitNotNull,
+            'course_id' => Course::factory(),
         ];
     }
 }

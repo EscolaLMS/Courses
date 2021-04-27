@@ -10,6 +10,7 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->timestamps();
             $table->string('title');
             $table->text('summary')->nullable();
             $table->string('image_path')->nullable();

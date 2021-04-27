@@ -1,8 +1,12 @@
 <?php
 
-namespace Database\Factories;
+namespace EscolaLms\Courses\Database\Factories;
 
-use App\Models\Topic;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\TopicRichText;
+use EscolaLms\Courses\Models\Lesson;
+
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TopicFactory extends Factory
@@ -23,10 +27,22 @@ class TopicFactory extends Factory
     {
         return [
             'title' => $this->faker->word,
-        'lesson_id' => $this->faker->word,
-        'topicable_id' => $this->faker->word,
-        'topicable_class' => $this->faker->word,
-        'order' => $this->faker->randomDigitNotNull
+            'lesson_id' => Lesson::factory(),
+            //'topicable_id' => $this->faker->word,
+            //'topicable_class' => $this->faker->word,
+            'order' => $this->faker->randomDigitNotNull
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterMaking(function (Topic $topic) {
+            //
+        })->afterCreating(function (Topic $topic) {
+            //
+            $topicText = TopicRichText::factory()->make([
+                'topic_id' => $topic->id
+            ]);
+        });
     }
 }

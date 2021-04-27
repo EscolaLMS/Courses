@@ -2,13 +2,13 @@
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
-use Tests\ApiTestTrait;
-use App\Models\Topic;
+use EscolaLms\Courses\Tests\TestCase;
+//use Tests\ApiTestTrait;
+use EscolaLms\Courses\Models\Topic;
 
 class TopicApiTest extends TestCase
 {
-    use ApiTestTrait, WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
 
     /**
      * @test
@@ -19,7 +19,8 @@ class TopicApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/topics', $topic
+            '/api/topics',
+            $topic
         );
 
         $this->assertApiResponse($topic);
@@ -66,8 +67,8 @@ class TopicApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-             '/api/topics/'.$topic->id
-         );
+            '/api/topics/'.$topic->id
+        );
 
         $this->assertApiSuccess();
         $this->response = $this->json(

@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace EscolaLms\Courses\Database\Factories;
 
-use App\Models\TopicRichText;
+use EscolaLms\Courses\Models\TopicRichText;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TopicRichTextFactory extends Factory

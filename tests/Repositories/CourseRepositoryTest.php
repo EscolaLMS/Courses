@@ -1,14 +1,15 @@
 <?php namespace Tests\Repositories;
 
-use App\Models\Course;
-use App\Repositories\CourseRepository;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Repositories\CourseRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
-use Tests\ApiTestTrait;
+use EscolaLms\Courses\Tests\TestCase;
+
+//use Tests\ApiTestTrait;
 
 class CourseRepositoryTest extends TestCase
 {
-    use ApiTestTrait, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @var CourseRepository

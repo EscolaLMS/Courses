@@ -27,7 +27,7 @@ class AppBaseController extends Controller
             'success' => false,
             'message' => $error,
             'data' => $code
-        ]);
+        ], $code);
     }
 
     public function sendSuccess($message)

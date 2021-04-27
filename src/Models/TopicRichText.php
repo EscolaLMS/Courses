@@ -77,4 +77,9 @@ class TopicRichText extends Model
     {
         return $this->belongsTo(\App\Models\Topic::class, 'topic_id');
     }
+
+    protected static function newFactory()
+    {
+        return \EscolaLms\Courses\Database\Factories\TopicRichTextFactory::new();
+    }
 }
