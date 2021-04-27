@@ -2,27 +2,27 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use App\Http\Requests\CreateLessonAPIRequest;
-use App\Http\Requests\UpdateLessonAPIRequest;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Repositories\LessonRepository;
+use App\Http\Requests\CreateTopicRichTextAPIRequest;
+use App\Http\Requests\UpdateTopicRichTextAPIRequest;
+use EscolaLms\Courses\Models\TopicRichText;
+use EscolaLms\Courses\Repositories\TopicRichTextRepository;
 use Illuminate\Http\Request;
 use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**
- * Class LessonController
+ * Class TopicRichTextController
  * @package App\Http\Controllers
  */
 
-class LessonAPIController extends AppBaseController
+class TopicRichTextAPIController extends AppBaseController
 {
-    /** @var  LessonRepository */
-    private $lessonRepository;
+    /** @var  TopicRichTextRepository */
+    private $topicRichTextRepository;
 
-    public function __construct(LessonRepository $lessonRepo)
+    public function __construct(TopicRichTextRepository $topicRichTextRepo)
     {
-        $this->lessonRepository = $lessonRepo;
+        $this->topicRichTextRepository = $topicRichTextRepo;
     }
 
     /**
@@ -30,10 +30,10 @@ class LessonAPIController extends AppBaseController
      * @return Response
      *
      * @OA\Get(
-     *      path="/api/lessons",
-     *      summary="Get a listing of the Lessons.",
-     *      tags={"Lesson"},
-     *      description="Get all Lessons",
+     *      path="/api/topicRichTexts",
+     *      summary="Get a listing of the TopicRichTexts.",
+     *      tags={"TopicRichText"},
+     *      description="Get all TopicRichTexts",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -49,7 +49,7 @@ class LessonAPIController extends AppBaseController
      *              @OA\Property(
      *                  property="data",
      *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/Lesson")
+     *                  @OA\Items(ref="#/components/schemas/TopicRichText")
      *              ),
      *              @OA\Property(
      *                  property="message",
@@ -62,29 +62,29 @@ class LessonAPIController extends AppBaseController
 
     public function index(Request $request)
     {
-        $lessons = $this->lessonRepository->all(
+        $topicRichTexts = $this->topicRichTextRepository->all(
             $request->except(['skip', 'limit']),
             $request->get('skip'),
             $request->get('limit')
         );
 
-        return $this->sendResponse($lessons->toArray(), 'Lessons retrieved successfully');
+        return $this->sendResponse($topicRichTexts->toArray(), 'Topic Rich Texts retrieved successfully');
     }
 
     /**
-     * @param CreateLessonAPIRequest $request
+     * @param CreateTopicRichTextAPIRequest $request
      * @return Response
      *
      * @OA\Post(
-     *      path="/api/lessons",
-     *      summary="Store a newly created Lesson in storage",
-     *      tags={"Lesson"},
-     *      description="Store Lesson",
-     *      @OA\RequestBody(
+     *      path="/api/topicRichTexts",
+     *      summary="Store a newly created TopicRichText in storage",
+     *      tags={"TopicRichText"},
+     *      description="Store TopicRichText",
+    *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
     *              mediaType="application/json",
-    *              @OA\Schema(ref="#/components/schemas/Lesson")
+    *              @OA\Schema(ref="#/components/schemas/TopicRichText")
     *          )
     *      ),
 
@@ -102,7 +102,7 @@ class LessonAPIController extends AppBaseController
      *              ),
      *              @OA\Property(
      *                  property="data",
-     *                  ref="#/components/schemas/Lesson"
+     *                  ref="#/components/schemas/TopicRichText"
      *              ),
      *              @OA\Property(
      *                  property="message",
@@ -113,13 +113,13 @@ class LessonAPIController extends AppBaseController
      * )
      */
 
-    public function store(CreateLessonAPIRequest $request)
+    public function store(CreateTopicRichTextAPIRequest $request)
     {
         $input = $request->all();
 
-        $lesson = $this->lessonRepository->create($input);
+        $topicRichText = $this->topicRichTextRepository->create($input);
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson saved successfully');
+        return $this->sendResponse($topicRichText->toArray(), 'Topic Rich Text saved successfully');
     }
 
     /**
@@ -127,13 +127,13 @@ class LessonAPIController extends AppBaseController
      * @return Response
      *
      * @OA\Get(
-     *      path="/api/lessons/{id}",
-     *      summary="Display the specified Lesson",
-     *      tags={"Lesson"},
-     *      description="Get Lesson",
+     *      path="/api/topicRichTexts/{id}",
+     *      summary="Display the specified TopicRichText",
+     *      tags={"TopicRichText"},
+     *      description="Get TopicRichText",
      *      @OA\Parameter(
      *          name="id",
-     *          description="id of Lesson",
+     *          description="id of TopicRichText",
     *          @OA\Schema(
     *             type="integer",
     *         ),
@@ -154,7 +154,7 @@ class LessonAPIController extends AppBaseController
      *              ),
      *              @OA\Property(
      *                  property="data",
-     *                  ref="#/components/schemas/Lesson"
+     *                  ref="#/components/schemas/TopicRichText"
      *              ),
      *              @OA\Property(
      *                  property="message",
@@ -167,29 +167,29 @@ class LessonAPIController extends AppBaseController
 
     public function show($id)
     {
-        /** @var Lesson $lesson */
-        $lesson = $this->lessonRepository->find($id);
+        /** @var TopicRichText $topicRichText */
+        $topicRichText = $this->topicRichTextRepository->find($id);
 
-        if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+        if (empty($topicRichText)) {
+            return $this->sendError('Topic Rich Text not found');
         }
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson retrieved successfully');
+        return $this->sendResponse($topicRichText->toArray(), 'Topic Rich Text retrieved successfully');
     }
 
     /**
      * @param int $id
-     * @param UpdateLessonAPIRequest $request
+     * @param UpdateTopicRichTextAPIRequest $request
      * @return Response
      *
      * @OA\Put(
-     *      path="/api/lessons/{id}",
-     *      summary="Update the specified Lesson in storage",
-     *      tags={"Lesson"},
-     *      description="Update Lesson",
+     *      path="/api/topicRichTexts/{id}",
+     *      summary="Update the specified TopicRichText in storage",
+     *      tags={"TopicRichText"},
+     *      description="Update TopicRichText",
      *      @OA\Parameter(
      *          name="id",
-     *          description="id of Lesson",
+     *          description="id of TopicRichText",
     *          @OA\Schema(
     *             type="integer",
     *         ),
@@ -200,10 +200,9 @@ class LessonAPIController extends AppBaseController
     *          required=true,
     *          @OA\MediaType(
     *              mediaType="application/json",
-    *              @OA\Schema(ref="#/components/schemas/Lesson")
+    *              @OA\Schema(ref="#/components/schemas/TopicRichText")
     *          )
     *      ),
-
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -218,7 +217,7 @@ class LessonAPIController extends AppBaseController
      *              ),
      *              @OA\Property(
      *                  property="data",
-     *                  ref="#/components/schemas/Lesson"
+     *                  ref="#/components/schemas/TopicRichText"
      *              ),
      *              @OA\Property(
      *                  property="message",
@@ -229,20 +228,20 @@ class LessonAPIController extends AppBaseController
      * )
      */
 
-    public function update($id, UpdateLessonAPIRequest $request)
+    public function update($id, UpdateTopicRichTextAPIRequest $request)
     {
         $input = $request->all();
 
-        /** @var Lesson $lesson */
-        $lesson = $this->lessonRepository->find($id);
+        /** @var TopicRichText $topicRichText */
+        $topicRichText = $this->topicRichTextRepository->find($id);
 
-        if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+        if (empty($topicRichText)) {
+            return $this->sendError('Topic Rich Text not found');
         }
 
-        $lesson = $this->lessonRepository->update($input, $id);
+        $topicRichText = $this->topicRichTextRepository->update($input, $id);
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson updated successfully');
+        return $this->sendResponse($topicRichText->toArray(), 'TopicRichText updated successfully');
     }
 
     /**
@@ -250,13 +249,13 @@ class LessonAPIController extends AppBaseController
      * @return Response
      *
      * @OA\Delete(
-     *      path="/api/lessons/{id}",
-     *      summary="Remove the specified Lesson from storage",
-     *      tags={"Lesson"},
-     *      description="Delete Lesson",
+     *      path="/api/topicRichTexts/{id}",
+     *      summary="Remove the specified TopicRichText from storage",
+     *      tags={"TopicRichText"},
+     *      description="Delete TopicRichText",
      *      @OA\Parameter(
      *          name="id",
-     *          description="id of Lesson",
+     *          description="id of TopicRichText",
     *          @OA\Schema(
     *             type="integer",
     *         ),
@@ -290,15 +289,15 @@ class LessonAPIController extends AppBaseController
 
     public function destroy($id)
     {
-        /** @var Lesson $lesson */
-        $lesson = $this->lessonRepository->find($id);
+        /** @var TopicRichText $topicRichText */
+        $topicRichText = $this->topicRichTextRepository->find($id);
 
-        if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+        if (empty($topicRichText)) {
+            return $this->sendError('Topic Rich Text not found');
         }
 
-        $lesson->delete();
+        $topicRichText->delete();
 
-        return $this->sendSuccess('Lesson deleted successfully');
+        return $this->sendSuccess('Topic Rich Text deleted successfully');
     }
 }

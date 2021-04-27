@@ -2,26 +2,23 @@
 
 namespace EscolaLms\Courses\Repositories;
 
-use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\TopicRichText;
 use EscolaLms\Courses\Repositories\BaseRepository;
 
 /**
- * Class TopicRepository
+ * Class TopicRichTextRepository
  * @package EscolaLms\Courses\Repositories
- * @version April 27, 2021, 11:21 am UTC
+ * @version April 27, 2021, 11:22 am UTC
 */
 
-class TopicRepository extends BaseRepository
+class TopicRichTextRepository extends BaseRepository
 {
     /**
      * @var array
      */
     protected $fieldSearchable = [
-        'title',
-        'lesson_id',
-        'topicable_id',
-        'topicable_class',
-        'order'
+        'topic_id',
+        'value'
     ];
 
     /**
@@ -39,6 +36,6 @@ class TopicRepository extends BaseRepository
      **/
     public function model()
     {
-        return Topic::class;
+        return TopicRichText::class;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\TopicRichText;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLessonAPIRequest extends FormRequest
+class CreateTopicRichTextAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,6 @@ class UpdateLessonAPIRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = Lesson::$rules;
-        
-        return $rules;
+        return TopicRichText::$rules;
     }
 }

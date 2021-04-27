@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
  *      schema="Topic",
- *      required={"topicable_id", "topicable_class"},
+ *      required={"lesson_id", "order"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="title",
@@ -24,23 +24,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          property="lesson_id",
  *          description="lesson_id",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="topicable_id",
  *          description="topicable_id",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="topicable_class",
  *          description="topicable_class",
  *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="order",
+ *          description="order",
+ *          type="integer",
  *      )
  * )
  */
+
 class Topic extends Model
 {
+
     use HasFactory;
 
     public $table = 'topics';
@@ -51,12 +56,12 @@ class Topic extends Model
 
 
 
-
     public $fillable = [
         'title',
         'lesson_id',
         'topicable_id',
-        'topicable_class'
+        'topicable_class',
+        'order'
     ];
 
     /**
@@ -69,7 +74,8 @@ class Topic extends Model
         'title' => 'string',
         'lesson_id' => 'integer',
         'topicable_id' => 'integer',
-        'topicable_class' => 'string'
+        'topicable_class' => 'string',
+        'order' => 'integer'
     ];
 
     /**
@@ -79,9 +85,10 @@ class Topic extends Model
      */
     public static $rules = [
         'title' => 'nullable|string|max:255',
-        'lesson_id' => 'nullable',
-        'topicable_id' => 'required',
-        'topicable_class' => 'required|string|max:255'
+        'lesson_id' => 'required',
+        'topicable_id' => 'nullable',
+        'topicable_class' => 'nullable|string|max:255',
+        'order' => 'required|integer'
     ];
 
     /**

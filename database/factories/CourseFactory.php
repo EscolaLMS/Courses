@@ -28,7 +28,6 @@ class CourseFactory extends Factory
         'video_path' => $this->faker->word,
         'base_price' => $this->faker->word,
         'duration' => $this->faker->word,
-        'active' => $this->faker->word,
         'author_id' => $this->faker->word
         ];
     }

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
  *      schema="Course",
- *      required={"title", "active"},
+ *      required={"title"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="title",
@@ -46,26 +46,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="active",
- *          description="active",
- *          type="boolean"
- *      ),
- *      @OA\Property(
  *          property="author_id",
  *          description="author_id",
  *          type="integer",
- *          format="int32"
  *      )
  * )
  */
+
 class Course extends Model
 {
+
     use HasFactory;
 
     public $table = 'courses';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
+
 
 
 
@@ -76,7 +73,6 @@ class Course extends Model
         'video_path',
         'base_price',
         'duration',
-        'active',
         'author_id'
     ];
 
@@ -93,7 +89,6 @@ class Course extends Model
         'video_path' => 'string',
         'base_price' => 'string',
         'duration' => 'string',
-        'active' => 'boolean',
         'author_id' => 'integer'
     ];
 
@@ -109,7 +104,6 @@ class Course extends Model
         'video_path' => 'nullable|string|max:255',
         'base_price' => 'nullable|string|max:255',
         'duration' => 'nullable|string|max:255',
-        'active' => 'required|boolean',
         'author_id' => 'nullable'
     ];
 

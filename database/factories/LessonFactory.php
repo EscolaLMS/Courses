@@ -24,7 +24,6 @@ class LessonFactory extends Factory
         return [
             'title' => $this->faker->word,
         'duration' => $this->faker->word,
-        'is_active' => $this->faker->word,
         'order' => $this->faker->randomDigitNotNull,
         'course_id' => $this->faker->word
         ];

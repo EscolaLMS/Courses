@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace EscolaLms\Courses\Http\Controllers;
 
-use App\Http\Requests\API\CreateCourseAPIRequest;
-use App\Http\Requests\API\UpdateCourseAPIRequest;
-use App\Models\Course;
-use App\Repositories\CourseRepository;
+use App\Http\Requests\CreateCourseAPIRequest;
+use App\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Repositories\CourseRepository;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
+use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**
  * Class CourseController
- * @package App\Http\Controllers\API
+ * @package App\Http\Controllers
  */
 
 class CourseAPIController extends AppBaseController
@@ -34,10 +34,12 @@ class CourseAPIController extends AppBaseController
      *      summary="Get a listing of the Courses.",
      *      tags={"Course"},
      *      description="Get all Courses",
-
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -57,6 +59,7 @@ class CourseAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function index(Request $request)
     {
         $courses = $this->courseRepository->all(
@@ -77,17 +80,20 @@ class CourseAPIController extends AppBaseController
      *      summary="Store a newly created Course in storage",
      *      tags={"Course"},
      *      description="Store Course",
-
-     *      @OA\RequestBody(
+    *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
     *              mediaType="application/json",
     *              @OA\Schema(ref="#/components/schemas/Course")
     *          )
     *      ),
+
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -106,6 +112,7 @@ class CourseAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function store(CreateCourseAPIRequest $request)
     {
         $input = $request->all();
@@ -124,16 +131,21 @@ class CourseAPIController extends AppBaseController
      *      summary="Display the specified Course",
      *      tags={"Course"},
      *      description="Get Course",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -152,6 +164,7 @@ class CourseAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function show($id)
     {
         /** @var Course $course */
@@ -174,10 +187,12 @@ class CourseAPIController extends AppBaseController
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
@@ -188,9 +203,13 @@ class CourseAPIController extends AppBaseController
     *              @OA\Schema(ref="#/components/schemas/Course")
     *          )
     *      ),
+
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -209,6 +228,7 @@ class CourseAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function update($id, UpdateCourseAPIRequest $request)
     {
         $input = $request->all();
@@ -234,16 +254,21 @@ class CourseAPIController extends AppBaseController
      *      summary="Remove the specified Course from storage",
      *      tags={"Course"},
      *      description="Delete Course",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -262,6 +287,7 @@ class CourseAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function destroy($id)
     {
         /** @var Course $course */

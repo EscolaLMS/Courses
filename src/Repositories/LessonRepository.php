@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Repositories;
+namespace EscolaLms\Courses\Repositories;
 
-use App\Models\Lesson;
-use App\Repositories\BaseRepository;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Repositories\BaseRepository;
 
 /**
  * Class LessonRepository
- * @package App\Repositories
- * @version April 26, 2021, 6:11 pm UTC
+ * @package EscolaLms\Courses\Repositories
+ * @version April 27, 2021, 11:20 am UTC
 */
 
 class LessonRepository extends BaseRepository
@@ -19,7 +19,6 @@ class LessonRepository extends BaseRepository
     protected $fieldSearchable = [
         'title',
         'duration',
-        'is_active',
         'order',
         'course_id'
     ];

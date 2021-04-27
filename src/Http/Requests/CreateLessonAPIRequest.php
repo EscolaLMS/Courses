@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace EscolaLms\Courses\Http\Requests;
 
-use App\Models\Lesson;
-use InfyOm\Generator\Request\APIRequest;
+use EscolaLms\Courses\Models\Lesson;
+use Illuminate\Foundation\Http\FormRequest;
 
-class CreateLessonAPIRequest extends APIRequest
+class CreateLessonAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

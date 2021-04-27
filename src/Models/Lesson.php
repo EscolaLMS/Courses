@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
  *      schema="Lesson",
- *      required={"title", "is_active", "order", "course_id"},
+ *      required={"title", "order", "course_id"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="title",
@@ -26,24 +26,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="is_active",
- *          description="is_active",
- *          type="boolean"
- *      ),
- *      @OA\Property(
  *          property="order",
  *          description="order",
  *          type="integer",
- *          format="int32"
  *      ),
  *      @OA\Property(
  *          property="course_id",
  *          description="course_id",
  *          type="integer",
- *          format="int32"
  *      )
  * )
  */
+
 class Lesson extends Model
 {
     use HasFactory;
@@ -55,10 +49,10 @@ class Lesson extends Model
 
 
 
+
     public $fillable = [
         'title',
         'duration',
-        'is_active',
         'order',
         'course_id'
     ];
@@ -72,7 +66,6 @@ class Lesson extends Model
         'id' => 'integer',
         'title' => 'string',
         'duration' => 'string',
-        'is_active' => 'boolean',
         'order' => 'integer',
         'course_id' => 'integer'
     ];
@@ -85,7 +78,6 @@ class Lesson extends Model
     public static $rules = [
         'title' => 'required|string|max:255',
         'duration' => 'nullable|string|max:255',
-        'is_active' => 'required|boolean',
         'order' => 'required|integer',
         'course_id' => 'required'
     ];

@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Topic;
+use App\Models\TopicRichText;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TopicFactory extends Factory
+class TopicRichTextFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Topic::class;
+    protected $model = TopicRichText::class;
 
     /**
      * Define the model's default state.
@@ -22,11 +22,8 @@ class TopicFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->word,
-        'lesson_id' => $this->faker->word,
-        'topicable_id' => $this->faker->word,
-        'topicable_class' => $this->faker->word,
-        'order' => $this->faker->randomDigitNotNull
+            'topic_id' => $this->faker->word,
+        'value' => $this->faker->text
         ];
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Repositories;
+namespace EscolaLms\Courses\Repositories;
 
-use App\Models\Course;
-use App\Repositories\BaseRepository;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Repositories\BaseRepository;
 
 /**
  * Class CourseRepository
- * @package App\Repositories
- * @version April 26, 2021, 6:10 pm UTC
+ * @package EscolaLms\Courses\Repositories
+ * @version April 27, 2021, 11:19 am UTC
 */
 
 class CourseRepository extends BaseRepository
@@ -23,7 +23,6 @@ class CourseRepository extends BaseRepository
         'video_path',
         'base_price',
         'duration',
-        'active',
         'author_id'
     ];
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace EscolaLms\Courses\Http\Controllers;
 
-use App\Http\Requests\API\CreateTopicAPIRequest;
-use App\Http\Requests\API\UpdateTopicAPIRequest;
-use App\Models\Topic;
-use App\Repositories\TopicRepository;
+use App\Http\Requests\CreateTopicAPIRequest;
+use App\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
+use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**
  * Class TopicController
- * @package App\Http\Controllers\API
+ * @package App\Http\Controllers
  */
 
 class TopicAPIController extends AppBaseController
@@ -34,10 +34,12 @@ class TopicAPIController extends AppBaseController
      *      summary="Get a listing of the Topics.",
      *      tags={"Topic"},
      *      description="Get all Topics",
-
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -57,6 +59,7 @@ class TopicAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function index(Request $request)
     {
         $topics = $this->topicRepository->all(
@@ -77,7 +80,6 @@ class TopicAPIController extends AppBaseController
      *      summary="Store a newly created Topic in storage",
      *      tags={"Topic"},
      *      description="Store Topic",
-
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
@@ -85,9 +87,13 @@ class TopicAPIController extends AppBaseController
     *              @OA\Schema(ref="#/components/schemas/Topic")
     *          )
     *      ),
+
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -106,6 +112,7 @@ class TopicAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function store(CreateTopicAPIRequest $request)
     {
         $input = $request->all();
@@ -124,16 +131,21 @@ class TopicAPIController extends AppBaseController
      *      summary="Display the specified Topic",
      *      tags={"Topic"},
      *      description="Get Topic",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Topic",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -152,6 +164,7 @@ class TopicAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function show($id)
     {
         /** @var Topic $topic */
@@ -174,10 +187,12 @@ class TopicAPIController extends AppBaseController
      *      summary="Update the specified Topic in storage",
      *      tags={"Topic"},
      *      description="Update Topic",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Topic",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
@@ -188,9 +203,13 @@ class TopicAPIController extends AppBaseController
     *              @OA\Schema(ref="#/components/schemas/Topic")
     *          )
     *      ),
+
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -209,6 +228,7 @@ class TopicAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function update($id, UpdateTopicAPIRequest $request)
     {
         $input = $request->all();
@@ -234,16 +254,21 @@ class TopicAPIController extends AppBaseController
      *      summary="Remove the specified Topic from storage",
      *      tags={"Topic"},
      *      description="Delete Topic",
-
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Topic",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -262,6 +287,7 @@ class TopicAPIController extends AppBaseController
      *      )
      * )
      */
+
     public function destroy($id)
     {
         /** @var Topic $topic */
