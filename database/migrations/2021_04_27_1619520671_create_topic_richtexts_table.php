@@ -12,7 +12,7 @@ class CreateTopicRichtextsTable extends Migration
             $table->bigIncrements('id');
             $table->timestamps();
             $table->bigInteger('topic_id')->unsigned();
-            $table->mediumText('value')->default('');
+            $table->mediumText('value');
             $table->foreign('topic_id')->references('id')->on('topics');
         });
     }
