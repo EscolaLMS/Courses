@@ -1,0 +1,40 @@
+{
+  "name": "escolalms/courses",
+  "description": "Escola Headless LMS Courses",
+  "type": "package",
+  "require": {
+    "php": ">=7.4",
+    "laravel/framework": ">=8.0",
+    "escolalms/core": ">=0.1.6",
+    "escolalms/categories": ">=0.1",
+    "escolalms/auth": "^0.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0",
+    "orchestra/testbench": ">=5.0"
+  },
+  "license": "MIT",
+  "authors": [{
+      "name": "Marcin Lenkowski",
+      "email": "marcin.lenkowski@escola.pl"
+    },
+    {
+      "name": "Mateusz Wojczal",
+      "email": "mateusz.wojczal@escola.pl"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "EscolaLms\\Courses\\": "src",
+      "EscolaLms\\Courses\\Tests\\": "tests",
+      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
+      ]
+    }
+  }
+}
