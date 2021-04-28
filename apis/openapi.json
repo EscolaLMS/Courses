@@ -1,0 +1,683 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "EscolaLMS",
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/api/courses": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a listing of the Courses.",
+                "description": "Get all Courses",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::index",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Store a newly created Course in storage",
+                "description": "Store Course",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/courses/{id}": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Display the specified Course",
+                "description": "Get Course",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update the specified Course in storage",
+                "description": "Update Course",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Remove the specified Course from storage",
+                "description": "Delete Course",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/lessons": {
+            "get": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Get a listing of the Lessons.",
+                "description": "Get all Lessons",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::index",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Store a newly created Lesson in storage",
+                "description": "Store Lesson",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Lesson"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/lessons/{id}": {
+            "get": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Display the specified Lesson",
+                "description": "Get Lesson",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Update the specified Lesson in storage",
+                "description": "Update Lesson",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Lesson"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Remove the specified Lesson from storage",
+                "description": "Delete Lesson",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/topics": {
+            "get": {
+                "tags": [
+                    "Topic"
+                ],
+                "summary": "Get a listing of the Topics.",
+                "description": "Get all Topics",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::index",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Topic"
+                ],
+                "summary": "Store a newly created Topic in storage",
+                "description": "Store Topic",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Topic"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/topics/{id}": {
+            "get": {
+                "tags": [
+                    "Topic"
+                ],
+                "summary": "Display the specified Topic",
+                "description": "Get Topic",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Topic"
+                ],
+                "summary": "Update the specified Topic in storage",
+                "description": "Update Topic",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Topic"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Topic"
+                ],
+                "summary": "Remove the specified Topic from storage",
+                "description": "Delete Topic",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/topicRichTexts": {
+            "get": {
+                "tags": [
+                    "TopicRichText"
+                ],
+                "summary": "Get a listing of the TopicRichTexts.",
+                "description": "Get all TopicRichTexts",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::index",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "TopicRichText"
+                ],
+                "summary": "Store a newly created TopicRichText in storage",
+                "description": "Store TopicRichText",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TopicRichText"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/topicRichTexts/{id}": {
+            "get": {
+                "tags": [
+                    "TopicRichText"
+                ],
+                "summary": "Display the specified TopicRichText",
+                "description": "Get TopicRichText",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of TopicRichText",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "TopicRichText"
+                ],
+                "summary": "Update the specified TopicRichText in storage",
+                "description": "Update TopicRichText",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of TopicRichText",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TopicRichText"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "TopicRichText"
+                ],
+                "summary": "Remove the specified TopicRichText from storage",
+                "description": "Delete TopicRichText",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of TopicRichText",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Course": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "summary": {
+                        "description": "summary",
+                        "type": "string"
+                    },
+                    "image_path": {
+                        "description": "image_path",
+                        "type": "string"
+                    },
+                    "video_path": {
+                        "description": "video_path",
+                        "type": "string"
+                    },
+                    "base_price": {
+                        "description": "base_price",
+                        "type": "string"
+                    },
+                    "duration": {
+                        "description": "duration",
+                        "type": "string"
+                    },
+                    "author_id": {
+                        "description": "author_id",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Lesson": {
+                "required": [
+                    "title",
+                    "order",
+                    "course_id"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "duration": {
+                        "description": "duration",
+                        "type": "string"
+                    },
+                    "order": {
+                        "description": "order",
+                        "type": "integer"
+                    },
+                    "course_id": {
+                        "description": "course_id",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Topic": {
+                "required": [
+                    "lesson_id",
+                    "order"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "lesson_id": {
+                        "description": "lesson_id",
+                        "type": "integer"
+                    },
+                    "topicable_id": {
+                        "description": "topicable_id",
+                        "type": "integer"
+                    },
+                    "topicable_class": {
+                        "description": "topicable_class",
+                        "type": "string"
+                    },
+                    "order": {
+                        "description": "order",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicRichText": {
+                "required": [
+                    "topic_id",
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "topic_id": {
+                        "description": "topic_id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
