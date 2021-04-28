@@ -1,10 +1,10 @@
 env:
-  - DB_CONNECTION=mysql
-  - DB_HOST=mysql
-  - DB_PORT=3306
-  - DB_DATABASE=database
-  - DB_USERNAME=username
-  - DB_PASSWORD=password
+  - DB_CONNECTION=pgsql
+  - DB_HOST=postgres
+  - DB_PORT=5432
+  - DB_DATABASE=test
+  - DB_USERNAME=postgres
+  - DB_PASSWORD=postgres
 
 providers:
   - Spatie\Permission\PermissionServiceProvider
@@ -12,4 +12,4 @@ providers:
   - EscolaLms\Categories\EscolaLmsCategoriesServiceProvider
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Auth\EscolaLmsAuthServiceProvider
-  - EscolaLmsCourseServiceProvider
+  - EscolaLms\Courses\EscolaLmsCourseServiceProvider

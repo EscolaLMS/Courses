@@ -7,15 +7,14 @@
     "laravel/framework": ">=8.0",
     "escolalms/core": ">=0.1.6",
     "escolalms/categories": ">=0.1",
-    "escolalms/auth": ">=0.1.4"
+    "escolalms/auth": "^0.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",
     "orchestra/testbench": ">=5.0"
   },
   "license": "MIT",
-  "authors": [
-    {
+  "authors": [{
       "name": "Marcin Lenkowski",
       "email": "marcin.lenkowski@escola.pl"
     },
@@ -28,7 +27,7 @@
     "psr-4": {
       "EscolaLms\\Courses\\": "src",
       "EscolaLms\\Courses\\Tests\\": "tests",
-      "Database\\Factories\\EscolaLms\\Courses\\Models\\": "database/factories"
+      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories"
     }
   },
   "extra": {
