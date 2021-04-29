@@ -2,10 +2,15 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use EscolaLms\Categories\Models\Category;
+use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
+use EscolaLms\Courses\Dto\CourseSearchDto;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
+use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Http\Request;
 use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
@@ -18,11 +23,19 @@ use Response;
 class CourseAPIController extends AppBaseController
 {
     /** @var  CourseRepository */
-    private $courseRepository;
+    private CourseRepositoryContract $courseRepository;
+    private CourseServiceContract $courseServiceContract;
+    private CategoriesRepositoryContract $categoriesRepositoryContract;
 
-    public function __construct(CourseRepository $courseRepo)
+    public function __construct(
+        CourseRepositoryContract $courseRepo,
+        CourseServiceContract $courseServiceContract,
+        CategoriesRepositoryContract $categoriesRepositoryContract
+    )
     {
         $this->courseRepository = $courseRepo;
+        $this->courseServiceContract = $courseServiceContract;
+        $this->categoriesRepositoryContract = $categoriesRepositoryContract;
     }
 
     /**
@@ -300,5 +313,47 @@ class CourseAPIController extends AppBaseController
         $course->delete();
 
         return $this->sendSuccess('Course deleted successfully');
+    }
+
+    /**
+     * @param int $category_id
+     * @param Request $request
+     * @return mixed
+     *
+     * @OA\Get(
+     *      tags={"Courses"},
+     *      path="/api/courses/category/{category_id}",
+     *      description="Searche Course By Criteria",
+     *      operationId="searchCourseByCategory",
+     *      @OA\Parameter(
+     *          name="category_id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="number",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Bad request",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     *   )
+     */
+
+    public function category(int $category_id, Request $request)
+    {
+        $category = $this->categoriesRepositoryContract->find($category_id);
+        $courses = $this->courseServiceContract->searchInCategoryAndSubCategory($category);
+        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 }
