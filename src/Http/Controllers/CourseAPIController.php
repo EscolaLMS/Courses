@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Courses\Dto\CourseSearchDto;
+use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Models\Course;
@@ -355,5 +356,14 @@ class CourseAPIController extends AppBaseController
         $category = $this->categoriesRepositoryContract->find($category_id);
         $courses = $this->courseServiceContract->searchInCategoryAndSubCategory($category);
         return $this->sendResponse($courses->toArray(), 'Course updated successfully');
+    }
+
+    public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest)
+    {
+        /** @var Course $course */
+        $course = $this->courseRepository->find($id);
+        $this->courseServiceContract->attachCategories($course, $attachCategoriesCourseAPIRequest->input('categories'));
+
+        return $this->sendResponse([], 'Course updated successfully');
     }
 }

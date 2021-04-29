@@ -101,4 +101,16 @@ class CourseApiTest extends TestCase
             $this->assertFalse($data->category_id !== $category->getKey() and $data->category_id !== $category2->getKey());
         }
     }
+
+    public function test_attach_categories_course()
+    {
+        $course = Course::factory()->create();
+        $categoriesIds = Category::inRandomOrder()->limit(5)->get()->pluck('id')->toArray();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/categories',
+            ['categories' => $categoriesIds]
+        );
+        $this->response->assertStatus(200);
+    }
 }

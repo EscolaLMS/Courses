@@ -6,6 +6,7 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
+
     /**
      * @var array
      */
@@ -108,6 +110,15 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         return $query;
+    }
+
+    /**
+     * @param Course $course
+     * @param array $categories
+     */
+    public function attachCategory(Course $course, Category $category)
+    {
+        return $course->categories()->save($category);
     }
 
 }

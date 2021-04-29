@@ -9,6 +9,7 @@ use EscolaLms\Categories\Repositories\Criteria\CourseInCategory;
 use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Core\Repositories\Criteria\CourseSearch;
 use EscolaLms\Courses\Dto\CourseSearchDto;
+use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -60,6 +61,25 @@ class CourseService implements CourseServiceContract
             ->applyCriteria($query, $criteria)
             ->paginate();
         return $courses;
+    }
+
+    /**
+     * @param Course $course
+     * @param array $categories
+     */
+    public function attachCategories(Course $course, array $categories)
+    {
+        $categoriesCollection = Category::whereIn('id', $categories)->get();
+        if ($categoriesCollection) {
+            $courseCategoriesIds = $course->categories()->get()->pluck('id')->toArray();
+            foreach ($categoriesCollection as $category) {
+                if (!in_array($category->getKey(), $courseCategoriesIds)) {
+                    if (!$this->courseRepository->attachCategory($course, $category)) {
+                        abort(422, 'Operation failed');
+                    }
+                }
+            }
+        }
     }
 
 }
