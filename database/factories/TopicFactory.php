@@ -3,7 +3,7 @@
 namespace EscolaLms\Courses\Database\Factories;
 
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicRichText;
+use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\Lesson;
 
 
@@ -34,15 +34,17 @@ class TopicFactory extends Factory
         ];
     }
 
+    /*
     public function configure()
     {
         return $this->afterMaking(function (Topic $topic) {
             //
         })->afterCreating(function (Topic $topic) {
-            //
+            // TODO, randome time
             $topicText = TopicRichText::factory()->make([
                 'topic_id' => $topic->id
             ]);
         });
     }
+    */
 }

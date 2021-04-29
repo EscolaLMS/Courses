@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace EscolaLms\Courses\Repositories\TopicContent;
 
-use EscolaLms\Courses\Models\TopicRichText;
+use EscolaLms\Courses\Models\TopicContent\H5P;
 use EscolaLms\Courses\Repositories\BaseRepository;
 
 /**
- * Class TopicRichTextRepository
- * @package EscolaLms\Courses\Repositories
+ * Class H5PRepository
+ * @package EscolaLms\Courses\Repositories\TopicContent
  * @version April 27, 2021, 11:22 am UTC
 */
 
-class TopicRichTextRepository extends BaseRepository
+class H5PRepository extends BaseRepository
 {
     /**
      * @var array
@@ -36,6 +36,6 @@ class TopicRichTextRepository extends BaseRepository
      **/
     public function model()
     {
-        return TopicRichText::class;
+        return H5P::class;
     }
 }

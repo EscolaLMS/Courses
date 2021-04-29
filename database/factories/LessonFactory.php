@@ -25,7 +25,7 @@ class LessonFactory extends Factory
     {
         return [
             'title' => $this->faker->word,
-            'duration' => rand(2, 10)." hours",
+            'duration' => rand(10, 50)." minutes",
             'order' => $this->faker->randomDigitNotNull,
             'course_id' => Course::factory(),
         ];

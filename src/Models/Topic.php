@@ -95,7 +95,7 @@ class Topic extends Model
      **/
     public function lesson()
     {
-        return $this->belongsTo(\App\Models\Lesson::class, 'lesson_id');
+        return $this->belongsTo(\EscolaLms\Courses\Models\Lesson::class, 'lesson_id');
     }
 
     /**
@@ -103,11 +103,16 @@ class Topic extends Model
      **/
     public function topicRichtexts()
     {
-        return $this->hasMany(\App\Models\TopicRichtext::class, 'topic_id');
+        return $this->hasMany(\EscolaLms\Courses\Models\TopicRichtext::class, 'topic_id');
     }
 
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicFactory::new();
+    }
+
+    public function topicable()
+    {
+        return $this->morphTo();
     }
 }

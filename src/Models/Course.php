@@ -119,7 +119,7 @@ class Course extends Model
      **/
     public function lessons()
     {
-        return $this->hasMany(\App\Models\Lesson::class, 'course_id');
+        return $this->hasMany(\EscolaLms\Courses\Models\Lesson::class, 'course_id');
     }
 
     protected static function newFactory()

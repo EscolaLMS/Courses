@@ -14,7 +14,7 @@ class CreateTopicsTable extends Migration
             $table->string('title')->nullable();
             $table->bigInteger('lesson_id', )->unsigned();
             $table->bigInteger('topicable_id')->nullable();
-            $table->string('topicable_class')->nullable();
+            $table->string('topicable_type')->nullable();
             $table->integer('order')->unsigned()->default(0);
             $table->foreign('lesson_id')->references('id')->on('lessons');
         });
