@@ -94,7 +94,6 @@ class CourseApiTest extends TestCase
             'GET',
             '/api/courses/search/' . $category->getKey()
         );
-        dd($this->response);
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);
