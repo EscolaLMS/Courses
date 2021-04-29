@@ -142,6 +142,39 @@
                 }
             }
         },
+        "/api/courses/category/{category_id}": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "description": "Searche Course By Criteria",
+                "operationId": "searchCourseByCategory",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/lessons": {
             "get": {
                 "tags": [
