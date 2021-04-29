@@ -10,4 +10,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     Route::resource('lessons', LessonAPIController::class);
     Route::resource('topics', TopicAPIController::class);
     Route::resource('topic_rich_texts', TopicRichTextAPIController::class);
+
+    Route::get('/search', [CourseAPIController::class, 'search']);
+    Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
 });
