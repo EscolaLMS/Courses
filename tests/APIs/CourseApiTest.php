@@ -105,7 +105,7 @@ class CourseApiTest extends TestCase
     public function test_attach_categories_course()
     {
         $course = Course::factory()->create();
-        $categoriesIds = Category::inRandomOrder()->limit(5)->get()->pluck('id')->toArray();
+        $categoriesIds = Course::factory(5)->create()->pluck('id')->toArray();
         $this->response = $this->json(
             'POST',
             '/api/courses/attach/'.$course->getKey().'/categories',
