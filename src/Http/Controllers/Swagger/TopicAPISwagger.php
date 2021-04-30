@@ -1,20 +1,14 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
-
 
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 interface TopicAPISwagger
 {
     /**
-     * @param Request $request
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/topics",
      *      summary="Get a listing of the Topics.",
@@ -49,9 +43,6 @@ interface TopicAPISwagger
     public function index(Request $request);
 
     /**
-     * @param CreateTopicAPIRequest $request
-     * @return Response
-     *
      * @OA\Post(
      *      path="/api/topics",
      *      summary="Store a newly created Topic in storage",
@@ -93,9 +84,6 @@ interface TopicAPISwagger
     public function store(CreateTopicAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/topics/{id}",
      *      summary="Display the specified Topic",
@@ -138,10 +126,6 @@ interface TopicAPISwagger
     public function show($id);
 
     /**
-     * @param int $id
-     * @param UpdateTopicAPIRequest $request
-     * @return Response
-     *
      * @OA\Put(
      *      path="/api/topics/{id}",
      *      summary="Update the specified Topic in storage",
@@ -192,9 +176,6 @@ interface TopicAPISwagger
     public function update($id, UpdateTopicAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Delete(
      *      path="/api/topics/{id}",
      *      summary="Remove the specified Topic from storage",

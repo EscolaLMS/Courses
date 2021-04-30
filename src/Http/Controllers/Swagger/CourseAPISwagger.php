@@ -1,22 +1,16 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
-
 
 use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 interface CourseAPISwagger
 {
     /**
-     * @param Request $request
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/courses",
      *      summary="Get a listing of the Courses.",
@@ -51,9 +45,6 @@ interface CourseAPISwagger
     public function index(Request $request);
 
     /**
-     * @param CreateCourseAPIRequest $request
-     * @return Response
-     *
      * @OA\Post(
      *      path="/api/courses",
      *      summary="Store a newly created Course in storage",
@@ -94,9 +85,6 @@ interface CourseAPISwagger
     public function store(CreateCourseAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/courses/{id}",
      *      summary="Display the specified Course",
@@ -139,10 +127,6 @@ interface CourseAPISwagger
     public function show($id);
 
     /**
-     * @param int $id
-     * @param UpdateCourseAPIRequest $request
-     * @return Response
-     *
      * @OA\Put(
      *      path="/api/courses/{id}",
      *      summary="Update the specified Course in storage",
@@ -192,9 +176,6 @@ interface CourseAPISwagger
     public function update($id, UpdateCourseAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Delete(
      *      path="/api/courses/{id}",
      *      summary="Remove the specified Course from storage",
@@ -237,10 +218,6 @@ interface CourseAPISwagger
     public function destroy($id);
 
     /**
-     * @param int $category_id
-     * @param Request $request
-     * @return mixed
-     *
      * @OA\Get(
      *      tags={"Courses"},
      *      path="/api/courses/category/{category_id}",
@@ -274,10 +251,6 @@ interface CourseAPISwagger
     public function category(int $category_id, Request $request);
 
     /**
-     * @param int $id
-     * @param AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest
-     * @return mixed
-     *
      * @OA\Post(
      *      path="/api/courses/attach/{id}/categories",
      *      summary="Attach categories for couse",
@@ -311,10 +284,6 @@ interface CourseAPISwagger
     public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest);
 
     /**
-     * @param int $id
-     * @param AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest
-     * @return mixed
-     *
      * @OA\Post(
      *      path="/api/courses/attach/{id}/tags",
      *      summary="Attach tags for couse",
@@ -354,9 +323,6 @@ interface CourseAPISwagger
     public function attachTags(int $id, AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest);
 
     /**
-     * @param Request $request
-     * @return mixed
-     *
      * @OA\Get(
      *      tags={"Courses"},
      *      path="/api/courses/search/tags",

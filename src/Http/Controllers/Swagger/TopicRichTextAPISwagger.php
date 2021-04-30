@@ -1,20 +1,14 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
-
 
 use EscolaLms\Courses\Http\Requests\CreateTopicRichTextAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicRichTextAPIRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 interface TopicRichTextAPISwagger
 {
     /**
-     * @param Request $request
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/topicRichTexts",
      *      summary="Get a listing of the TopicRichTexts.",
@@ -49,9 +43,6 @@ interface TopicRichTextAPISwagger
     public function index(Request $request);
 
     /**
-     * @param CreateTopicRichTextAPIRequest $request
-     * @return Response
-     *
      * @OA\Post(
      *      path="/api/topicRichTexts",
      *      summary="Store a newly created TopicRichText in storage",
@@ -64,7 +55,6 @@ interface TopicRichTextAPISwagger
      *              @OA\Schema(ref="#/components/schemas/TopicRichText")
      *          )
      *      ),
-
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -93,9 +83,6 @@ interface TopicRichTextAPISwagger
     public function store(CreateTopicRichTextAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Get(
      *      path="/api/topicRichTexts/{id}",
      *      summary="Display the specified TopicRichText",
@@ -138,10 +125,6 @@ interface TopicRichTextAPISwagger
     public function show($id);
 
     /**
-     * @param int $id
-     * @param UpdateTopicRichTextAPIRequest $request
-     * @return Response
-     *
      * @OA\Put(
      *      path="/api/topicRichTexts/{id}",
      *      summary="Update the specified TopicRichText in storage",
@@ -191,9 +174,6 @@ interface TopicRichTextAPISwagger
     public function update($id, UpdateTopicRichTextAPIRequest $request);
 
     /**
-     * @param int $id
-     * @return Response
-     *
      * @OA\Delete(
      *      path="/api/topicRichTexts/{id}",
      *      summary="Remove the specified TopicRichText from storage",
