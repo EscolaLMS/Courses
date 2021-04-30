@@ -87,7 +87,7 @@ class Lesson extends Model
      **/
     public function course()
     {
-        return $this->belongsTo(\EscolaLms\Courses\Models\Course::class, 'course_id');
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
     /**
@@ -95,7 +95,7 @@ class Lesson extends Model
      **/
     public function topics()
     {
-        return $this->hasMany(\EscolaLms\Courses\Models\Topic::class, 'lesson_id');
+        return $this->hasMany(Topic::class, 'lesson_id');
     }
 
     protected static function newFactory()

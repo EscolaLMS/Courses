@@ -7,6 +7,7 @@
     "laravel/framework": ">=8.0",
     "escolalms/core": ">=0.1.6",
     "escolalms/categories": ">=0.1",
+    "escolalms/tags": ">=0.1",
     "escolalms/auth": "^0.1"
   },
   "require-dev": {

@@ -3,7 +3,9 @@
 namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
-
+use EscolaLms\Tags\Models\Tag;
+use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -62,9 +64,6 @@ class Course extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
-
-
     public $fillable = [
         'title',
         'summary',
@@ -111,7 +110,7 @@ class Course extends Model
      **/
     public function author()
     {
-        return $this->belongsTo(\App\Models\User::class, 'author_id');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     /**
@@ -119,7 +118,17 @@ class Course extends Model
      **/
     public function lessons()
     {
-        return $this->hasMany(\EscolaLms\Courses\Models\Lesson::class, 'course_id');
+        return $this->hasMany(Lesson::class, 'course_id');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'morphable');
     }
 
     protected static function newFactory()
