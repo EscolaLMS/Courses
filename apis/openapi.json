@@ -12,7 +12,7 @@
                 ],
                 "summary": "Get a listing of the Courses.",
                 "description": "Get all Courses",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::index",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::index",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -28,7 +28,7 @@
                 ],
                 "summary": "Store a newly created Course in storage",
                 "description": "Store Course",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::store",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::store",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -56,7 +56,7 @@
                 ],
                 "summary": "Display the specified Course",
                 "description": "Get Course",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::show",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::show",
                 "parameters": [
                     {
                         "name": "id",
@@ -83,7 +83,7 @@
                 ],
                 "summary": "Update the specified Course in storage",
                 "description": "Update Course",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::update",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::update",
                 "parameters": [
                     {
                         "name": "id",
@@ -120,7 +120,7 @@
                 ],
                 "summary": "Remove the specified Course from storage",
                 "description": "Delete Course",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\CourseAPIController::destroy",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::destroy",
                 "parameters": [
                     {
                         "name": "id",
@@ -175,6 +175,130 @@
                 }
             }
         },
+        "/api/courses/attach/{id}/categories": {
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Attach categories for couse",
+                "description": "Attach categories for couse",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::attachCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "categories": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "": {
+                                                    "type": "number",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/courses/attach/{id}/tags": {
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Attach tags for couse",
+                "description": "Attach tags for couse",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\CourseAPISwagger::attachTags",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Nowości"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/courses/search/tags": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "description": "Searche Course By Criteria",
+                "operationId": "searchCourseByCategory",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/lessons": {
             "get": {
                 "tags": [
@@ -182,7 +306,7 @@
                 ],
                 "summary": "Get a listing of the Lessons.",
                 "description": "Get all Lessons",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::index",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\LessonAPISwagger::index",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -198,7 +322,7 @@
                 ],
                 "summary": "Store a newly created Lesson in storage",
                 "description": "Store Lesson",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::store",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\LessonAPISwagger::store",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -226,7 +350,7 @@
                 ],
                 "summary": "Display the specified Lesson",
                 "description": "Get Lesson",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::show",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\LessonAPISwagger::show",
                 "parameters": [
                     {
                         "name": "id",
@@ -253,7 +377,7 @@
                 ],
                 "summary": "Update the specified Lesson in storage",
                 "description": "Update Lesson",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::update",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\LessonAPISwagger::update",
                 "parameters": [
                     {
                         "name": "id",
@@ -290,7 +414,7 @@
                 ],
                 "summary": "Remove the specified Lesson from storage",
                 "description": "Delete Lesson",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\LessonAPIController::destroy",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\LessonAPISwagger::destroy",
                 "parameters": [
                     {
                         "name": "id",
@@ -319,7 +443,7 @@
                 ],
                 "summary": "Get a listing of the Topics.",
                 "description": "Get all Topics",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::index",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicAPISwagger::index",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -335,7 +459,7 @@
                 ],
                 "summary": "Store a newly created Topic in storage",
                 "description": "Store Topic",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::store",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicAPISwagger::store",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -363,7 +487,7 @@
                 ],
                 "summary": "Display the specified Topic",
                 "description": "Get Topic",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::show",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicAPISwagger::show",
                 "parameters": [
                     {
                         "name": "id",
@@ -390,7 +514,7 @@
                 ],
                 "summary": "Update the specified Topic in storage",
                 "description": "Update Topic",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::update",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicAPISwagger::update",
                 "parameters": [
                     {
                         "name": "id",
@@ -427,7 +551,7 @@
                 ],
                 "summary": "Remove the specified Topic from storage",
                 "description": "Delete Topic",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicAPIController::destroy",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicAPISwagger::destroy",
                 "parameters": [
                     {
                         "name": "id",
@@ -456,7 +580,7 @@
                 ],
                 "summary": "Get a listing of the TopicRichTexts.",
                 "description": "Get all TopicRichTexts",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::index",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicRichTextAPISwagger::index",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -472,7 +596,7 @@
                 ],
                 "summary": "Store a newly created TopicRichText in storage",
                 "description": "Store TopicRichText",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::store",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicRichTextAPISwagger::store",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -500,7 +624,7 @@
                 ],
                 "summary": "Display the specified TopicRichText",
                 "description": "Get TopicRichText",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::show",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicRichTextAPISwagger::show",
                 "parameters": [
                     {
                         "name": "id",
@@ -527,7 +651,7 @@
                 ],
                 "summary": "Update the specified TopicRichText in storage",
                 "description": "Update TopicRichText",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::update",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicRichTextAPISwagger::update",
                 "parameters": [
                     {
                         "name": "id",
@@ -564,7 +688,7 @@
                 ],
                 "summary": "Remove the specified TopicRichText from storage",
                 "description": "Delete TopicRichText",
-                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\TopicRichTextAPIController::destroy",
+                "operationId": "EscolaLms\\Courses\\Http\\Controllers\\Swagger\\TopicRichTextAPISwagger::destroy",
                 "parameters": [
                     {
                         "name": "id",
