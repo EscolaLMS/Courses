@@ -4,7 +4,6 @@ namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
-use EscolaLms\Courses\Dto\CourseSearchDto;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
@@ -15,7 +14,6 @@ use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Http\Request;
-use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**
@@ -104,6 +102,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function category(int $category_id, Request $request)
     {
+        /** @var Category $category */
         $category = $this->categoriesRepositoryContract->find($category_id);
         $courses = $this->courseServiceContract->searchInCategoryAndSubCategory($category);
         return $this->sendResponse($courses->toArray(), 'Course updated successfully');

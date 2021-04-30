@@ -8,7 +8,6 @@ use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
-use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**

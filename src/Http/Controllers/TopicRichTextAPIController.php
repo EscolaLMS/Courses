@@ -8,7 +8,6 @@ use EscolaLms\Courses\Http\Requests\UpdateTopicRichTextAPIRequest;
 use EscolaLms\Courses\Models\TopicRichText;
 use EscolaLms\Courses\Repositories\TopicRichTextRepository;
 use Illuminate\Http\Request;
-use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
 
 /**
