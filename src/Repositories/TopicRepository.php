@@ -75,9 +75,9 @@ class TopicRepository extends BaseRepository
      *
      * @param array $input
      *
-     * @return Model
+     * @return Topic
      */
-    public function create($input)
+    public function create(array $input): Topic
     {
         // initialise mode from allowed list string
         $classType = $input["topicable_class"];
