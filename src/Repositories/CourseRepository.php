@@ -114,7 +114,17 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $query = $this->applyCriteria($query, $criteria);
         }
 
-        return $query;
+        /** search by TAG */
+
+        if (isset($search['tag']) && $search['tag']) {
+            $query->whereHas('tags', function (Builder $query) use ($search) {
+                $query->where('title', '=', $search['tag']);
+            });
+            unset($search['tag']);
+        }
+
+
+        return $query->with('tags');
     }
 
     /**

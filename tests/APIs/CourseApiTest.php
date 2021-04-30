@@ -135,4 +135,34 @@ class CourseApiTest extends TestCase
         );
         $this->response->assertStatus(200);
     }
+
+    public function test_search_course_by_tag()
+    {
+        $course = Course::factory()->create();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/tags',
+            ['tags' => [
+                [
+                    'title' => 'Fruit'
+                ],
+            ]]
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/search/tags',
+            ['tag' => 'Fruit']
+        );
+        $this->response->assertStatus(200);
+        $this->assertObjectHasAttribute('data', $this->response->getData());
+        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        foreach ($this->response->getData()->data->data as $data) {
+            $this->assertFalse(empty($data->tags));
+            foreach ($data->tags as $tag) {
+                $this->assertTrue($tag->title === 'Fruit');
+            }
+        }
+    }
 }

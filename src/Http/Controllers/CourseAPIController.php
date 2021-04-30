@@ -449,5 +449,48 @@ class CourseAPIController extends AppBaseController
         $this->courseServiceContract->attachTags($course, $attachTagsCourseAPIRequest->input('tags'));
         return $this->sendResponse([], 'Course updated successfully');
     }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     *
+     * @OA\Get(
+     *      tags={"Courses"},
+     *      path="/api/courses/search/tags",
+     *      description="Searche Course By Criteria",
+     *      operationId="searchCourseByCategory",
+     *      @OA\Parameter(
+     *          name="tag",
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Bad request",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     *   )
+     */
+
+    public function searchByTag(Request $request)
+    {
+        $courses = $this->courseRepository
+            ->allQueryBuilder($request->only('tag'))
+            ->orderBy('courses.id', 'desc')
+            ->paginate();
+
+        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
+    }
 }
 

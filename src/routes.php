@@ -12,10 +12,10 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     Route::resource('topics', TopicAPIController::class);
     Route::resource('topic_rich_texts', TopicRichTextAPIController::class);
 
+    Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
     Route::group(['prefix' => '/courses/attach/{id}/'], function () {
         Route::post('categories', [CourseAPIController::class, 'attachCategory']);
         Route::post('tags', [CourseAPIController::class, 'attachTags']);
     });
-    Route::get('/search', [CourseAPIController::class, 'search']);
 });
