@@ -10,21 +10,7 @@ class TopicApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
 
-    /**
-     * @test
-     */
-    public function test_create_topic()
-    {
-        $topic = Topic::factory()->make()->toArray();
 
-        $this->response = $this->json(
-            'POST',
-            '/api/topics',
-            $topic
-        );
-
-        $this->assertApiResponse($topic);
-    }
 
     /**
      * @test
@@ -41,23 +27,7 @@ class TopicApiTest extends TestCase
         $this->assertApiResponse($topic->toArray());
     }
 
-    /**
-     * @test
-     */
-    public function test_update_topic()
-    {
-        $topic = Topic::factory()->create();
-        $editedTopic = Topic::factory()->make()->toArray();
-
-        $this->response = $this->json(
-            'PUT',
-            '/api/topics/'.$topic->id,
-            $editedTopic
-        );
-
-        $this->assertApiResponse($editedTopic);
-    }
-
+   
     /**
      * @test
      */
