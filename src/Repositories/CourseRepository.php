@@ -4,10 +4,9 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class CourseRepository
@@ -17,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
+
     /**
      * @var array
      */
@@ -69,9 +69,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return Course::class;
     }
 
-    /**
-     * @return Builder
-     */
     public function queryAll(): Builder
     {
         return $this->model->newQuery()
@@ -107,7 +104,27 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $query = $this->applyCriteria($query, $criteria);
         }
 
-        return $query;
+        /** search by TAG */
+
+        if (isset($search['tag']) && $search['tag']) {
+            $query->whereHas('tags', function (Builder $query) use ($search) {
+                $query->where('title', '=', $search['tag']);
+            });
+            unset($search['tag']);
+        }
+
+
+        return $query->with('tags');
+    }
+
+    public function attachCategory(Course $course, Category $category) : bool
+    {
+        return $course->categories()->save($category)->getKey();
+    }
+
+    public function attachTag(Course $course, Tag $tag) : bool
+    {
+        return $course->tags()->save($tag)->getKey();
     }
 
 }

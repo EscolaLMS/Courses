@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
+use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -62,9 +63,6 @@ class Course extends Model
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-
-
-
 
     public $fillable = [
         'title',
@@ -126,6 +124,11 @@ class Course extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'morphable');
     }
 
     protected static function newFactory()

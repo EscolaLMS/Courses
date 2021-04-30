@@ -1,6 +1,7 @@
 <?php namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
@@ -99,6 +100,69 @@ class CourseApiTest extends TestCase
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);
         foreach ($this->response->getData()->data->data as $data) {
             $this->assertFalse($data->category_id !== $category->getKey() and $data->category_id !== $category2->getKey());
+        }
+    }
+
+    public function test_attach_categories_course()
+    {
+        $course = Course::factory()->create();
+        $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/categories',
+            ['categories' => $categoriesIds]
+        );
+        $this->response->assertStatus(200);
+    }
+
+    public function test_attach_tags_course()
+    {
+        $course = Course::factory()->create();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/tags',
+            ['tags' => [
+                [
+                    'title' => 'Nowości'
+                ],
+                [
+                    'title' => 'Promocje'
+                ],
+                [
+                    'title' => 'Owoce'
+                ],
+            ]]
+        );
+        $this->response->assertStatus(200);
+    }
+
+    public function test_search_course_by_tag()
+    {
+        $course = Course::factory()->create();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/tags',
+            ['tags' => [
+                [
+                    'title' => 'Fruit'
+                ],
+            ]]
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/search/tags',
+            ['tag' => 'Fruit']
+        );
+        $this->response->assertStatus(200);
+        $this->assertObjectHasAttribute('data', $this->response->getData());
+        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        foreach ($this->response->getData()->data->data as $data) {
+            $this->assertFalse(empty($data->tags));
+            foreach ($data->tags as $tag) {
+                $this->assertTrue($tag->title === 'Fruit');
+            }
         }
     }
 }
