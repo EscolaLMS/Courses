@@ -18,11 +18,8 @@ class CoursesSeeder extends Seeder
 {
     private function getRandomRichContent()
     {
-        $classes = [RichText, Audio, Video, Image, H5P];
-        return $classes[array_rand($classes)]::factory()->create();
-        // TODO: instruduce a abstract TopicContent class
-        // all below will extends this calls
-        // and the list is from that abstraction
+        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory()];
+        return $classes[array_rand($classes)]->create();
     }
 
     public function run()

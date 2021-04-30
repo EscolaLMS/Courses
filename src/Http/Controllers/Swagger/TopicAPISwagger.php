@@ -50,7 +50,7 @@ interface TopicAPISwagger
      *      path="/api/topics",
      *      summary="Store a newly created Topic in storage",
      *      tags={"Topic"},
-     *      description="Store Topic. Depending on `topicable_class` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
+     *      description="Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(

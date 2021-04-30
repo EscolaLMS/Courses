@@ -19,7 +19,7 @@ class TopicResource extends JsonResource
             'title' => $this->title,
             'lesson_id' => $this->lesson_id,
             'topicable_id' => $this->topicable_id,
-            'topicable_class' => $this->topicable_class
+            'topicable_type' => $this->topicable_type
         ];
     }
 }

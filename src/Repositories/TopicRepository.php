@@ -31,7 +31,7 @@ class TopicRepository extends BaseRepository
         'title',
         'lesson_id',
         'topicable_id',
-        'topicable_class',
+        'topicable_type',
         'order'
     ];
 
@@ -70,18 +70,8 @@ class TopicRepository extends BaseRepository
         return self::$contentClasses;
     }
 
-    /**
-     * Create model record
-     *
-     * @param array $input
-     *
-     * @return Topic
-     */
-    public function create(array $input): Topic
+    private function getContentModel($classType, $input)
     {
-        // initialise mode from allowed list string
-        $classType = $input["topicable_class"];
-
         if (!in_array($classType, self::$contentClasses)) {
             throw new Error("Type '$classType' is not allowed");
         }
@@ -101,6 +91,25 @@ class TopicRepository extends BaseRepository
             throw new TopicException(TopicException::CONTENT_VALIDATION, $validator->errors()->toArray());
         }
 
+        return [
+            'model' => $contentModel,
+            'input' => $contentInput
+        ];
+    }
+
+    /**
+     * Create model record
+     *
+     * @param array $input
+     *
+     * @return Topic
+     */
+    public function create(array $input): Topic
+    {
+        // initialise mode from allowed list string
+        $classType = $input["topicable_type"];
+        $content = $this->getContentModel($classType, $input);
+
         // saves topic to gets its ID, for later referncing
         $input = [
             'title' => $input['title'],
@@ -113,15 +122,58 @@ class TopicRepository extends BaseRepository
 
         // check if `createResourseFromRequest` exisits on `Model` if so then convert input
         if (method_exists($classType, 'createResourseFromRequest')) {
-            $contentInput = $classType::createResourseFromRequest($contentInput, $model->id);
+            $content['input'] = $classType::createResourseFromRequest($content['input'], $model->id);
         }
        
         // create related 1:1 content and associate with topic
-        $contentModel->fill($contentInput);
-        $contentModel->save();
+        $content['model']->fill($content['input']);
+        $content['model']->save();
         
-        $model->topicable()->associate($contentModel)->save();
+        $model->topicable()->associate($content['model'])->save();
         $model->load('topicable');
+
+        return $model;
+    }
+
+
+    /**
+     * Update model record for given id
+     *
+     * @param array $input
+     * @param int $id
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     */
+    public function update(array $input, int $id): Topic
+    {
+        $query = $this->model->newQuery();
+
+        $model = $query->with('topicable')->findOrFail($id);
+
+        if (isset($input['topicable_type']) && $model->topicable_type != $input['topicable_type']) {
+            $classType = $input['topicable_type'];
+            $content = $this->getContentModel($classType, $input);
+
+            if (method_exists($classType, 'createResourseFromRequest')) {
+                $content['input'] = $classType::createResourseFromRequest($content['input'], $id);
+            }
+
+            $content['model']->fill($content['input']);
+            $content['model']->save();
+
+            //$model->topicable()->delete();
+            $model->topicable()->associate($content['model'])->save();
+        }
+
+        $modelFillable = $model->fillable;
+
+        $input = array_filter($input, function ($key) use ($modelFillable) {
+            return in_array($key, $modelFillable);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $model->fill($input);
+
+        $model->save();
 
         return $model;
     }
