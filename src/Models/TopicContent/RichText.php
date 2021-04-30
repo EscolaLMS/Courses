@@ -1,28 +1,23 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
  *      schema="TopicRichText",
- *      required={"topic_id", "value"},
+ *      required={"value"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
 *          @OA\Schema(
 *             type="integer",
 *         )
- *      ),
- *      @OA\Property(
- *          property="topic_id",
- *          description="topic_id",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
  *      ),
  *      @OA\Property(
  *          property="value",
@@ -32,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class TopicRichText extends Model
+class RichText extends AbstractContent
 {
     use HasFactory;
 
@@ -41,11 +36,7 @@ class TopicRichText extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
-
-
     public $fillable = [
-        'topic_id',
         'value'
     ];
 
@@ -56,7 +47,6 @@ class TopicRichText extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'topic_id' => 'integer',
         'value' => 'string'
     ];
 
@@ -66,20 +56,17 @@ class TopicRichText extends Model
      * @var array
      */
     public static $rules = [
-        'topic_id' => 'required',
         'value' => 'required|string'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
+
     public function topic()
     {
-        return $this->belongsTo(\App\Models\Topic::class, 'topic_id');
+        return $this->morphOne(Topic::class, 'topicable');
     }
 
     protected static function newFactory()
     {
-        return \EscolaLms\Courses\Database\Factories\TopicRichTextFactory::new();
+        return \EscolaLms\Courses\Database\Factories\TopicContent\RichTextFactory::new();
     }
 }

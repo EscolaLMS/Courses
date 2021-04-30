@@ -9,6 +9,7 @@ use Illuminate\Routing\ImplicitRouteBinding;
 Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     Route::resource('courses', CourseAPIController::class);
     Route::resource('lessons', LessonAPIController::class);
+    Route::get('topics/types', [TopicAPIController::class, 'classes']);
     Route::resource('topics', TopicAPIController::class);
     Route::resource('topic_rich_texts', TopicRichTextAPIController::class);
 

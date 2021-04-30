@@ -31,8 +31,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="integer",
  *      ),
  *      @OA\Property(
- *          property="topicable_class",
- *          description="topicable_class",
+ *          property="topicable_type",
+ *          description="topicable_type",
  *          type="string"
  *      ),
  *      @OA\Property(
@@ -59,7 +59,7 @@ class Topic extends Model
         'title',
         'lesson_id',
         'topicable_id',
-        'topicable_class',
+        'topicable_type',
         'order'
     ];
 
@@ -73,7 +73,7 @@ class Topic extends Model
         'title' => 'string',
         'lesson_id' => 'integer',
         'topicable_id' => 'integer',
-        'topicable_class' => 'string',
+        'topicable_type' => 'string',
         'order' => 'integer'
     ];
 
@@ -85,9 +85,10 @@ class Topic extends Model
     public static $rules = [
         'title' => 'nullable|string|max:255',
         'lesson_id' => 'required',
-        'topicable_id' => 'nullable',
-        'topicable_class' => 'nullable|string|max:255',
-        'order' => 'required|integer'
+        'topicable_id' => 'integer',
+        'topicable_type' => 'required|string|max:255',
+        'order' => 'integer',
+        'value' => 'required'
     ];
 
     /**
@@ -95,7 +96,7 @@ class Topic extends Model
      **/
     public function lesson()
     {
-        return $this->belongsTo(\App\Models\Lesson::class, 'lesson_id');
+        return $this->belongsTo(\EscolaLms\Courses\Models\Lesson::class, 'lesson_id');
     }
 
     /**
@@ -103,11 +104,16 @@ class Topic extends Model
      **/
     public function topicRichtexts()
     {
-        return $this->hasMany(\App\Models\TopicRichtext::class, 'topic_id');
+        return $this->hasMany(\EscolaLms\Courses\Models\TopicRichtext::class, 'topic_id');
     }
 
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicFactory::new();
+    }
+
+    public function topicable()
+    {
+        return $this->morphTo();
     }
 }

@@ -24,8 +24,12 @@ class UpdateTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = Topic::$rules;
-        
-        return $rules;
+        return [
+            'title' => 'string|max:255',
+            'lesson_id' => 'integer|exists:hh5p_contents,id',
+            'topicable_id' => 'integer',
+            'topicable_type' => 'string|max:255',
+            'order' => 'integer',
+        ];
     }
 }

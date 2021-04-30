@@ -28,7 +28,9 @@
     "psr-4": {
       "EscolaLms\\Courses\\": "src",
       "EscolaLms\\Courses\\Tests\\": "tests",
-      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories"
+      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories",
+      "EscolaLms\\Courses\\Database\\Seeders\\": "database/seeders"
+
     }
   },
   "extra": {

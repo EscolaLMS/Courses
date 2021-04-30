@@ -43,25 +43,28 @@ interface TopicAPISwagger
     public function index(Request $request);
 
     /**
+     * @param CreateTopicAPIRequest $request
+     * @return Response
+     *
      * @OA\Post(
      *      path="/api/topics",
      *      summary="Store a newly created Topic in storage",
      *      tags={"Topic"},
-     *      description="Store Topic",
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *              @OA\Schema(ref="#/components/schemas/Topic")
-     *          )
-     *      ),
+     *      description="Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/x-www-form-urlencoded",
+    *              @OA\Schema(ref="#/components/schemas/Topic")
+    *          )
+    *      ),
 
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -216,4 +219,41 @@ interface TopicAPISwagger
      */
 
     public function destroy($id);
+
+    /**
+     * @param Request $request
+     * @return Response
+     *
+     * @OA\Get(
+     *      path="/api/topics/types",
+     *      summary="Get a listing of the Availabe Topic Content Types Classes.",
+     *      tags={"Topic"},
+     *      description="Get all Topic Contents",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @OA\Items(type="string")
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    public function classes();
 }

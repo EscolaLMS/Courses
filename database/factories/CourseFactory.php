@@ -23,13 +23,28 @@ class CourseFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->word,
+            'title' => $this->faker->sentence,
             'summary' => $this->faker->text,
-            'image_path' => $this->faker->text,
-            'video_path' => $this->faker->word,
-            'base_price' => $this->faker->word,
-            'duration' => $this->faker->word,
+            'image_path' => "1.jpg",
+            'video_path' => "1.mp4",
+            'base_price' => 11.99,
+            'duration' => rand(2, 10)." hours",
             'author_id' => User::factory(),
         ];
     }
+
+    /*
+    public function configure()
+    {
+
+        return $this->afterMaking(function (Course $topic) {
+            //
+        })->afterCreating(function (Course $topic) {
+            //
+            $topicText = TopicRichText::factory()->make([
+                'topic_id' => $topic->id
+            ]);
+        });
+    }
+    */
 }

@@ -4,19 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTopicRichtextsTable extends Migration
+class CreateTopicAudiosTable extends Migration
 {
     public function up()
     {
-        Schema::create('topic_richtexts', function (Blueprint $table) {
+        Schema::create('topic_audios', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
-            $table->mediumText('value');
+            $table->string('value', 255);
+            $table->unsignedInteger('length');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('topic_richtexts');
+        Schema::dropIfExists('topic_audios');
     }
 }

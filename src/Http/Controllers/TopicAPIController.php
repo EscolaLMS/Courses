@@ -9,6 +9,8 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
 use Response;
+use EscolaLms\Courses\Exceptions\TopicException;
+use Error;
 
 /**
  * Class TopicController
@@ -36,11 +38,19 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendResponse($topics->toArray(), 'Topics retrieved successfully');
     }
 
+
+
     public function store(CreateTopicAPIRequest $request)
     {
         $input = $request->all();
 
-        $topic = $this->topicRepository->create($input);
+        try {
+            $topic = $this->topicRepository->create($input);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendResponse($topic->toArray(), 'Topic saved successfully');
     }
@@ -85,5 +95,13 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $topic->delete();
 
         return $this->sendSuccess('Topic deleted successfully');
+    }
+
+
+    public function classes()
+    {
+        $classes = $this->topicRepository->availableContentClasses();
+
+        return $this->sendResponse($classes, 'Topic content availabe list');
     }
 }
