@@ -6,6 +6,7 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Courses\Dto\CourseSearchDto;
 use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Models\Course;
@@ -20,7 +21,6 @@ use Response;
  * Class CourseController
  * @package App\Http\Controllers
  */
-
 class CourseAPIController extends AppBaseController
 {
     /** @var  CourseRepository */
@@ -51,9 +51,9 @@ class CourseAPIController extends AppBaseController
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -94,20 +94,19 @@ class CourseAPIController extends AppBaseController
      *      summary="Store a newly created Course in storage",
      *      tags={"Course"},
      *      description="Store Course",
-    *      @OA\RequestBody(
-    *          required=true,
-    *          @OA\MediaType(
-    *              mediaType="application/json",
-    *              @OA\Schema(ref="#/components/schemas/Course")
-    *          )
-    *      ),
-
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/Course")
+     *          )
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -148,18 +147,18 @@ class CourseAPIController extends AppBaseController
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -204,26 +203,25 @@ class CourseAPIController extends AppBaseController
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
      *          required=true,
      *          in="path"
      *      ),
-    *      @OA\RequestBody(
-    *          required=true,
-    *          @OA\MediaType(
-    *              mediaType="application/json",
-    *              @OA\Schema(ref="#/components/schemas/Course")
-    *          )
-    *      ),
-
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/Course")
+     *          )
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -271,18 +269,18 @@ class CourseAPIController extends AppBaseController
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
      *          required=true,
      *          in="path"
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -358,6 +356,41 @@ class CourseAPIController extends AppBaseController
         return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 
+    /**
+     * @param int $id
+     * @param AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest
+     * @return mixed
+     *
+     * @OA\Post(
+     *      path="/api/courses/attach/{id}/categories",
+     *      summary="Attach categories for couse",
+     *      tags={"Course"},
+     *      description="Attach categories for couse",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="categories",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                         type="number",
+     *                         example="1"
+     *                      ),
+     *                  ),
+     *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *      )
+     * )
+     */
+
     public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest)
     {
         /** @var Course $course */
@@ -366,4 +399,55 @@ class CourseAPIController extends AppBaseController
 
         return $this->sendResponse([], 'Course updated successfully');
     }
+
+    /**
+     * @param int $id
+     * @param AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest
+     * @return mixed
+     *
+     * @OA\Post(
+     *      path="/api/courses/attach/{id}/tags",
+     *      summary="Attach tags for couse",
+     *      tags={"Course"},
+     *      description="Attach tags for couse",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="tags",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                         type="array",
+     *                         @OA\Items(
+     *                           @OA\Property(
+     *                                 property="title",
+     *                                 type="string",
+     *                                 example="Nowości"
+     *                              ),
+     *                          ),
+     *                      ),
+     *                  ),
+     *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *      )
+     * )
+     */
+
+    public function attachTags(int $id, AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest)
+    {
+        /** @var Course $course */
+        $course = $this->courseRepository->find($id);
+
+        $this->courseServiceContract->attachTags($course, $attachTagsCourseAPIRequest->input('tags'));
+        return $this->sendResponse([], 'Course updated successfully');
+    }
 }
+

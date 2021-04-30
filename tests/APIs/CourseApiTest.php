@@ -1,6 +1,7 @@
 <?php namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
@@ -105,11 +106,32 @@ class CourseApiTest extends TestCase
     public function test_attach_categories_course()
     {
         $course = Course::factory()->create();
-        $categoriesIds = Course::factory(5)->create()->pluck('id')->toArray();
+        $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
         $this->response = $this->json(
             'POST',
             '/api/courses/attach/'.$course->getKey().'/categories',
             ['categories' => $categoriesIds]
+        );
+        $this->response->assertStatus(200);
+    }
+
+    public function test_attach_tags_course()
+    {
+        $course = Course::factory()->create();
+        $this->response = $this->json(
+            'POST',
+            '/api/courses/attach/'.$course->getKey().'/tags',
+            ['tags' => [
+                [
+                    'title' => 'Nowości'
+                ],
+                [
+                    'title' => 'Promocje'
+                ],
+                [
+                    'title' => 'Owoce'
+                ],
+            ]]
         );
         $this->response->assertStatus(200);
     }

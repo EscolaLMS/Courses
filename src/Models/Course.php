@@ -2,7 +2,9 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Eloquent as Model;
+//use Eloquent as Model;
+use EscolaLms\Tags\Models\Tag;
+use Illuminate\Database\Eloquent\Model;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -126,6 +128,11 @@ class Course extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'morphable');
     }
 
     protected static function newFactory()

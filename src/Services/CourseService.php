@@ -12,7 +12,9 @@ use EscolaLms\Courses\Dto\CourseSearchDto;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class CourseService implements CourseServiceContract
@@ -77,6 +79,23 @@ class CourseService implements CourseServiceContract
                     if (!$this->courseRepository->attachCategory($course, $category)) {
                         abort(422, 'Operation failed');
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Course $course
+     * @param array $tags
+     */
+    public function attachTags(Course $course, array $tags)
+    {
+        foreach ($tags as $tag) {
+            $courseTagsIds = $course->tags()->get()->pluck('title')->toArray();
+            if (!in_array($tag['title'], $courseTagsIds)) {
+                $tagModel = new Tag($tag);
+                if (!$this->courseRepository->attachTag($course, $tagModel)) {
+                    abort(422, 'Operation failed');
                 }
             }
         }
