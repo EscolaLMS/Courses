@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class Video extends Model
+class Video extends AbstractContent
 {
     use HasFactory;
 
@@ -36,7 +37,8 @@ class Video extends Model
     const UPDATED_AT = 'updated_at';
 
     public $fillable = [
-        'value'
+        'value',
+        'poster'
     ];
 
     /**
@@ -55,7 +57,8 @@ class Video extends Model
      * @var array
      */
     public static $rules = [
-        'value' => 'required|string'
+        'value' => 'file|mimes:mp4,ogg,webm',
+        'poster' => 'file|image'
     ];
 
 
@@ -67,5 +70,23 @@ class Video extends Model
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicContent\VideoFactory::new();
+    }
+
+    // TODO: this idea is crazy
+    public static function createResourseFromRequest($input, $topicId):array
+    {
+        $tmpFile = $input['value']->getPathName();
+        $path = $input['value']->store("topic/$topicId/videos");
+
+        if (isset($input['poster'])) {
+            $poster = $input['poster']->store("topic/$topicId/videos");
+        }
+
+        return [
+              'value' => $path,
+              'width' => 0,
+              'height' => 0,
+              'poster' => isset($poster) ? $poster : null
+          ];
     }
 }

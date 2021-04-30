@@ -9,6 +9,8 @@ use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
 use EscolaLms\Courses\Http\Controllers\AppBaseController;
 use Response;
+use EscolaLms\Courses\Exceptions\TopicException;
+use Error;
 
 /**
  * Class TopicController
@@ -79,11 +81,11 @@ class TopicAPIController extends AppBaseController
      *      path="/api/topics",
      *      summary="Store a newly created Topic in storage",
      *      tags={"Topic"},
-     *      description="Store Topic",
+     *      description="Store Topic. Depending on `topicable_class` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
-    *              mediaType="application/json",
+    *              mediaType="application/x-www-form-urlencoded",
     *              @OA\Schema(ref="#/components/schemas/Topic")
     *          )
     *      ),
@@ -117,7 +119,13 @@ class TopicAPIController extends AppBaseController
     {
         $input = $request->all();
 
-        $topic = $this->topicRepository->create($input);
+        try {
+            $topic = $this->topicRepository->create($input);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendResponse($topic->toArray(), 'Topic saved successfully');
     }
@@ -300,5 +308,46 @@ class TopicAPIController extends AppBaseController
         $topic->delete();
 
         return $this->sendSuccess('Topic deleted successfully');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     *
+     * @OA\Get(
+     *      path="/api/topics/types",
+     *      summary="Get a listing of the Availabe Topic Content Types Classes.",
+     *      tags={"Topic"},
+     *      description="Get all Topic Contents",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @OA\Items(type="string")
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function classes()
+    {
+        $classes = $this->topicRepository->availableContentClasses();
+
+        return $this->sendResponse($classes, 'Topic content availabe list');
     }
 }

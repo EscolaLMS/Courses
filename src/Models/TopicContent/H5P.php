@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class H5P extends Model
+class H5P extends AbstractContent
 {
     use HasFactory;
 
@@ -55,7 +56,7 @@ class H5P extends Model
      * @var array
      */
     public static $rules = [
-        'value' => 'required|string'
+        'value' => 'required|integer|exists:hh5p_contents,id'
     ];
 
 

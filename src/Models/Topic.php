@@ -85,9 +85,10 @@ class Topic extends Model
     public static $rules = [
         'title' => 'nullable|string|max:255',
         'lesson_id' => 'required',
-        'topicable_id' => 'nullable',
-        'topicable_class' => 'nullable|string|max:255',
-        'order' => 'required|integer'
+        'topicable_id' => 'integer',
+        'topicable_class' => 'required|string|max:255',
+        'order' => 'integer',
+        'value' => 'required'
     ];
 
     /**

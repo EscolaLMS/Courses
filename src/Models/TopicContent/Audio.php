@@ -4,7 +4,7 @@ namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
-
+use EscolaLms\Courses\Models\AbstractContent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class Audio extends Model
+class Audio extends AbstractContent
 {
     use HasFactory;
 
@@ -36,7 +36,8 @@ class Audio extends Model
     const UPDATED_AT = 'updated_at';
 
     public $fillable = [
-        'value'
+        'value',
+        'length'
     ];
 
     /**
@@ -55,7 +56,7 @@ class Audio extends Model
      * @var array
      */
     public static $rules = [
-        'value' => 'required|string'
+        'value' => 'required|file|mimes:mp3,ogg'
     ];
 
 
@@ -67,5 +68,16 @@ class Audio extends Model
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicContent\AudioFactory::new();
+    }
+    // TODO: this idea is crazy
+    public static function createResourseFromRequest($input, $topicId):array
+    {
+        $tmpFile = $input['value']->getPathName();
+        $path = $input['value']->store("topic/$topicId/audios");
+        // TODO: get length of the video
+        return [
+            'value' => $path,
+            'length' => 0,
+        ];
     }
 }

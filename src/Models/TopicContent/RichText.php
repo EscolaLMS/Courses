@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class RichText extends Model
+class RichText extends AbstractContent
 {
     use HasFactory;
 

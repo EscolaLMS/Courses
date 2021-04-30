@@ -18,21 +18,11 @@ class CoursesSeeder extends Seeder
 {
     private function getRandomRichContent()
     {
+        $classes = [RichText, Audio, Video, Image, H5P];
+        return $classes[array_rand($classes)]::factory()->create();
         // TODO: instruduce a abstract TopicContent class
         // all below will extends this calls
         // and the list is from that abstraction
-        switch (rand(1, 5)) {
-            case 1:
-                return RichText::factory()->create();
-            case 2:
-                return Audio::factory()->create();
-            case 3:
-                return Video::factory()->create();
-            case 4:
-                return Image::factory()->create();
-            case 5:
-                return H5P::factory()->create();
-        }
     }
 
     public function run()
@@ -45,11 +35,6 @@ class CoursesSeeder extends Seeder
                     $content = $this->getRandomRichContent();
                     $topic->topicable()->associate($content)->save();
                 })
-                /*
-                ->each(function ($topic) {
-                    $topic->for(TopicRichText::factory()->create(), 'topicable');
-                })
-                */
             )
             ->count(rand(1, 10)))
 

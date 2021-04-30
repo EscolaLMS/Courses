@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models\TopicContent;
 
 use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class Image extends Model
+class Image extends AbstractContent
 {
     use HasFactory;
 
@@ -55,7 +56,7 @@ class Image extends Model
      * @var array
      */
     public static $rules = [
-        'value' => 'required|string'
+        'value' => 'required|image'
     ];
 
 
@@ -67,5 +68,21 @@ class Image extends Model
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicContent\ImageFactory::new();
+    }
+
+    // TODO: this idea is crazy
+    public static function createResourseFromRequest($input, $topicId):array
+    {
+        $tmpFile = $input['value']->getPathName();
+        $sizes = getimagesize($tmpFile);
+        if (!$sizes) {
+            throw new Error("File is not an Image");
+        }
+        $path = $input['value']->store("topic/$topicId/images");
+        return [
+            'value' => $path,
+            'width' => $sizes[0],
+            'height' => $sizes[1],
+        ];
     }
 }
