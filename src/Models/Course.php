@@ -2,9 +2,8 @@
 
 namespace EscolaLms\Courses\Models;
 
-//use Eloquent as Model;
+use Eloquent as Model;
 use EscolaLms\Tags\Models\Tag;
-use Illuminate\Database\Eloquent\Model;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -64,9 +63,6 @@ class Course extends Model
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-
-
-
 
     public $fillable = [
         'title',

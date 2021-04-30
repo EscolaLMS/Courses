@@ -69,9 +69,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return Course::class;
     }
 
-    /**
-     * @return Builder
-     */
     public function queryAll(): Builder
     {
         return $this->model->newQuery()
@@ -80,13 +77,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             ->leftJoin('categories', 'categories.id', '=', 'category_course.category_id');
     }
 
-    /**
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
-     * @param array $criteria
-     * @return Builder
-     */
     public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder
     {
         if (isset($search) && isset($search['title'])) {
@@ -127,21 +117,11 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $query->with('tags');
     }
 
-    /**
-     * @param Course $course
-     * @param Category $category
-     * @return bool
-     */
     public function attachCategory(Course $course, Category $category) : bool
     {
         return $course->categories()->save($category)->getKey();
     }
 
-    /**
-     * @param Course $course
-     * @param Tag $tag
-     * @return bool
-     */
     public function attachTag(Course $course, Tag $tag) : bool
     {
         return $course->tags()->save($tag)->getKey();
