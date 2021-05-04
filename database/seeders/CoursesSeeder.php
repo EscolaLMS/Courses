@@ -10,6 +10,8 @@ use EscolaLms\Courses\Models\TopicContent\Audio;
 use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Models\TopicContent\Image;
 use EscolaLms\Courses\Models\TopicContent\H5P;
+use EscolaLms\Courses\Models\TopicContent\OEmbed;
+
 
 
 use Illuminate\Database\Seeder;
@@ -18,22 +20,31 @@ class CoursesSeeder extends Seeder
 {
     private function getRandomRichContent()
     {
-        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory()];
-        return $classes[array_rand($classes)]->create();
+        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory(), OEmbed::factory()];
+        //$classes = [ Audio::factory() ];
+        
+        return $classes[array_rand($classes)];
     }
 
     public function run()
     {
         Course::factory()
+        ->count(rand(5, 10))
         ->count(1)
         ->has(Lesson::factory()
             ->has(
                 Topic::factory()->afterCreating(function ($topic) {
                     $content = $this->getRandomRichContent();
+                    if (method_exists($content, 'updatePath')) {
+                        $content = $content->updatePath($topic->id)->create();
+                    } else {
+                        $content = $content->create();
+                    }
+                    
                     $topic->topicable()->associate($content)->save();
                 })
             )
-            ->count(rand(1, 10)))
+            ->count(rand(5, 10)))
 
         ->create();
     }

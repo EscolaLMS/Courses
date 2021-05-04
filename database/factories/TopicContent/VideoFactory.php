@@ -24,9 +24,30 @@ class VideoFactory extends Factory
         return [
             //'topic_id' => $this->faker->word,
             'value' => '1.mp4',
-            'poster' => '1.jpg',
+            'poster' => 'poster.jpg',
             'width' => 640,
             'height' => 480
         ];
+    }
+
+    public function updatePath($id)
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            $word = $this->faker->word;
+            $filename = "topic/$id/".$word.".mp3";
+            $filename_poster = "topic/$id/".$word.".jpg";
+            $dest = storage_path("app/public/$filename");
+            $dest_poster = storage_path("app/public/$filename_poster");
+            $destDir = dirname($dest);
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            copy(realpath(__DIR__."/../../mocks/1.mp3"), $dest);
+            copy(realpath(__DIR__."/../../mocks/poster.jpg"), $dest_poster);
+            return [
+                'value' => $filename,
+                'poster' =>  $filename_poster
+            ];
+        });
     }
 }

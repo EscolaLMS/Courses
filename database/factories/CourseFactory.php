@@ -33,18 +33,30 @@ class CourseFactory extends Factory
         ];
     }
 
-    /*
+    
     public function configure()
     {
+        return $this->afterMaking(function (Course $course) {
+            //
+        })->afterCreating(function (Course $course) {
+            //
+            $id = $course->id;
+            $word = $this->faker->word;
+            $filename_image = "course/$id/".$word.".jpg";
+            $filename_video = "course/$id/".$word.".mp4";
+            $dest_image = storage_path("app/public/$filename_image");
+            $dest_video = storage_path("app/public/$filename_video");
+            $destDir = dirname($dest_image);
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            copy(realpath(__DIR__."/../mocks/1.jpg"), $dest_image);
+            copy(realpath(__DIR__."/../mocks/1.mp4"), $dest_video);
 
-        return $this->afterMaking(function (Course $topic) {
-            //
-        })->afterCreating(function (Course $topic) {
-            //
-            $topicText = TopicRichText::factory()->make([
-                'topic_id' => $topic->id
+            $course->update([
+                'image_path' =>  $filename_image,
+                'video_path' => $filename_video
             ]);
         });
     }
-    */
 }

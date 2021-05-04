@@ -27,4 +27,20 @@ class AudioFactory extends Factory
             'length' => rand(1000, 2000),
         ];
     }
+
+    public function updatePath($id)
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            $filename = "topic/$id/".$this->faker->word.".mp3";
+            $dest = storage_path("app/public/$filename");
+            $destDir = dirname($dest);
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            copy(realpath(__DIR__."/../../mocks/1.mp3"), $dest);
+            return [
+                'value' => $filename,
+            ];
+        });
+    }
 }
