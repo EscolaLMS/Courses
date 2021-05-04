@@ -9,6 +9,8 @@ use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
@@ -31,8 +33,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         CourseRepositoryContract $courseRepo,
         CourseServiceContract $courseServiceContract,
         CategoriesRepositoryContract $categoriesRepositoryContract
-    )
-    {
+    ) {
         $this->courseRepository = $courseRepo;
         $this->courseServiceContract = $courseServiceContract;
         $this->categoriesRepositoryContract = $categoriesRepositoryContract;
@@ -61,7 +62,20 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function show($id)
     {
         /** @var Course $course */
-        $course = $this->courseRepository->find($id);
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons']);
+
+        if (empty($course)) {
+            return $this->sendError('Course not found');
+        }
+
+        return $this->sendResponse($course->toArray(), 'Course retrieved successfully');
+    }
+
+    public function program($id, GetCourseCurriculumAPIRequest $request)
+    {
+        /** @var Course $course */
+        $course = $this->courseRepository->findWith($id, ['*'], [
+            'lessons.topics.topicable']);
 
         if (empty($course)) {
             return $this->sendError('Course not found');
@@ -136,4 +150,3 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 }
-

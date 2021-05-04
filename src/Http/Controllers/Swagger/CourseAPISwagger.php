@@ -6,6 +6,8 @@ use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+
 use Illuminate\Http\Request;
 
 interface CourseAPISwagger
@@ -54,6 +56,10 @@ interface CourseAPISwagger
      *          required=true,
      *          @OA\MediaType(
      *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/Course")
+     *          ),
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
      *              @OA\Schema(ref="#/components/schemas/Course")
      *          )
      *      ),
@@ -127,6 +133,48 @@ interface CourseAPISwagger
     public function show($id);
 
     /**
+     * @OA\Get(
+     *      path="/api/courses/{id}/program",
+     *      summary="Display the specified Course program/curriculum/syllabus",
+     *      tags={"Course"},
+     *      description="Get Course",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    public function program($id, GetCourseCurriculumAPIRequest $request);
+
+    /**
      * @OA\Put(
      *      path="/api/courses/{id}",
      *      summary="Update the specified Course in storage",
@@ -145,6 +193,53 @@ interface CourseAPISwagger
      *          required=true,
      *          @OA\MediaType(
      *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/Course")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    /**
+     * @OA\Post(
+     *      path="/api/courses/{id}",
+     *      summary="Update the specified Course in storage",
+     *      tags={"Course"},
+     *      description="Update Course",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
      *              @OA\Schema(ref="#/components/schemas/Course")
      *          )
      *      ),
