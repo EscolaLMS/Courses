@@ -7,11 +7,10 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
- *      schema="TopicImage",
+ *      schema="TopicOEmbed",
  *      required={"value"},
  *      @OA\Property(
  *          property="id",
@@ -28,11 +27,11 @@ use Illuminate\Support\Facades\Storage;
  * )
  */
 
-class Image extends AbstractContent
+class OEmbed extends AbstractContent
 {
     use HasFactory;
 
-    public $table = 'topic_images';
+    public $table = 'topic_oembeds';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -57,10 +56,9 @@ class Image extends AbstractContent
      * @var array
      */
     public static $rules = [
-        'value' => 'required|image'
+        'value' => 'required|string'
     ];
 
-    protected $appends = ['url'];
 
     public function topic()
     {
@@ -69,27 +67,6 @@ class Image extends AbstractContent
 
     protected static function newFactory()
     {
-        return \EscolaLms\Courses\Database\Factories\TopicContent\ImageFactory::new();
-    }
-
-    // TODO: this idea is crazy
-    public static function createResourseFromRequest($input, $topicId):array
-    {
-        $tmpFile = $input['value']->getPathName();
-        $sizes = getimagesize($tmpFile);
-        if (!$sizes) {
-            throw new Error("File is not an Image");
-        }
-        $path = $input['value']->store("public/topic/$topicId/images");
-        return [
-            'value' => $path,
-            'width' => $sizes[0],
-            'height' => $sizes[1],
-        ];
-    }
-
-    public function getUrlAttribute()
-    {
-        return  url(Storage::url($this->attributes['value']));
+        return \EscolaLms\Courses\Database\Factories\TopicContent\OEmbedFactory::new();
     }
 }

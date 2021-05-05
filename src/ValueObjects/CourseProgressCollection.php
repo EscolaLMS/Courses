@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\ValueObjects;
 
 
 use Carbon\Carbon;
+use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
 use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
@@ -34,6 +35,13 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     {
         $progress = new Collection();
         $existingProgresses = ($this->course->progress()->where('user_id', $this->user->getKey())->get());
+        $topicsWithoutProgress = $this->course
+            ->topic()
+            ->whereNotIn(
+                'topics.id',
+                $existingProgresses->pluck('topic_id')
+            )->get();
+
         foreach ($existingProgresses as $record) {
             $progress->push([
                 'status' => $record->status
@@ -45,7 +53,14 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
             }
         }
 
-        return $progress->values();
+        foreach ($topicsWithoutProgress as $record) {
+            $progress->push([
+                'topic_id' => $record->getKey(),
+                'status' => ProgressStatus::INCOMPLETE
+            ]);
+        }
+
+        return $progress->sortBy('topic_id')->values();
     }
 
     public function getUser(): Authenticatable

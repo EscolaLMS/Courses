@@ -43,7 +43,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
     public function store(CreateTopicAPIRequest $request)
     {
         $input = $request->all();
-
         try {
             $topic = $this->topicRepository->create($input);
         } catch (TopicException $error) {
@@ -78,7 +77,13 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError('Topic not found');
         }
 
-        $topic = $this->topicRepository->update($input, $id);
+        try {
+            $topic = $this->topicRepository->update($input, $id);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendResponse($topic->toArray(), 'Topic updated successfully');
     }

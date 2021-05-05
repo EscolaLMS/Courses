@@ -6,6 +6,7 @@ use Eloquent as Model;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\AbstractContent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -59,6 +60,8 @@ class Audio extends AbstractContent
         'value' => 'required|file|mimes:mp3,ogg'
     ];
 
+    protected $appends = ['url'];
+
 
     public function topic()
     {
@@ -73,11 +76,16 @@ class Audio extends AbstractContent
     public static function createResourseFromRequest($input, $topicId):array
     {
         $tmpFile = $input['value']->getPathName();
-        $path = $input['value']->store("topic/$topicId/audios");
+        $path = $input['value']->store("public/topic/$topicId/audios");
         // TODO: get length of the video
         return [
             'value' => $path,
             'length' => 0,
         ];
+    }
+
+    public function getUrlAttribute()
+    {
+        return  url(Storage::url($this->attributes['value']));
     }
 }

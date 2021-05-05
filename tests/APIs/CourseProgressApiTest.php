@@ -7,6 +7,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -20,12 +21,16 @@ class CourseProgressApiTest extends TestCase
     {
         $user = User::factory()->create();
         $courses = Course::factory(5)->create();
+        $topics = Topic::factory(2)->create();
         foreach ($courses as $course) {
-            $progress = CourseProgress::create([
-                'user_id' => $user->getKey(),
-                'course_id' => $course->getKey(),
-                'status' => 1
-            ]);
+            foreach ($topics as $topic) {
+                CourseProgress::create([
+                    'user_id' => $user->getKey(),
+                    'course_id' => $course->getKey(),
+                    'topic_id' => $topic->getKey(),
+                    'status' => 1
+                ]);
+            }
             $user->courses()->save($course);
         }
 

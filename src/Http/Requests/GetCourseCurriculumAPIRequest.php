@@ -2,10 +2,10 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTopicAPIRequest extends FormRequest
+class GetCourseCurriculumAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,6 @@ class UpdateTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title' => 'string|max:255',
-            'lesson_id' => 'integer|exists:lessons,id',
-            'topicable_id' => 'integer',
-            'topicable_type' => 'string|max:255',
-            'order' => 'integer',
-        ];
+        return [];
     }
 }

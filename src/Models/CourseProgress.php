@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * EscolaLms\Courses\Models\CourseProgress
@@ -41,6 +42,7 @@ class CourseProgress extends Model
         'id',
         'user_id',
         'course_id',
+        'topic_id',
         'status',
         'seconds',
         'finished_at'
@@ -55,5 +57,11 @@ class CourseProgress extends Model
         'id' => 'integer',
         'finished_at' => 'datetime'
     ];
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class, 'topic_id');
+    }
+
 
 }

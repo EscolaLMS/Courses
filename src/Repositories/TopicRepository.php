@@ -124,14 +124,12 @@ class TopicRepository extends BaseRepository
         if (method_exists($classType, 'createResourseFromRequest')) {
             $content['input'] = $classType::createResourseFromRequest($content['input'], $model->id);
         }
-       
+
         // create related 1:1 content and associate with topic
         $content['model']->fill($content['input']);
         $content['model']->save();
-        
         $model->topicable()->associate($content['model'])->save();
         $model->load('topicable');
-
         return $model;
     }
 

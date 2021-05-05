@@ -87,7 +87,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if (isset($search) && isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
             $flat = self::flatten($collection, 'children');
-            $flat_ids = array_map(fn($cat) => $cat->id, $flat);
+            $flat_ids = array_map(fn ($cat) => $cat->id, $flat);
             $flat_ids[] = $search['category_id'];
             unset($search['category_id']);
         }
@@ -127,4 +127,79 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $course->tags()->save($tag)->getKey();
     }
 
+    /**
+     * Find model record for given id with relations
+     *
+     * @param int $id
+     * @param array $columns
+     * @param array $with relations
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     */
+    public function findWith(int $id, array $columns = ['*'], array $with = []): ?Course
+    {
+        $query = $this->model->newQuery()->with($with);
+
+        return $query->find($id, $columns);
+    }
+
+    /**
+     * Create model record
+     *
+     * @param array $input
+     *
+     * @return Model
+     */
+    public function create(array $input): Course
+    {
+        $model = $this->model->newInstance($input);
+
+        $model->save();
+
+        $update = [];
+        $courseId = $model->id;
+
+        if (isset($input['video'])) {
+            $update['video_path'] = $input['video']->store("public/course/$courseId/videos");
+        }
+
+        if (isset($input['image'])) {
+            $update['image_path'] = $input['image']->store("public/course/$courseId/images");
+        }
+
+        if (count($update)) {
+            $model->update($update);
+        }
+
+        return $model;
+    }
+
+    /**
+     * Update model record for given id
+     *
+     * @param array $input
+     * @param int $id
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     */
+    public function update(array $input, int $id): Course
+    {
+        $query = $this->model->newQuery();
+
+        $model = $query->findOrFail($id);
+
+        if (isset($input['video'])) {
+            $input['video_path'] = $input['video']->store("public/course/$id/videos");
+        }
+
+        if (isset($input['image'])) {
+            $input['image_path'] = $input['image']->store("public/course/$id/images");
+        }
+
+        $model->fill($input);
+
+        $model->save();
+
+        return $model;
+    }
 }

@@ -28,4 +28,20 @@ class ImageFactory extends Factory
             'height' => 480
         ];
     }
+
+    public function updatePath($id)
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            $filename = "topic/$id/".$this->faker->word.".jpg";
+            $dest = storage_path("app/public/$filename");
+            $destDir = dirname($dest);
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            copy(realpath(__DIR__."/../../mocks/1.jpg"), $dest);
+            return [
+                'value' => $filename,
+            ];
+        });
+    }
 }

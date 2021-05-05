@@ -7,6 +7,7 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\AbstractContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -61,6 +62,7 @@ class Video extends AbstractContent
         'poster' => 'file|image'
     ];
 
+    protected $appends = ['url', 'poster_url'];
 
     public function topic()
     {
@@ -79,7 +81,7 @@ class Video extends AbstractContent
         $path = $input['value']->store("topic/$topicId/videos");
 
         if (isset($input['poster'])) {
-            $poster = $input['poster']->store("topic/$topicId/videos");
+            $poster = $input['poster']->store("public/topic/$topicId/videos");
         }
 
         return [
@@ -88,5 +90,18 @@ class Video extends AbstractContent
               'height' => 0,
               'poster' => isset($poster) ? $poster : null
           ];
+    }
+
+    public function getUrlAttribute()
+    {
+        return  url(Storage::url($this->attributes['value']));
+    }
+
+    public function getPosterUrlAttribute()
+    {
+        if (isset($this->attributes['value'])) {
+            return  url(Storage::url($this->attributes['value']));
+        }
+        return null;
     }
 }
