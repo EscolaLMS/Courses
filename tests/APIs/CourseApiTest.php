@@ -165,4 +165,19 @@ class CourseApiTest extends TestCase
             }
         }
     }
+
+    /**
+     * @test
+     */
+    public function test_read_course_program()
+    {
+        $course = Course::factory()->create();
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/'.$course->id.'/program'
+        );
+
+        $this->response->assertStatus(200);
+    }
 }

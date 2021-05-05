@@ -2,7 +2,7 @@
 
 namespace EscolaLms\Courses\Database\Factories\TopicContent;
 
-use EscolaLms\Courses\Models\TopicContent\RichText;
+use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OEmbedFactory extends Factory
@@ -12,7 +12,7 @@ class OEmbedFactory extends Factory
      *
      * @var string
      */
-    protected $model = RichText::class;
+    protected $model = OEmbed::class;
 
     /**
      * Define the model's default state.
