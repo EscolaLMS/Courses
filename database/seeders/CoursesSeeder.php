@@ -21,7 +21,6 @@ class CoursesSeeder extends Seeder
     private function getRandomRichContent()
     {
         $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory(), OEmbed::factory()];
-        //$classes = [ Audio::factory() ];
         
         return $classes[array_rand($classes)];
     }
@@ -42,7 +41,7 @@ class CoursesSeeder extends Seeder
                     }
                     
                     $topic->topicable()->associate($content)->save();
-                })
+                })->count(10)
             )
             ->count(rand(5, 10)))
 
