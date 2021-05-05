@@ -55,3 +55,11 @@ class CustomServiceProvider extends ServiceProvider
 ```
 
 see [EscolaLmsCourseServiceProvider.php](src/EscolaLmsCourseServiceProvider.php) as reference as well as [Models/TopicContent](package2/src/Models/TopicContent)
+
+## Seeder 
+
+Package comes with seeder that create course with lessons and topics 
+
+```php
+php artisan db:seed --class="\EscolaLms\Courses\Database\Seeders\CoursesSeeder"
+```
