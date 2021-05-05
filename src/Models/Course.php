@@ -2,11 +2,14 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Eloquent as Model;
+//use Eloquent as Model;
+use Illuminate\Database\Eloquent\Model;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @OA\Schema(
@@ -134,5 +137,15 @@ class Course extends Model
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\CourseFactory::new();
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(CourseProgress::class, 'course_id');
     }
 }

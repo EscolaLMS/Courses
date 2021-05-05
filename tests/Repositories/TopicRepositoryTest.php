@@ -33,7 +33,6 @@ class TopicRepositoryTest extends TestCase
 
         $createdTopic = $this->topicRepo->create($topic);
 
-
         $createdTopic = $createdTopic->toArray();
         $this->assertArrayHasKey('id', $createdTopic);
         $this->assertNotNull($createdTopic['id'], 'Created Topic must have id specified');

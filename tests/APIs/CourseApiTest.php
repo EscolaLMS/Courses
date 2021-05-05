@@ -1,7 +1,8 @@
-<?php namespace Tests\APIs;
+<?php
+
+namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
