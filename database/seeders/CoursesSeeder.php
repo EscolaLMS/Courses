@@ -34,22 +34,22 @@ class CoursesSeeder extends Seeder
     {
         $this->faker = $this->makeFaker();
         $courses = Course::factory()
-            ->count(rand(5, 10))
-            ->count(1)
-            ->has(Lesson::factory()
-                ->has(
-                    Topic::factory()->afterCreating(function ($topic) {
-                        $content = $this->getRandomRichContent();
-                        if (method_exists($content, 'updatePath')) {
-                            $content = $content->updatePath($topic->id)->create();
-                        } else {
-                            $content = $content->create();
-                        }
-
-                        $topic->topicable()->associate($content)->save();
-                    })
-                )
-                ->count(rand(5, 10)))
+        ->count(rand(5, 10))
+        ->count(1)
+        ->has(Lesson::factory()
+            ->has(
+                Topic::factory()->afterCreating(function ($topic) {
+                    $content = $this->getRandomRichContent();
+                    if (method_exists($content, 'updatePath')) {
+                        $content = $content->updatePath($topic->id)->create();
+                    } else {
+                        $content = $content->create();
+                    }
+                    
+                    $topic->topicable()->associate($content)->save();
+                })
+            )
+            ->count(rand(5, 10)))
             ->create();
 
         foreach ($courses as $course) {

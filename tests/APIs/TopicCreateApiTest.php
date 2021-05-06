@@ -131,7 +131,6 @@ class TopicCreateApiTest extends TestCase
                 'value' => 'lorem ipsum'
             ]
         );
-
         $this->response->assertStatus(200);
 
         $data = json_decode($this->response->getContent());

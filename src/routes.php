@@ -1,6 +1,7 @@
 <?php
 
 use EscolaLms\Courses\Http\Controllers\CourseAPIController;
+use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicRichTextAPIController;
@@ -21,5 +22,14 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     Route::group(['prefix' => '/courses/attach/{id}/'], function () {
         Route::post('categories', [CourseAPIController::class, 'attachCategory']);
         Route::post('tags', [CourseAPIController::class, 'attachTags']);
+    });
+
+
+    Route::group(['prefix' => '/progress'], function () {
+        Route::get('/', [CourseProgressAPIController::class, 'index']);
+        Route::get('/{course}', [CourseProgressAPIController::class, 'show']);
+        Route::patch('/{course}', [CourseProgressAPIController::class, 'store']);
+        Route::put('/{curriculum_lectures_quiz}/ping', [CourseProgressAPIController::class, 'ping']);
+        Route::post('/{curriculum_lectures_quiz}/h5p', [CourseProgressAPIController::class, 'h5p']);
     });
 });

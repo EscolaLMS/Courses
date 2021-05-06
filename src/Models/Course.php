@@ -3,10 +3,14 @@
 namespace EscolaLms\Courses\Models;
 
 use Eloquent as Model;
+use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -177,4 +181,20 @@ class Course extends Model
         }
         return null;
     }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(CourseProgress::class, 'course_id');
+    }
+
+    public function topic(): HasManyThrough
+    {
+        return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
+    }
+
 }

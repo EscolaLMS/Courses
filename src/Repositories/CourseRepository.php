@@ -114,7 +114,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
 
-        return $query->with('tags');
+        return isset($search['tag']) ? $query->with('tags') : $query;
     }
 
     public function attachCategory(Course $course, Category $category) : bool
