@@ -21,9 +21,14 @@ class H5PFactory extends Factory
      */
     public function definition()
     {
+        if (class_exists('EscolaLms\HeadlessH5P\Models\H5PContent')) {
+            $h5p = 'EscolaLms\HeadlessH5P\Models\H5PContent';
+        }
+        
         return [
             //'topic_id' => $this->faker->word,
-            'value' => 1 // ID to h5p content
+            'value' => isset($h5p) ? $h5p ::inRandomOrder()->first()->id : 0
+            // ID to h5p content
         ];
     }
 }

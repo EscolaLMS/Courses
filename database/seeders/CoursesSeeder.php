@@ -26,7 +26,7 @@ class CoursesSeeder extends Seeder
     {
         $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory(), OEmbed::factory()];
         //$classes = [ Audio::factory() ];
-        
+
         return $classes[array_rand($classes)];
     }
 
