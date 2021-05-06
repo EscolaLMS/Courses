@@ -11,7 +11,7 @@ use EscolaLms\Courses\Models\Course;
 
 class CourseApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use WithoutMiddleware, DatabaseTransactions;
 
     /**
      * @test
