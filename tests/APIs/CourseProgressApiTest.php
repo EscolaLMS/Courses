@@ -1,13 +1,11 @@
 <?php
 
-
 namespace EscolaLms\Courses\Tests\APIs;
 
-
-use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -16,10 +14,9 @@ class CourseProgressApiTest extends TestCase
 {
     use WithoutMiddleware, DatabaseTransactions;
 
-
     public function test_show_progress_course()
     {
-        $user = User::factory()->create();
+        $user = User::create();
         $courses = Course::factory(5)->create();
         $topics = Topic::factory(2)->create();
         foreach ($courses as $course) {

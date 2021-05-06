@@ -6,6 +6,7 @@ use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
+use EscolaLms\Courses\Tests\Models\UserTest;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -38,7 +39,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('auth.providers.users.model', UserTest::class);
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', env('APP_DEBUG', true));
