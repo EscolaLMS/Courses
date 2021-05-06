@@ -160,10 +160,10 @@ class CourseApiTest extends TestCase
         $this->assertObjectHasAttribute('data', $this->response->getData());
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);
         foreach ($this->response->getData()->data->data as $data) {
-            $this->assertFalse(empty($data->tags));
-            foreach ($data->tags as $tag) {
-                $this->assertTrue($tag->title === 'Fruit');
+            if ($data->id === $course->getKey()) {
+                $result[] = $data;
             }
         }
+        $this->assertTrue(!empty($result));
     }
 }
