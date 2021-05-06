@@ -16,7 +16,7 @@ class CourseProgressApiTest extends TestCase
 
     public function test_show_progress_course()
     {
-        $user = User::create();
+        $user = User::factory()->create();
         $courses = Course::factory(5)->create();
         $topics = Topic::factory(2)->create();
         foreach ($courses as $course) {
