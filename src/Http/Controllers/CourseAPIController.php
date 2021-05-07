@@ -197,7 +197,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             ->allQueryBuilder($request->only('tag'))
             ->orderBy('courses.id', 'desc')
             ->paginate();
-
         return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 }

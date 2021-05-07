@@ -1,7 +1,8 @@
-<?php namespace Tests\APIs;
+<?php
+
+namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
@@ -13,7 +14,7 @@ use Spatie\Permission\Models\Role;
 
 class CourseAdminApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use WithoutMiddleware, DatabaseTransactions;
 
     /**
      * @test
@@ -175,11 +176,11 @@ class CourseAdminApiTest extends TestCase
         $this->assertObjectHasAttribute('data', $this->response->getData());
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);
         foreach ($this->response->getData()->data->data as $data) {
-            $this->assertFalse(empty($data->tags));
-            foreach ($data->tags as $tag) {
-                $this->assertTrue($tag->title === 'Fruit');
+            if ($data->id === $course->getKey()) {
+                $result[] = $data;
             }
         }
+        $this->assertTrue(!empty($result));
     }
 
     /**

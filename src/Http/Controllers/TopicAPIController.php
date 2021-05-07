@@ -46,7 +46,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
     public function store(CreateTopicAPIRequest $request)
     {
         $input = $request->all();
-
         try {
             $topic = $this->topicRepository->create($input);
         } catch (AccessDeniedHttpException $error) {
