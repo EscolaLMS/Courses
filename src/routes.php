@@ -7,12 +7,12 @@ use EscolaLms\Courses\Http\Controllers\TopicRichTextAPIController;
 use Illuminate\Routing\ImplicitRouteBinding;
 
 Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
-    Route::get('courses/{id}/program', [CourseAPIController::class, 'program']);
-    Route::post('courses/{id}', [CourseAPIController::class, 'update']);
+    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
+    Route::post('courses/{course}', [CourseAPIController::class, 'update']);
     Route::resource('courses', CourseAPIController::class);
     Route::resource('lessons', LessonAPIController::class);
     Route::get('topics/types', [TopicAPIController::class, 'classes']);
-    Route::post('topics/{id}', [TopicAPIController::class, 'update']);
+    Route::post('topics/{topic}', [TopicAPIController::class, 'update']);
     Route::resource('topics', TopicAPIController::class);
     Route::resource('topic_rich_texts', TopicRichTextAPIController::class);
 

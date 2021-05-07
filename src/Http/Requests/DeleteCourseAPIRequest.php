@@ -5,7 +5,7 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCourseAPIRequest extends FormRequest
+class DeleteCourseAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,8 @@ class CreateCourseAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        return isset($user) ? $user->can('create', Course::class) : false;
+        $course = Course::find($this->route('course'));
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**
@@ -25,6 +26,6 @@ class CreateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return Course::$rules;
+        return [];
     }
 }

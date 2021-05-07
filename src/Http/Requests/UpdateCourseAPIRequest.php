@@ -14,7 +14,9 @@ class UpdateCourseAPIRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $user = auth()->user();
+        $course = Course::find($this->route('course'));
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**

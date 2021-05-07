@@ -5,12 +5,14 @@ namespace EscolaLms\Courses\Http\Controllers;
 use EscolaLms\Courses\Http\Controllers\Swagger\TopicAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
 use Response;
 use EscolaLms\Courses\Exceptions\TopicException;
 use Error;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Class TopicController
@@ -46,6 +48,8 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
 
         try {
             $topic = $this->topicRepository->create($input);
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
             return $this->sendDataError($error->getMessage(), $error->getData());
         } catch (Error $error) {
@@ -75,11 +79,13 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $topic = $this->topicRepository->find($id);
 
         if (empty($topic)) {
-            return $this->sendError('Topic not found');
+            return $this->sendError('Topic not found', 404);
         }
 
         try {
             $topic = $this->topicRepository->update($input, $id);
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
             return $this->sendDataError($error->getMessage(), $error->getData());
         } catch (Error $error) {
@@ -89,7 +95,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendResponse($topic->toArray(), 'Topic updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteTopicAPIRequest $request)
     {
         /** @var Topic $topic */
         $topic = $this->topicRepository->find($id);
@@ -98,7 +104,15 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError('Topic not found');
         }
 
-        $topic->delete();
+        try {
+            $topic->delete();
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendSuccess('Topic deleted successfully');
     }

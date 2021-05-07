@@ -14,7 +14,8 @@ class CreateTopicAPIRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $user = auth()->user();
+        return isset($user) ? $user->can('update', Course::class) : false;
     }
 
     /**

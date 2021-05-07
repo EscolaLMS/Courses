@@ -10,6 +10,8 @@ use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
+use EscolaLms\Courses\Policies\CoursesPolicy;
+use EscolaLms\Courses\AuthServiceProvider;
 
 class TestCase extends \EscolaLms\Core\Tests\TestCase
 {
@@ -29,7 +31,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class
+            EscolaLmsCourseServiceProvider::class,
+            AuthServiceProvider::class
         ];
     }
 

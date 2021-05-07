@@ -4,6 +4,8 @@ namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
+
 use Illuminate\Http\Request;
 
 interface TopicAPISwagger
@@ -12,7 +14,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/topics",
      *      summary="Get a listing of the Topics.",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Get all Topics",
      *      @OA\Response(
      *          response=200,
@@ -49,7 +51,7 @@ interface TopicAPISwagger
      * @OA\Post(
      *      path="/api/topics",
      *      summary="Store a newly created Topic in storage",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
     *      @OA\RequestBody(
     *          required=true,
@@ -90,7 +92,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/topics/{id}",
      *      summary="Display the specified Topic",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Get Topic",
      *      @OA\Parameter(
      *          name="id",
@@ -132,7 +134,7 @@ interface TopicAPISwagger
      * @OA\Put(
      *      path="/api/topics/{id}",
      *      summary="Update the specified Topic in storage",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Update Topic",
      *      @OA\Parameter(
      *          name="id",
@@ -182,7 +184,7 @@ interface TopicAPISwagger
      * @OA\Delete(
      *      path="/api/topics/{id}",
      *      summary="Remove the specified Topic from storage",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Delete Topic",
      *      @OA\Parameter(
      *          name="id",
@@ -218,7 +220,7 @@ interface TopicAPISwagger
      * )
      */
 
-    public function destroy($id);
+    public function destroy($id, DeleteTopicAPIRequest $request);
 
     /**
      * @param Request $request
@@ -227,7 +229,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/topics/types",
      *      summary="Get a listing of the Availabe Topic Content Types Classes.",
-     *      tags={"Topic"},
+     *      tags={"Course"},
      *      description="Get all Topic Contents",
      *      @OA\Response(
      *          response=200,

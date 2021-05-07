@@ -6,6 +6,7 @@ use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
 
 use Illuminate\Http\Request;
@@ -310,11 +311,11 @@ interface CourseAPISwagger
      * )
      */
 
-    public function destroy($id);
+    public function destroy($id, DeleteCourseAPIRequest $request);
 
     /**
      * @OA\Get(
-     *      tags={"Courses"},
+     *      tags={"Course"},
      *      path="/api/courses/category/{category_id}",
      *      description="Searche Course By Criteria",
      *      operationId="searchCourseByCategory",
@@ -419,7 +420,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      tags={"Courses"},
+     *      tags={"Course"},
      *      path="/api/courses/search/tags",
      *      description="Searche Course By Criteria",
      *      operationId="searchCourseByCategory",

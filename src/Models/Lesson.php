@@ -79,7 +79,7 @@ class Lesson extends Model
         'title' => 'required|string|max:255',
         'duration' => 'nullable|string|max:255',
         'order' => 'required|integer',
-        'course_id' => 'required'
+        'course_id' => 'required|exists:courses,id'
     ];
 
     /**

@@ -7,6 +7,7 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class CourseRepository
@@ -152,6 +153,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
      */
     public function create(array $input): Course
     {
+        $input['author_id'] = Auth::id();
         $model = $this->model->newInstance($input);
 
         $model->save();
