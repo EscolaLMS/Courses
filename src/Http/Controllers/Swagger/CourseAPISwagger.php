@@ -53,6 +53,9 @@ interface CourseAPISwagger
      *      summary="Store a newly created Course in storage",
      *      tags={"Course"},
      *      description="Store Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\MediaType(
@@ -97,6 +100,9 @@ interface CourseAPISwagger
      *      summary="Display the specified Course",
      *      tags={"Course"},
      *      description="Get Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -139,6 +145,9 @@ interface CourseAPISwagger
      *      summary="Display the specified Course program/curriculum/syllabus",
      *      tags={"Course"},
      *      description="Get Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -181,6 +190,9 @@ interface CourseAPISwagger
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -228,6 +240,9 @@ interface CourseAPISwagger
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -277,6 +292,9 @@ interface CourseAPISwagger
      *      summary="Remove the specified Course from storage",
      *      tags={"Course"},
      *      description="Delete Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -350,6 +368,9 @@ interface CourseAPISwagger
      * @OA\Post(
      *      path="/api/courses/attach/{id}/categories",
      *      summary="Attach categories for couse",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      tags={"Course"},
      *      description="Attach categories for couse",
      *      @OA\RequestBody(
@@ -385,6 +406,9 @@ interface CourseAPISwagger
      *      summary="Attach tags for couse",
      *      tags={"Course"},
      *      description="Attach tags for couse",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(

@@ -9,10 +9,25 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
-class TopicCreateApiTest extends TestCase
+class TopicTutorCreateApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(CoursesPermissionSeeder::class);
+
+        $this->user = config('auth.providers.users.model')::factory()->create();
+        $this->user->guard_name = 'api';
+        $this->user->assignRole('tutor');
+        $this->course = Course::factory()->create([
+            'author_id' => $this->user->id
+        ]);
+        $this->lesson = Lesson::factory(['course_id' => $this->course->id])->create();
+    }
 
     /**
      * @test
@@ -20,18 +35,15 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_image()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
         Storage::fake('local');
 
         $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Image',
                 'value' => $file
             ]
@@ -53,18 +65,15 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_audio()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
         Storage::fake('local');
 
         $file = UploadedFile::fake()->image('avatar.mp3');
 
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
                 'value' => $file
             ]
@@ -86,18 +95,15 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_video()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
         Storage::fake('local');
 
         $file = UploadedFile::fake()->image('avatar.mp4');
 
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Video',
                 'value' => $file
             ]
@@ -119,14 +125,11 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_richtext()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
                 'value' => 'lorem ipsum'
             ]
@@ -146,9 +149,6 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_no_lesson()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->post(
@@ -167,15 +167,11 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_image_no_file()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
-
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Image',
                 'value' => 'file'
             ]
@@ -186,15 +182,11 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_audio_no_file()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
-
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
                 'value' => 'file'
             ]
@@ -206,13 +198,13 @@ class TopicCreateApiTest extends TestCase
     public function test_create_topic_video_no_file()
     {
         $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
+        
 
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Video',
                 'value' => 'file'
             ]
@@ -223,14 +215,11 @@ class TopicCreateApiTest extends TestCase
 
     public function test_create_topic_wrong_class()
     {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->id])->create();
-
-        $this->response = $this->post(
+        $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/topics',
             [
                 'title' => 'Hello World',
-                'lesson_id' => $lesson->id,
+                'lesson_id' => $this->lesson->id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichTextAAAAAA',
                 'value' => 'lorem ipsum'
             ]

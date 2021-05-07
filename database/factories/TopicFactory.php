@@ -28,23 +28,9 @@ class TopicFactory extends Factory
         return [
             'title' => $this->faker->word,
             'lesson_id' => Lesson::factory(),
-            //'topicable_id' => $this->faker->word,
-            //'topicable_type' => $this->faker->word,
             'order' => $this->faker->randomDigitNotNull
         ];
     }
 
-    /*
-    public function configure()
-    {
-        return $this->afterMaking(function (Topic $topic) {
-            //
-        })->afterCreating(function (Topic $topic) {
-            // TODO, randome time
-            $topicText = TopicRichText::factory()->make([
-                'topic_id' => $topic->id
-            ]);
-        });
-    }
-    */
+
 }

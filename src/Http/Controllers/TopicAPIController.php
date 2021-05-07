@@ -6,6 +6,7 @@ use EscolaLms\Courses\Http\Controllers\Swagger\TopicAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
@@ -59,7 +60,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendResponse($topic->toArray(), 'Topic saved successfully');
     }
 
-    public function show($id)
+    public function show($id, GetTopicAPIRequest $request)
     {
         /** @var Topic $topic */
         $topic = $this->topicRepository->find($id);

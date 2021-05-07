@@ -5,6 +5,8 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
+use EscolaLms\Courses\Models\Topic;
+
 class DeleteTopicAPIRequest extends FormRequest
 {
     /**
@@ -15,7 +17,12 @@ class DeleteTopicAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        return isset($user) ? $user->can('delete', Course::class) : false;
+        $topic = Topic::find($this->route('topic'));
+        if (!isset($topic)) {
+            return true; // controller will fire 404 error
+        }
+        $course = $topic->lesson->course;
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**

@@ -15,6 +15,9 @@ interface LessonAPISwagger
      *      summary="Get a listing of the Lessons.",
      *      tags={"Course"},
      *      description="Get all Lessons",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -49,6 +52,9 @@ interface LessonAPISwagger
      *      summary="Store a newly created Lesson in storage",
      *      tags={"Course"},
      *      description="Store Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\MediaType(
@@ -90,6 +96,9 @@ interface LessonAPISwagger
      *      summary="Display the specified Lesson",
      *      tags={"Course"},
      *      description="Get Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
@@ -132,6 +141,9 @@ interface LessonAPISwagger
      *      summary="Update the specified Lesson in storage",
      *      tags={"Course"},
      *      description="Update Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
@@ -181,6 +193,9 @@ interface LessonAPISwagger
      *      summary="Remove the specified Lesson from storage",
      *      tags={"Course"},
      *      description="Delete Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
