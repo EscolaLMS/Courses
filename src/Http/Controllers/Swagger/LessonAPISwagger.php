@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
 use Illuminate\Http\Request;
 
 interface LessonAPISwagger
@@ -12,8 +13,11 @@ interface LessonAPISwagger
      * @OA\Get(
      *      path="/api/lessons",
      *      summary="Get a listing of the Lessons.",
-     *      tags={"Lesson"},
+     *      tags={"Course"},
      *      description="Get all Lessons",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -46,8 +50,11 @@ interface LessonAPISwagger
      * @OA\Post(
      *      path="/api/lessons",
      *      summary="Store a newly created Lesson in storage",
-     *      tags={"Lesson"},
+     *      tags={"Course"},
      *      description="Store Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\MediaType(
@@ -87,8 +94,11 @@ interface LessonAPISwagger
      * @OA\Get(
      *      path="/api/lessons/{id}",
      *      summary="Display the specified Lesson",
-     *      tags={"Lesson"},
+     *      tags={"Course"},
      *      description="Get Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
@@ -129,8 +139,11 @@ interface LessonAPISwagger
      * @OA\Put(
      *      path="/api/lessons/{id}",
      *      summary="Update the specified Lesson in storage",
-     *      tags={"Lesson"},
+     *      tags={"Course"},
      *      description="Update Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
@@ -178,8 +191,11 @@ interface LessonAPISwagger
      * @OA\Delete(
      *      path="/api/lessons/{id}",
      *      summary="Remove the specified Lesson from storage",
-     *      tags={"Lesson"},
+     *      tags={"Course"},
      *      description="Delete Lesson",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Lesson",
@@ -214,5 +230,5 @@ interface LessonAPISwagger
      * )
      */
 
-    public function destroy($id);
+    public function destroy($id, DeleteLessonAPIRequest $request);
 }

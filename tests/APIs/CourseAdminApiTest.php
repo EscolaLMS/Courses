@@ -8,27 +8,44 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
 //use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Laravel\Passport\Passport;
+use Spatie\Permission\Models\Role;
 
-class CourseApiTest extends TestCase
+class CourseAdminApiTest extends TestCase
 {
     use WithoutMiddleware, DatabaseTransactions;
 
     /**
      * @test
      */
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(CoursesPermissionSeeder::class);
+        $this->user = config('auth.providers.users.model')::factory()->create();
+        $this->user->guard_name = 'api';
+        $this->user->assignRole('admin');
+    }
     public function test_create_course()
     {
         $course = Course::factory()->make()->toArray();
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/courses',
             $course
         );
 
+        $course['author_id'] = $this->user->id;
+
+        $this->response->assertStatus(200);
+
         $this->assertApiResponse($course);
     }
 
+    
     /**
      * @test
      */
@@ -36,7 +53,7 @@ class CourseApiTest extends TestCase
     {
         $course = Course::factory()->create();
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/'.$course->id
         );
@@ -52,7 +69,7 @@ class CourseApiTest extends TestCase
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/courses/'.$course->id,
             $editedCourse
@@ -68,14 +85,13 @@ class CourseApiTest extends TestCase
     {
         $course = Course::factory()->create();
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
             '/api/courses/'.$course->id
         );
         
-
         $this->assertApiSuccess();
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/'.$course->id
         );
@@ -92,7 +108,7 @@ class CourseApiTest extends TestCase
         $course2 = Course::factory()->create();
         $course->categories()->save($category);
         $course2->categories()->save($category2);
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/search/' . $category->getKey()
         );
@@ -108,7 +124,7 @@ class CourseApiTest extends TestCase
     {
         $course = Course::factory()->create();
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/courses/attach/'.$course->getKey().'/categories',
             ['categories' => $categoriesIds]
@@ -119,7 +135,7 @@ class CourseApiTest extends TestCase
     public function test_attach_tags_course()
     {
         $course = Course::factory()->create();
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
@@ -140,7 +156,7 @@ class CourseApiTest extends TestCase
     public function test_search_course_by_tag()
     {
         $course = Course::factory()->create();
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
@@ -151,7 +167,7 @@ class CourseApiTest extends TestCase
         );
         $this->response->assertStatus(200);
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/search/tags',
             ['tag' => 'Fruit']
@@ -174,7 +190,7 @@ class CourseApiTest extends TestCase
     {
         $course = Course::factory()->create();
 
-        $this->response = $this->json(
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/'.$course->id.'/program'
         );

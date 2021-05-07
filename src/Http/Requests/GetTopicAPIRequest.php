@@ -2,10 +2,10 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCourseAPIRequest extends FormRequest
+class GetTopicAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,12 @@ class CreateCourseAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        return isset($user) ? $user->can('create', Course::class) : false;
+        $topic = Topic::find($this->route('topic'));
+        if (!isset($topic)) {
+            return true; // controller will fire 404 error
+        }
+        $course = $topic->lesson->course;
+        return isset($user) ? $user->can('attend', $course) : false;
     }
 
     /**
@@ -25,6 +30,6 @@ class CreateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return Course::$rules;
+        return [ ];
     }
 }

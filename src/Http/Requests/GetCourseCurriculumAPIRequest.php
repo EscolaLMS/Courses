@@ -14,7 +14,12 @@ class GetCourseCurriculumAPIRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $user = auth()->user();
+        $course = Course::find($this->route('course'));
+        if (intval($course->base_price) === 0) {
+            return true; // this is free course, so it's free :D
+        }
+        return isset($user) ? $user->can('attend', $course) : false;
     }
 
     /**

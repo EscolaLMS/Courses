@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateLessonAPIRequest extends FormRequest
@@ -14,7 +15,9 @@ class CreateLessonAPIRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $user = auth()->user();
+        $course = Course::find($this->input('course_id'));
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**
