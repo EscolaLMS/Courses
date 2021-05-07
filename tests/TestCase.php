@@ -6,7 +6,7 @@ use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Courses\Tests\Models\UserTest;
+use EscolaLms\Courses\Tests\Models\User as UserTest;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
