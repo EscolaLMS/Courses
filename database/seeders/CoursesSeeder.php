@@ -6,6 +6,8 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+
 use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\TopicContent\Audio;
 use EscolaLms\Courses\Models\TopicContent\Video;
@@ -22,10 +24,13 @@ class CoursesSeeder extends Seeder
 {
     use WithFaker;
 
-    private function getRandomRichContent()
+    private function getRandomRichContent($withH5P = false)
     {
-        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), H5P::factory(), OEmbed::factory()];
-        //$classes = [ Audio::factory() ];
+        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), OEmbed::factory()];
+
+        if ($withH5P) {
+            $classes[] = H5P::factory();
+        }
 
         return $classes[array_rand($classes)];
     }
@@ -33,19 +38,22 @@ class CoursesSeeder extends Seeder
     public function run()
     {
         $this->faker = $this->makeFaker();
+
+        $hasH5P = H5PContent::first() !== null;
+
         $courses = Course::factory()
         ->count(rand(5, 10))
         ->count(1)
         ->has(Lesson::factory()
             ->has(
-                Topic::factory()->afterCreating(function ($topic) {
-                    $content = $this->getRandomRichContent();
+                Topic::factory()->afterCreating(function ($topic) use ($hasH5P) {
+                    $content = $this->getRandomRichContent($hasH5P);
                     if (method_exists($content, 'updatePath')) {
                         $content = $content->updatePath($topic->id)->create();
                     } else {
                         $content = $content->create();
                     }
-                    
+
                     $topic->topicable()->associate($content)->save();
                 })
             )
