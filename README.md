@@ -9,6 +9,15 @@ Courses and content package
 [![downloads](https://img.shields.io/packagist/v/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
 [![downloads](https://img.shields.io/packagist/l/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
 
+## Model relation
+
+The model user must be extended with the class HasCourses :
+```
+class User extends EscolaLms\Core\Models\User
+{
+    use HasCourses;
+```
+
 ## Database relation
 
 There is simple relation. [see docs for diagram](doc)
