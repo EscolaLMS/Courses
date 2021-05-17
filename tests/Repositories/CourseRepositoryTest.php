@@ -35,6 +35,7 @@ class CourseRepositoryTest extends TestCase
         $this->assertArrayHasKey('id', $createdCourse);
         $this->assertNotNull($createdCourse['id'], 'Created Course must have id specified');
         $this->assertNotNull(Course::find($createdCourse['id']), 'Course with given id must be in DB');
+        $course['author_id'] = $createdCourse['author_id'];
         $this->assertModelData($course, $createdCourse);
     }
 

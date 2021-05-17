@@ -40,6 +40,10 @@ You create any of the Content model by post to the same Topic endponit (create a
 
 List of possible `TopicContent`s is availabe in the endpoint `/api/topics/types`
 
+## Curriculum/Sylabus/Program
+
+App user access the course by fetching `GET /api/courses/{id}/program` endpoint. This is after user purchase or has other access to the course. this endpoints renders tree of Course, Lessons, Topic with Contents essential to render whole course.
+
 ## Adding new `TopicContent` type
 
 In the ServiceProvider register your class like
@@ -64,9 +68,21 @@ class CustomServiceProvider extends ServiceProvider
 
 see [EscolaLmsCourseServiceProvider.php](src/EscolaLmsCourseServiceProvider.php) as reference as well as [Models/TopicContent](package2/src/Models/TopicContent)
 
-## Seeder 
+## Seeder
 
-Package comes with seeder that create course with lessons and topics 
+### Passport roles & permissions
+
+Package comes with seeder that populate the permissions for to access administration endpoints.
+
+```php
+php artisan db:seed --class="\EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder"
+```
+
+Above defined some roles and permissions. See the [seeder](database/seeders/CoursesPermissionSeeder.php) and [policy](src/Policies/CoursesPolicy.php).
+
+### Content
+
+Package comes with seeder that create course with lessons and topics
 
 ```php
 php artisan db:seed --class="\EscolaLms\Courses\Database\Seeders\CoursesSeeder"

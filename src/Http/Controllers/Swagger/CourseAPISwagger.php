@@ -6,6 +6,7 @@ use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
 
 use Illuminate\Http\Request;
@@ -52,6 +53,9 @@ interface CourseAPISwagger
      *      summary="Store a newly created Course in storage",
      *      tags={"Course"},
      *      description="Store Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\MediaType(
@@ -96,6 +100,9 @@ interface CourseAPISwagger
      *      summary="Display the specified Course",
      *      tags={"Course"},
      *      description="Get Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -138,6 +145,9 @@ interface CourseAPISwagger
      *      summary="Display the specified Course program/curriculum/syllabus",
      *      tags={"Course"},
      *      description="Get Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -180,6 +190,9 @@ interface CourseAPISwagger
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -227,6 +240,9 @@ interface CourseAPISwagger
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -276,6 +292,9 @@ interface CourseAPISwagger
      *      summary="Remove the specified Course from storage",
      *      tags={"Course"},
      *      description="Delete Course",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
@@ -310,11 +329,11 @@ interface CourseAPISwagger
      * )
      */
 
-    public function destroy($id);
+    public function destroy($id, DeleteCourseAPIRequest $request);
 
     /**
      * @OA\Get(
-     *      tags={"Courses"},
+     *      tags={"Course"},
      *      path="/api/courses/category/{category_id}",
      *      description="Searche Course By Criteria",
      *      operationId="searchCourseByCategory",
@@ -349,6 +368,9 @@ interface CourseAPISwagger
      * @OA\Post(
      *      path="/api/courses/attach/{id}/categories",
      *      summary="Attach categories for couse",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      tags={"Course"},
      *      description="Attach categories for couse",
      *      @OA\RequestBody(
@@ -384,6 +406,9 @@ interface CourseAPISwagger
      *      summary="Attach tags for couse",
      *      tags={"Course"},
      *      description="Attach tags for couse",
+     *     security={
+     *         {"passport": {}},
+     *     },
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
@@ -419,7 +444,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      tags={"Courses"},
+     *      tags={"Course"},
      *      path="/api/courses/search/tags",
      *      description="Searche Course By Criteria",
      *      operationId="searchCourseByCategory",

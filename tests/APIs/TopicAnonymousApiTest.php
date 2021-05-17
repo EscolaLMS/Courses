@@ -6,7 +6,7 @@ use EscolaLms\Courses\Tests\TestCase;
 //use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Topic;
 
-class TopicApiTest extends TestCase
+class TopicAnonymousApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
 
@@ -24,7 +24,7 @@ class TopicApiTest extends TestCase
             '/api/topics/'.$topic->id
         );
 
-        $this->assertApiResponse($topic->toArray());
+        $this->response->assertStatus(403);
     }
 
    
@@ -40,12 +40,37 @@ class TopicApiTest extends TestCase
             '/api/topics/'.$topic->id
         );
 
-        $this->assertApiSuccess();
+
+        $this->response->assertStatus(403);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_topic()
+    {
+        $topic = Topic::factory()->create();
+
         $this->response = $this->json(
-            'GET',
+            'POST',
             '/api/topics/'.$topic->id
         );
 
-        $this->response->assertStatus(404);
+        $this->response->assertStatus(403);
+    }
+
+    /**
+     * @test
+     */
+    public function test_read_topic_types()
+    {
+        $topic = Topic::factory()->create();
+
+        $this->response = $this->json(
+            'GET',
+            '/api/topics/types'
+        );
+
+        $this->response->assertStatus(200);
     }
 }

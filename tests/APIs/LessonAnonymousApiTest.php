@@ -6,7 +6,7 @@ use EscolaLms\Courses\Tests\TestCase;
 //use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Lesson;
 
-class LessonApiTest extends TestCase
+class LessonAnonymousApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
 
@@ -23,7 +23,7 @@ class LessonApiTest extends TestCase
             $lesson
         );
 
-        $this->assertApiResponse($lesson);
+        $this->response->assertStatus(403);
     }
 
     /**
@@ -38,7 +38,7 @@ class LessonApiTest extends TestCase
             '/api/lessons/'.$lesson->id
         );
 
-        $this->assertApiResponse($lesson->toArray());
+        $this->response->assertStatus(200);
     }
 
     /**
@@ -55,7 +55,7 @@ class LessonApiTest extends TestCase
             $editedLesson
         );
 
-        $this->assertApiResponse($editedLesson);
+        $this->response->assertStatus(403);
     }
 
     /**
@@ -70,12 +70,6 @@ class LessonApiTest extends TestCase
             '/api/lessons/'.$lesson->id
         );
 
-        $this->assertApiSuccess();
-        $this->response = $this->json(
-            'GET',
-            '/api/lessons/'.$lesson->id
-        );
-
-        $this->response->assertStatus(404);
+        $this->response->assertStatus(403);
     }
 }

@@ -5,10 +5,14 @@ namespace EscolaLms\Courses\Http\Controllers;
 use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\LessonRepository;
 use Illuminate\Http\Request;
 use Response;
+use EscolaLms\Courses\Exceptions\TopicException;
+use Error;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Class LessonController
@@ -40,13 +44,22 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
     {
         $input = $request->all();
 
-        $lesson = $this->lessonRepository->create($input);
+        try {
+            $lesson = $this->lessonRepository->create($input);
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendResponse($lesson->toArray(), 'Lesson saved successfully');
     }
 
     public function show($id)
     {
+        
         /** @var Lesson $lesson */
         $lesson = $this->lessonRepository->find($id);
 
@@ -68,12 +81,20 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             return $this->sendError('Lesson not found');
         }
 
-        $lesson = $this->lessonRepository->update($input, $id);
+        try {
+            $lesson = $this->lessonRepository->update($input, $id);
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendResponse($lesson->toArray(), 'Lesson updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteLessonAPIRequest $request)
     {
         /** @var Lesson $lesson */
         $lesson = $this->lessonRepository->find($id);
@@ -82,7 +103,15 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             return $this->sendError('Lesson not found');
         }
 
-        $lesson->delete();
+        try {
+            $lesson->delete();
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
 
         return $this->sendSuccess('Lesson deleted successfully');
     }
