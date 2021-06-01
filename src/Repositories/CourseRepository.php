@@ -80,10 +80,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder
     {
-        if (isset($search) && isset($search['title'])) {
-            $search['title'] = ['ILIKE', "%" . $search['title'] . "%"];
-        }
-
         /** search main category and all subcategories */
         if (isset($search) && isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
@@ -96,11 +92,11 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $query = $this->allQuery($search, $skip, $limit);
 
         if (isset($flat_ids)) {
-            $query->leftJoin('category_course', 'category_course.course_id', '=', 'courses.id')
-                    ->leftJoin('categories', 'categories.id', '=', 'category_course.category_id')
-                    ->whereIn('categories.id', $flat_ids);
+            $query = $query->whereHas('categories', function (Builder $query) use ($flat_ids) {
+                $query->whereIn('categories.id', $flat_ids);
+            });
         }
-
+ 
         if (!empty($criteria)) {
             $query = $this->applyCriteria($query, $criteria);
         }

@@ -11,6 +11,8 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use EscolaLms\Core\Dtos\OrderDto;
+use EscolaLms\Core\Dtos\PaginationDto;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
@@ -45,11 +47,15 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function index(Request $request)
     {
-        $courses = $this->courseRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+        $search = $request->except(['limit', 'skip', 'order', 'order_by']);
+
+        $orderDto = OrderDto::instantiateFromRequest($request);
+
+        $courses = $this->courseServiceContract->getCoursesListWithOrdering(
+            $orderDto,
+            PaginationDto::instantiateFromRequest($request),
+            $search
+        )->paginate($request->get('per_page') ?? 15);
 
         return $this->sendResponse($courses->toArray(), 'Courses retrieved successfully');
     }
@@ -149,14 +155,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendSuccess('Course deleted successfully');
     }
 
-    public function category(int $category_id, Request $request)
-    {
-        /** @var Category $category */
-        $category = $this->categoriesRepositoryContract->find($category_id);
-        $courses = $this->courseServiceContract->searchInCategoryAndSubCategory($category);
-        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
-    }
-
     public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest)
     {
         /** @var Course $course */
@@ -189,14 +187,5 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
         return $this->sendResponse([], 'Course updated successfully');
-    }
-
-    public function searchByTag(Request $request)
-    {
-        $courses = $this->courseRepository
-            ->allQueryBuilder($request->only('tag'))
-            ->orderBy('courses.id', 'desc')
-            ->paginate();
-        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 }
