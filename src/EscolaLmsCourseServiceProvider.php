@@ -28,15 +28,10 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         CourseRepositoryContract::class => CourseRepository::class
     ];
 
-    protected $policies = [
-        Course::class => CoursesPolicy::class,
-    ];
-
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->registerPolicies();
     }
 
     public function register()
