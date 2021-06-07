@@ -8,9 +8,7 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-
-//use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use EscolaLms\Courses\Repositories;
 use EscolaLms\Courses\Models\TopicContent\Audio;
 use EscolaLms\Courses\Models\TopicContent\Video;
