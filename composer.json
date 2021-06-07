@@ -36,8 +36,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider",
-        "EscolaLms\\Courses\\AuthServiceProvider"
+        "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
       ]
     }
   }
