@@ -198,6 +198,18 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $model->categories()->sync($input['categories']);
         }
 
+        if (isset($input['tags']) && is_array($input['tags'])) {
+
+            /** this is actually replacing the tags, even when you do send exactly the same  */
+            $model->tags()->delete();
+
+            $tags = array_map(function ($tag) {
+                return ['title' => $tag];
+            }, $input['tags']);
+
+            $model->tags()->createMany($tags);
+        }
+
         $model->fill($input);
 
         $model->save();
