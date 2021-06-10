@@ -122,6 +122,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         try {
             $course = $this->courseRepository->update($input, $id);
+            $course->load(['lessons.topics.topicable', 'categories', 'tags']);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
