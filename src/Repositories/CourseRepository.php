@@ -96,7 +96,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
                 $query->whereIn('categories.id', $flat_ids);
             });
         }
- 
+
         if (!empty($criteria)) {
             $query = $this->applyCriteria($query, $criteria);
         }
@@ -192,6 +192,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         if (isset($input['image'])) {
             $input['image_path'] = $input['image']->store("public/course/$id/images");
+        }
+
+        if (isset($input['categories']) && is_array($input['categories'])) {
+            $model->categories()->sync($input['categories']);
         }
 
         $model->fill($input);
