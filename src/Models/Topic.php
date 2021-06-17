@@ -52,9 +52,6 @@ class Topic extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
-
-
     public $fillable = [
         'title',
         'lesson_id',
@@ -88,7 +85,6 @@ class Topic extends Model
         'topicable_id' => 'integer',
         'topicable_type' => 'required|string|max:255',
         'order' => 'integer',
-        'value' => 'required'
     ];
 
     /**
