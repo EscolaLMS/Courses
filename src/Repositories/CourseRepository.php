@@ -216,4 +216,18 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         return $model;
     }
+
+    public function delete(int $id): ?bool
+    {
+        $course = $this->findWith($id, ['*'], ['lessons.topics']);
+        foreach ($course->lessons as $lesson) {
+            foreach ($lesson->topics as $topic) {
+                $topic->topicable()->delete();
+                $topic->delete();
+            }
+        }
+        $course->lessons()->delete();
+        $course->delete();
+        return true;
+    }
 }

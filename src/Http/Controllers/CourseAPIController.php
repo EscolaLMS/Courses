@@ -144,7 +144,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         }
 
         try {
-            $course->delete();
+            $this->courseRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
