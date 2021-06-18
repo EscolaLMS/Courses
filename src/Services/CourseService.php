@@ -8,6 +8,9 @@ use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Courses\Dto\CourseSearchDto;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
@@ -37,7 +40,7 @@ class CourseService implements CourseServiceContract
         return $this->getCoursesListByCriteria($criteria);
     }
 
-  
+
 
     public function getCoursesListByCriteria(array $criteria, ?PaginationDto $pagination = null): LengthAwarePaginator
     {
@@ -121,5 +124,19 @@ class CourseService implements CourseServiceContract
             $criteria[] = new OrderCriterion($orderDto->getOrderBy(), $orderDto->getOrder());
         }
         return $criteria;
+    }
+
+    public function sort($class, $orders)
+    {
+        if ($class === 'Lesson') {
+            foreach ($orders as $order) {
+                Lesson::findOrFail($order[0])->update(['order' => $order[1]]);
+            }
+        }
+        if ($class === 'Topic') {
+            foreach ($orders as $order) {
+                Topic::findOrFail($order[0])->update(['order' => $order[1]]);
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 
 use Illuminate\Http\Request;
 
@@ -493,4 +494,48 @@ interface CourseAPISwagger
      */
 
     public function attachTags(int $id, AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest);
+
+    /**
+     * @OA\Post(
+     *      path="/api/courses/sort",
+     *      summary="Sorts Lessons or Topics",
+     *      tags={"Course"},
+     *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example
+     * `{""class"":""Lesson"",""orders"":[[3,0],[2,1],[4,2],[5,3],[6,4],[7,5],[1,6],[71,7]], ""course_id"":1}`
+     * ",
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="course_id",
+     *                  type="integer",
+     *              ),
+     *              @OA\Property(
+     *                  property="class",
+     *                  type="string",
+     *              ),
+     *              @OA\Property(
+     *                  property="orders",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      type="array",
+     *                      @OA\Items(type="integer"),
+     *                  ),
+     *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *      )
+     * )
+     */
+
+    public function sort(SortAPIRequest $request);
 }
