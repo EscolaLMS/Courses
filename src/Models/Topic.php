@@ -36,6 +36,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="value",
+ *          description="value",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="order",
  *          description="order",
  *          type="integer",
@@ -51,9 +56,6 @@ class Topic extends Model
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-
-
-
 
     public $fillable = [
         'title',
@@ -88,7 +90,7 @@ class Topic extends Model
         'topicable_id' => 'integer',
         'topicable_type' => 'required|string|max:255',
         'order' => 'integer',
-        'value' => 'required'
+        'value' => 'required',
     ];
 
     /**
