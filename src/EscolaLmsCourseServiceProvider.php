@@ -15,6 +15,7 @@ use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Models\TopicContent\Image;
 use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\TopicContent\H5P;
+use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\AuthServiceProvider;
 
@@ -40,5 +41,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         TopicRepository::registerContentClass(Image::class);
         TopicRepository::registerContentClass(RichText::class);
         TopicRepository::registerContentClass(H5P::class);
+        TopicRepository::registerContentClass(OEmbed::class);
     }
 }
