@@ -169,6 +169,7 @@ class TopicRepository extends BaseRepository
             }
 
             $model->topicable->fill($input);
+            $model->topicable->save();
         }
 
         $modelFillable = $model->fillable;
