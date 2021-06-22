@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
@@ -42,5 +43,30 @@ class CourseProgressApiTest extends TestCase
             $this->assertObjectHasAttribute('progress', $data);
             $this->assertNotEmpty($data->progress);
         }
+    }
+
+    public function test_ping_progress_course()
+    {
+        $user = User::factory()->create();
+        $courses = Course::factory(5)->create();
+        $topics = Topic::factory(2)->create();
+        $oneTopic = null;
+        foreach ($courses as $course) {
+            foreach ($topics as $topic) {
+                $oneTopic = $topic;
+                CourseProgress::create([
+                    'user_id' => $user->getKey(),
+                    'course_id' => $course->getKey(),
+                    'topic_id' => $topic->getKey(),
+                    'status' => 1
+                ]);
+            }
+            $user->courses()->save($course);
+        }
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/progress/' . $oneTopic->getKey() . '/ping'
+        );
+        dd($this->response);
     }
 }

@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Models;
 use Eloquent as Model;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @OA\Schema(
@@ -115,5 +116,10 @@ class Topic extends Model
     public function topicable()
     {
         return $this->morphTo();
+    }
+
+    public function progress(): HasOne
+    {
+        return $this->hasOne(CourseProgress::class, 'topic_id');
     }
 }

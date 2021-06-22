@@ -7,18 +7,31 @@ namespace EscolaLms\Courses\ValueObjects;
 use Carbon\Carbon;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
 use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class CourseProgressCollection extends ValueObject implements ValueObjectContract, CourseProgressCollectionContract
 {
+    public const FORGET_TRACKING_SESSION_AFTER_MINUTES = 60;
+
     private Authenticatable $user;
     private Course $course;
     private Collection $progress;
     private int $totalSpentTime;
     private ?Carbon $finishDate;
+    private CourseProgressRepositoryContract $courseProgressRepositoryContract;
+
+    public function __construct(
+        CourseProgressRepositoryContract $courseProgressRepositoryContract
+    )
+    {
+        $this->courseProgressRepositoryContract = $courseProgressRepositoryContract;
+    }
 
     public function build(Authenticatable $user, Course $course): self
     {
@@ -62,6 +75,40 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
         return $progress->sortBy('topic_id')->values();
     }
+
+    public function ping(Topic $topic): self
+    {
+        $progress = $this->courseProgressRepositoryContract->findProgress($topic, $this->user);
+
+        if (($progress->status ?? ProgressStatus::INCOMPLETE) == ProgressStatus::COMPLETE) {
+            throw new RuntimeException("Lecture is already finished.");
+        }
+
+        $secondsPassed = $progress->seconds ?? 0;
+
+        $lastTrack = $this->courseProgressRepositoryContract->getUserLastTimeInTopic($this->user, $topic);
+        $now = Carbon::now();
+        if ($this->hasActiveProgressSession($lastTrack)) {
+            $secondsDiff = $lastTrack->diffInSeconds($now);
+            $secondsPassed += $secondsDiff;
+            $this->courseProgressRepositoryContract->updateInTopic($topic, $this->user, ProgressStatus::IN_PROGRESS, $secondsPassed);
+        }
+
+        $this->courseProgressRepositoryContract->updateUserTimeInTopic($this->user, $topic);
+
+        return $this;
+    }
+
+    /**
+     * @param Carbon|null $lastTrack
+     * @return bool
+     */
+    private function hasActiveProgressSession(?Carbon $lastTrack): bool
+    {
+        return !(is_null($lastTrack) || $lastTrack->lte(Carbon::now()->subMinutes(self::FORGET_TRACKING_SESSION_AFTER_MINUTES)));
+    }
+
+
 
     public function getUser(): Authenticatable
     {

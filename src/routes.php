@@ -29,7 +29,8 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
         Route::get('/', [CourseProgressAPIController::class, 'index']);
         Route::get('/{course}', [CourseProgressAPIController::class, 'show']);
         Route::patch('/{course}', [CourseProgressAPIController::class, 'store']);
-        Route::put('/{curriculum_lectures_quiz}/ping', [CourseProgressAPIController::class, 'ping']);
+
+        Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
         Route::post('/{curriculum_lectures_quiz}/h5p', [CourseProgressAPIController::class, 'h5p']);
     });
 });

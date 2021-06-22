@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\BaseRepository;
+use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use EscolaLms\Courses\Exceptions\TopicException;
@@ -15,7 +16,7 @@ use Error;
  * @version April 27, 2021, 11:21 am UTC
 */
 
-class TopicRepository extends BaseRepository
+class TopicRepository extends BaseRepository implements TopicRepositoryContract
 {
 
     /**
@@ -95,6 +96,11 @@ class TopicRepository extends BaseRepository
             'model' => $contentModel,
             'input' => $contentInput
         ];
+    }
+
+    public function getById($id) : Topic
+    {
+        return $this->model->newQuery()->where('id', '=', $id)->first();
     }
 
     /**

@@ -6,6 +6,7 @@ namespace EscolaLms\Courses\Services;
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -42,5 +43,8 @@ class ProgressService implements ProgressServiceContract
     }
 
 
-
+    public function ping(Authenticatable $user, Topic $topic): void
+    {
+        CourseProgressCollection::make($user, $topic->lesson->course)->ping($topic);
+    }
 }
