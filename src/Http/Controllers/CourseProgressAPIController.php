@@ -4,6 +4,7 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 
+use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
 use EscolaLms\Courses\Http\Resources\ProgressesResource;

@@ -58,7 +58,7 @@ class CourseProgressApiTest extends TestCase
                     'user_id' => $user->getKey(),
                     'course_id' => $course->getKey(),
                     'topic_id' => $topic->getKey(),
-                    'status' => 1
+                    'status' => 0
                 ]);
             }
             $user->courses()->save($course);
@@ -67,6 +67,9 @@ class CourseProgressApiTest extends TestCase
             'PUT',
             '/api/progress/' . $oneTopic->getKey() . '/ping'
         );
-        dd($this->response);
+        $this->response->assertOk();
+        $data = $this->response->getData();
+        $this->assertObjectHasAttribute('status', $data);
+        $this->assertTrue($data->status);
     }
 }

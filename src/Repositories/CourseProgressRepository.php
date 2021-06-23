@@ -72,8 +72,8 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
 
     public function updateUserTimeInTopic(Authenticatable $user, Topic $topic): void
     {
-        UserTopicTime::where(['user_id' => $user->getKey(), 'lecture_id' => $topic->getKey()])->delete();
-        UserTopicTime::create(['user_id' => $user->getKey(), 'lecture_id' => $topic->getKey()]);
+        UserTopicTime::where(['user_id' => $user->getKey(), 'topic_id' => $topic->getKey()])->delete();
+        UserTopicTime::create(['user_id' => $user->getKey(), 'topic_id' => $topic->getKey()]);
     }
 
 }

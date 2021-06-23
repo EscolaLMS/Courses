@@ -87,7 +87,9 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $secondsPassed = $progress->seconds ?? 0;
 
         $lastTrack = $this->courseProgressRepositoryContract->getUserLastTimeInTopic($this->user, $topic);
+
         $now = Carbon::now();
+
         if ($this->hasActiveProgressSession($lastTrack)) {
             $secondsDiff = $lastTrack->diffInSeconds($now);
             $secondsPassed += $secondsDiff;
