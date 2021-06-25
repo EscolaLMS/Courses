@@ -26,7 +26,7 @@ class CourseFactory extends Factory
 
         return [
             'title' => $this->faker->sentence,
-            'summary' => $this->faker->text,
+            'summary' => $this->faker->markdown,
             'image_path' => "1.jpg",
             'video_path' => "1.mp4",
             'base_price' => 1199,

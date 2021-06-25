@@ -20,7 +20,8 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         'course_id',
         'user_id',
         'status',
-        'finished_at'
+        'finished_at',
+        'active'
     ];
 
     public function getFieldsSearchable()
@@ -75,5 +76,4 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         UserTopicTime::where(['user_id' => $user->getKey(), 'topic_id' => $topic->getKey()])->delete();
         UserTopicTime::create(['user_id' => $user->getKey(), 'topic_id' => $topic->getKey()]);
     }
-
 }
