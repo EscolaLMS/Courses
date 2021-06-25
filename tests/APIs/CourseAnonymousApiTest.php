@@ -156,7 +156,7 @@ class CourseAnonymousApiTest extends TestCase
      */
     public function test_anonymous_read_course_program()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['base_price'=>9999]);
 
         $this->response = $this->json(
             'GET',

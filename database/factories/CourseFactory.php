@@ -29,7 +29,7 @@ class CourseFactory extends Factory
             'summary' => $this->faker->markdown,
             'image_path' => "1.jpg",
             'video_path' => "1.mp4",
-            'base_price' => 1199,
+            'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10)." hours",
             'author_id' => User::factory(),
             
