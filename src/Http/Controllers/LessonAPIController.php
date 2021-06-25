@@ -59,7 +59,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
 
     public function show($id)
     {
-        
+
         /** @var Lesson $lesson */
         $lesson = $this->lessonRepository->find($id);
 
@@ -104,7 +104,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         }
 
         try {
-            $lesson->delete();
+            $this->lessonRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {

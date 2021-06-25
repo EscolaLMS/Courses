@@ -8,8 +8,6 @@ use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
 use EscolaLms\Courses\Http\Resources\ProgressesResource;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;

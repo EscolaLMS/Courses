@@ -43,7 +43,6 @@ class CoursesSeeder extends Seeder
 
         $courses = Course::factory()
         ->count(rand(5, 10))
-        ->count(1)
         ->has(Lesson::factory()
             ->has(
                 Topic::factory()->afterCreating(function ($topic) use ($hasH5P) {

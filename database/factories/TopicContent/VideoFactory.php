@@ -34,7 +34,7 @@ class VideoFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($id) {
             $word = $this->faker->word;
-            $filename = "topic/$id/".$word.".mp3";
+            $filename = "topic/$id/".$word.".mp4";
             $filename_poster = "topic/$id/".$word.".jpg";
             $dest = storage_path("app/public/$filename");
             $dest_poster = storage_path("app/public/$filename_poster");
@@ -42,7 +42,7 @@ class VideoFactory extends Factory
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);
             }
-            copy(realpath(__DIR__."/../../mocks/1.mp3"), $dest);
+            copy(realpath(__DIR__."/../../mocks/1.mp4"), $dest);
             copy(realpath(__DIR__."/../../mocks/poster.jpg"), $dest_poster);
             return [
                 'value' => $filename,

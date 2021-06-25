@@ -122,7 +122,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'lesson_id' => $input['lesson_id'],
             'order' => $input['order'] ?? 0,
         ];
-        
+
         $model = $this->model->newInstance($input);
         $model->save();
 
@@ -167,6 +167,15 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
             //$model->topicable()->delete();
             $model->topicable()->associate($content['model'])->save();
+        } elseif (isset($input['topicable_type']) && $model->topicable_type == $input['topicable_type']) {
+            $classType = $input['topicable_type'];
+
+            if (method_exists($classType, 'createResourseFromRequest')) {
+                $input = $classType::createResourseFromRequest($input, $id);
+            }
+
+            $model->topicable->fill($input);
+            $model->topicable->save();
         }
 
         $modelFillable = $model->fillable;

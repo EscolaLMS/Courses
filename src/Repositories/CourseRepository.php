@@ -80,10 +80,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder
     {
-        if (isset($search) && isset($search['title'])) {
-            $search['title'] = ['ILIKE', "%" . $search['title'] . "%"];
-        }
-
         /** search main category and all subcategories */
         if (isset($search) && isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
@@ -96,9 +92,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $query = $this->allQuery($search, $skip, $limit);
 
         if (isset($flat_ids)) {
-            $query->leftJoin('category_course', 'category_course.course_id', '=', 'courses.id')
-                    ->leftJoin('categories', 'categories.id', '=', 'category_course.category_id')
-                    ->whereIn('categories.id', $flat_ids);
+            $query = $query->whereHas('categories', function (Builder $query) use ($flat_ids) {
+                $query->whereIn('categories.id', $flat_ids);
+            });
         }
 
         if (!empty($criteria)) {
@@ -198,6 +194,22 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $input['image_path'] = $input['image']->store("public/course/$id/images");
         }
 
+        if (isset($input['categories']) && is_array($input['categories'])) {
+            $model->categories()->sync($input['categories']);
+        }
+
+        if (isset($input['tags']) && is_array($input['tags'])) {
+
+            /** this is actually replacing the tags, even when you do send exactly the same  */
+            $model->tags()->delete();
+
+            $tags = array_map(function ($tag) {
+                return ['title' => $tag];
+            }, $input['tags']);
+
+            $model->tags()->createMany($tags);
+        }
+
         $model->fill($input);
 
         $model->save();
@@ -208,5 +220,19 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     public function getById($id) : Course
     {
         return $this->model->newQuery()->where('id', '=', $id)->first();
+    }
+
+    public function delete(int $id): ?bool
+    {
+        $course = $this->findWith($id, ['*'], ['lessons.topics']);
+        foreach ($course->lessons as $lesson) {
+            foreach ($lesson->topics as $topic) {
+                $topic->topicable()->delete();
+                $topic->delete();
+            }
+        }
+        $course->lessons()->delete();
+        $course->delete();
+        return true;
     }
 }

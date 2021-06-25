@@ -8,6 +8,7 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 
 use Illuminate\Http\Request;
 
@@ -19,6 +20,81 @@ interface CourseAPISwagger
      *      summary="Get a listing of the Courses.",
      *      tags={"Course"},
      *      description="Get all Courses",
+     *      @OA\Parameter(
+     *          name="order_by",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"created_at","title","base_price","duration"}
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="order",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"ASC", "DESC"}
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="page",
+     *          description="Pagination Page Number",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *               default=1,
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="per_page",
+     *          description="Pagination Per Page",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *               default=15,
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="title",
+     *          description="Course title %LIKE%",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="category_id",
+     *          description="Category ID. When applied all courses with given cat_id and children categories are searched",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *          ),
+     *      ),
+     *     @OA\Parameter(
+     *          name="author_id",
+     *          description="Author ID",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="tag",
+     *          description="Tag name exactly",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -331,38 +407,6 @@ interface CourseAPISwagger
 
     public function destroy($id, DeleteCourseAPIRequest $request);
 
-    /**
-     * @OA\Get(
-     *      tags={"Course"},
-     *      path="/api/courses/category/{category_id}",
-     *      description="Searche Course By Criteria",
-     *      operationId="searchCourseByCategory",
-     *      @OA\Parameter(
-     *          name="category_id",
-     *          required=true,
-     *          in="path",
-     *          @OA\Schema(
-     *              type="number",
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Bad request",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          )
-     *      )
-     *   )
-     */
-
-    public function category(int $category_id, Request $request);
 
     /**
      * @OA\Post(
@@ -409,6 +453,15 @@ interface CourseAPISwagger
      *     security={
      *         {"passport": {}},
      *     },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
@@ -443,34 +496,46 @@ interface CourseAPISwagger
     public function attachTags(int $id, AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest);
 
     /**
-     * @OA\Get(
+     * @OA\Post(
+     *      path="/api/courses/sort",
+     *      summary="Sorts Lessons or Topics",
      *      tags={"Course"},
-     *      path="/api/courses/search/tags",
-     *      description="Searche Course By Criteria",
-     *      operationId="searchCourseByCategory",
-     *      @OA\Parameter(
-     *          name="tag",
-     *          in="path",
-     *          @OA\Schema(
-     *              type="string",
-     *          ),
+     *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example
+     * `{""class"":""Lesson"",""orders"":[[3,0],[2,1],[4,2],[5,3],[6,4],[7,5],[1,6],[71,7]], ""course_id"":1}`
+     * ",
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="course_id",
+     *                  type="integer",
+     *              ),
+     *              @OA\Property(
+     *                  property="class",
+     *                  type="string",
+     *              ),
+     *              @OA\Property(
+     *                  property="orders",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      type="array",
+     *                      @OA\Items(type="integer"),
+     *                  ),
+     *              ),
+     *          )
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
      *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Bad request",
-     *          @OA\MediaType(
      *              mediaType="application/json"
-     *          )
+     *          ),
      *      )
-     *   )
+     * )
      */
 
-    public function searchByTag(Request $request);
+    public function sort(SortAPIRequest $request);
 }

@@ -40,4 +40,18 @@ class LessonRepository extends BaseRepository
     {
         return Lesson::class;
     }
+
+    public function delete(int $id): ?bool
+    {
+        $query = $this->model->newQuery()->with(['topics']);
+        $lesson = $query->find($id);
+
+        foreach ($lesson->topics as $topic) {
+            $topic->topicable()->delete();
+            $topic->delete();
+        }
+        $lesson->topics()->delete();
+        $lesson->delete();
+        return true;
+    }
 }
