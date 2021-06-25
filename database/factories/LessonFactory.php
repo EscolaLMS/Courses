@@ -30,7 +30,7 @@ class LessonFactory extends Factory
             'duration' => rand(10, 50)." minutes",
             'order' => $this->faker->randomDigitNotNull,
             'active' => $this->faker->boolean,
-            'course_id' =>  Course::inRandomOrder()->get(),
+            'course_id' =>  Course::inRandomOrder()->get()->id,
             'summary' => $this->faker->markdown,
         ];
     }
