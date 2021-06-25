@@ -11,7 +11,9 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
-
+use EscolaLms\Courses\Http\Requests\SortAPIRequest;
+use EscolaLms\Core\Dtos\OrderDto;
+use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
@@ -45,11 +47,15 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function index(Request $request)
     {
-        $courses = $this->courseRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+        $search = $request->except(['limit', 'skip', 'order', 'order_by']);
+
+        $orderDto = OrderDto::instantiateFromRequest($request);
+
+        $courses = $this->courseServiceContract->getCoursesListWithOrdering(
+            $orderDto,
+            PaginationDto::instantiateFromRequest($request),
+            $search
+        )->paginate($request->get('per_page') ?? 15);
 
         return $this->sendResponse($courses->toArray(), 'Courses retrieved successfully');
     }
@@ -74,7 +80,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function show($id)
     {
         /** @var Course $course */
-        $course = $this->courseRepository->findWith($id, ['*'], ['lessons']);
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'categories', 'tags']);
 
         if (empty($course)) {
             return $this->sendError('Course not found');
@@ -116,6 +122,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         try {
             $course = $this->courseRepository->update($input, $id);
+            $course->load(['lessons.topics.topicable', 'categories', 'tags']);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
@@ -137,7 +144,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         }
 
         try {
-            $course->delete();
+            $this->courseRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
@@ -147,14 +154,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         }
 
         return $this->sendSuccess('Course deleted successfully');
-    }
-
-    public function category(int $category_id, Request $request)
-    {
-        /** @var Category $category */
-        $category = $this->categoriesRepositoryContract->find($category_id);
-        $courses = $this->courseServiceContract->searchInCategoryAndSubCategory($category);
-        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
     }
 
     public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest)
@@ -191,12 +190,17 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponse([], 'Course updated successfully');
     }
 
-    public function searchByTag(Request $request)
+    public function sort(SortAPIRequest $request)
     {
-        $courses = $this->courseRepository
-            ->allQueryBuilder($request->only('tag'))
-            ->orderBy('courses.id', 'desc')
-            ->paginate();
-        return $this->sendResponse($courses->toArray(), 'Course updated successfully');
+        try {
+            $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
+        } catch (AccessDeniedHttpException $error) {
+            return $this->sendError($error->getMessage(), 403);
+        } catch (TopicException $error) {
+            return $this->sendDataError($error->getMessage(), $error->getData());
+        } catch (Error $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
+        return $this->sendResponse([], $request->get('class'). ' sorted successfully');
     }
 }

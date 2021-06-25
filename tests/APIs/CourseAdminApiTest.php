@@ -110,13 +110,19 @@ class CourseAdminApiTest extends TestCase
         $course2->categories()->save($category2);
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/search/' . $category->getKey()
+            '/api/courses/?category_id=' . $category->getKey()
         );
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+
+        $courses_ids = [$category->getKey(), $category2->getKey()];
+
         foreach ($this->response->getData()->data->data as $data) {
-            $this->assertFalse($data->category_id !== $category->getKey() and $data->category_id !== $category2->getKey());
+            foreach ($data->categories as $courseCategory) {
+                $this->assertTrue(in_array($courseCategory->id, $courses_ids));
+            }
+            //$this->assertFalse($data->category_id !== $category->getKey() and $data->category_id !== $category2->getKey());
         }
     }
 
@@ -169,8 +175,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/search/tags',
-            ['tag' => 'Fruit']
+            '/api/courses/?tag=Fruit',
         );
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());

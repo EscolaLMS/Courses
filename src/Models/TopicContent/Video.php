@@ -77,19 +77,26 @@ class Video extends AbstractContent
     // TODO: this idea is crazy
     public static function createResourseFromRequest($input, $topicId):array
     {
-        $tmpFile = $input['value']->getPathName();
-        $path = $input['value']->store("topic/$topicId/videos");
-
-        if (isset($input['poster'])) {
-            $poster = $input['poster']->store("public/topic/$topicId/videos");
+        if (is_string($input['value'])) {
+            unset($input['value']);
+            return $input;
         }
+        if ($input['value']) {
+            $tmpFile = $input['value']->getPathName();
+            $path = $input['value']->store("topic/$topicId/videos");
 
-        return [
+            if (isset($input['poster'])) {
+                $poster = $input['poster']->store("public/topic/$topicId/videos");
+            }
+
+            return [
               'value' => $path,
               'width' => 0,
               'height' => 0,
               'poster' => isset($poster) ? $poster : null
           ];
+        }
+        return $input;
     }
 
     public function getUrlAttribute()
