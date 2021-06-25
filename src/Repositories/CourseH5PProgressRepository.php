@@ -13,7 +13,7 @@ class CourseH5PProgressRepository extends BaseRepository implements CourseH5PPro
      * @var array
      */
     protected $fieldSearchable = [
-        'quiz_id',
+        'topic_id',
         'user_id',
         'event',
     ];
