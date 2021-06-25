@@ -874,7 +874,7 @@
                     },
                     "base_price": {
                         "description": "base_price",
-                        "type": "string"
+                        "type": "integer"
                     },
                     "duration": {
                         "description": "duration",
