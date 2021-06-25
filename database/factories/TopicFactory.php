@@ -27,7 +27,7 @@ class TopicFactory extends Factory
     {
         return [
             'title' => $this->faker->word,
-            'lesson_id' => Lesson::factory(),
+            'lesson_id' => Lesson::factory()->create(),
             'order' => $this->faker->randomDigitNotNull
         ];
     }
