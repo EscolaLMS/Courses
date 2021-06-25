@@ -18,6 +18,8 @@ class TopicResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'lesson_id' => $this->lesson_id,
+            'active' => $this->active,
+            'preview' => $this->preview,
             'topicable_id' => $this->topicable_id,
             'topicable_type' => $this->topicable_type
         ];

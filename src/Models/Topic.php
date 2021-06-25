@@ -22,6 +22,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="active",
+ *          description="active",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
+ *          property="preview",
+ *          description="preview",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
  *          property="lesson_id",
  *          description="lesson_id",
  *          type="integer",

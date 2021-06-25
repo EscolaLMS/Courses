@@ -30,6 +30,8 @@ class UpdateTopicAPIRequest extends FormRequest
         return [
             'title' => 'string|max:255',
             'lesson_id' => 'integer|exists:lessons,id',
+            'active' => 'boolean',
+            'preview' => 'boolean',
             'topicable_id' => 'integer',
             'topicable_type' => 'string|max:255',
             'order' => 'integer',
