@@ -1,24 +1,19 @@
 <?php
 
-
 namespace EscolaLms\Courses\Events;
 
-
 use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CourseCompleted
+class TestCompleted
 {
     use Dispatchable, SerializesModels;
 
-    private Course $course;
     private User $user;
 
-    public function __construct(Course $course, User $user)
+    public function __construct(User $user)
     {
-        $this->course = $course;
         $this->user = $user;
     }
 
@@ -27,8 +22,4 @@ class CourseCompleted
         return $this->user;
     }
 
-    public function getCourse(): Course
-    {
-        return $this->course;
-    }
 }

@@ -204,4 +204,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         return $model;
     }
+
+    public function getById($id) : Course
+    {
+        return $this->model->newQuery()->where('id', '=', $id)->first();
+    }
 }
