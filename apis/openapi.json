@@ -1,114 +1,97 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Escola LMS",
+        "title": "EscolaLMS",
         "version": "0.0.1"
     },
     "paths": {
-        "/api/categories": {
+        "/api/courses": {
             "get": {
                 "tags": [
-                    "categories"
+                    "Course"
                 ],
-                "description": "Get Categories",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::index",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "422": {
-                        "description": "Bad request",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            },
-            "post": {
-                "summary": "Category create",
-                "description": "Create single Categories",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::create",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Dokumentacja"
-                                    },
-                                    "icon_class": {
-                                        "type": "string",
-                                        "example": "fa-business-time"
-                                    },
-                                    "is_active": {
-                                        "type": "bool",
-                                        "example": "true"
-                                    },
-                                    "parent_id": {
-                                        "type": "?integer",
-                                        "example": "null"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "422": {
-                        "description": "Bad request",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
-        "/api/categories/tree": {
-            "get": {
-                "tags": [
-                    "categories"
-                ],
-                "description": "Get Categories Tree",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::tree",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "422": {
-                        "description": "Bad request",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
-        "/api/categories/{id}": {
-            "get": {
-                "tags": [
-                    "categories"
-                ],
-                "description": "Get single Categories",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::show",
+                "summary": "Get a listing of the Courses.",
+                "description": "Get all Courses",
+                "operationId": "9663f6d2e6826935f1abd0fa2734f590",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
+                        "name": "order_by",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "created_at",
+                                "title",
+                                "base_price",
+                                "duration"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ASC",
+                                "DESC"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination Page Number",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Pagination Per Page",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "Course title %LIKE%",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "Category ID. When applied all courses with given cat_id and children categories are searched",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "author_id",
+                        "in": "query",
+                        "description": "Author ID",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "tag",
+                        "in": "query",
+                        "description": "Tag name exactly",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -120,39 +103,254 @@
                         "content": {
                             "application/json": {}
                         }
-                    },
-                    "422": {
-                        "description": "Bad request",
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Store a newly created Course in storage",
+                "description": "Store Course",
+                "operationId": "577080d0c808480068a8028d70a69d7c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
                         "content": {
                             "application/json": {}
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/{id}": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Display the specified Course",
+                "description": "Get Course",
+                "operationId": "ac094110c32a7652583ef86ee8037d60",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
             },
             "put": {
-                "summary": "Update category",
-                "description": "Update single Categories",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::update",
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update the specified Course in storage",
+                "description": "Update Course",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update the specified Course in storage",
+                "description": "Update Course",
+                "operationId": "652304ab1e9c1e396b861a5ae25e763d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Course"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Remove the specified Course from storage",
+                "description": "Delete Course",
+                "operationId": "fcb98aa20358a4c5b94653c9ca55bc12",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/{id}/program": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Display the specified Course program/curriculum/syllabus",
+                "description": "Get Course",
+                "operationId": "7f047bd2f00baeb8ae6f5b7a48a2c817",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/attach/{id}/categories": {
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Attach categories for couse",
+                "description": "Attach categories for couse",
+                "operationId": "6f783d27c5ce46d4d60962d9ed7fe26c",
+                "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Dokumentacja"
-                                    },
-                                    "icon_class": {
-                                        "type": "string",
-                                        "example": "fa-business-time"
-                                    },
-                                    "is_active": {
-                                        "type": "bool",
-                                        "example": "true"
-                                    },
-                                    "parent_id": {
-                                        "type": "?integer",
-                                        "example": "null"
+                                    "categories": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "": {
+                                                    "type": "number",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -166,33 +364,693 @@
                         "content": {
                             "application/json": {}
                         }
-                    },
-                    "422": {
-                        "description": "Bad request",
-                        "content": {
-                            "application/json": {}
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/attach/{id}/tags": {
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Attach tags for couse",
+                "description": "Attach tags for couse",
+                "operationId": "e741f763513db9d3e5e772c3d231542a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
-                }
-            },
-            "delete": {
-                "summary": "Destroy category",
-                "description": "Destroy the specified category",
-                "operationId": "EscolaLms\\Categories\\Http\\Controllers\\Swagger\\CategorySwagger::destroy",
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Nowości"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "content": {
                             "application/json": {}
                         }
-                    },
-                    "422": {
-                        "description": "Bad request",
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/sort": {
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Sorts Lessons or Topics",
+                "description": "Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example\n     * `{\"class\":\"Lesson\",\"orders\":[[3,0],[2,1],[4,2],[5,3],[6,4],[7,5],[1,6],[71,7]], \"course_id\":1}`\n     * ",
+                "operationId": "19a8caf9cf35aae0cb8f3e05070a9b23",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "course_id": {
+                                        "type": "integer"
+                                    },
+                                    "class": {
+                                        "type": "string"
+                                    },
+                                    "orders": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
                         "content": {
                             "application/json": {}
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/lessons": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a listing of the Lessons.",
+                "description": "Get all Lessons",
+                "operationId": "d4fabef92b9b5f29adc9d7c96a022cbb",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Store a newly created Lesson in storage",
+                "description": "Store Lesson",
+                "operationId": "8a23ae25ad205a167812be528108cdfa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Lesson"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/lessons/{id}": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Display the specified Lesson",
+                "description": "Get Lesson",
+                "operationId": "1abcb5066eb2e0512abcf56fc4c3bacd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update the specified Lesson in storage",
+                "description": "Update Lesson",
+                "operationId": "c82913bb3b75a0c5e664272183f0f4de",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Lesson"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Remove the specified Lesson from storage",
+                "description": "Delete Lesson",
+                "operationId": "bd298ca0de086b6386e79be9e337cfe4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Lesson",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/topics": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a listing of the Topics.",
+                "description": "Get all Topics",
+                "operationId": "cfe6dc69f1155b27f02c9aa91a51dd77",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Store a newly created Topic in storage",
+                "description": "Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
+                "operationId": "325c7579901747349cd6927391829fbe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Topic"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/topics/{id}": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Display the specified Topic",
+                "description": "Get Topic",
+                "operationId": "8cb3335b5f72e51015ad05066135da80",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update the specified Topic in storage",
+                "description": "Update Topic",
+                "operationId": "7a79b7967600602ecc98fb2a296d988b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Topic"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Remove the specified Topic from storage",
+                "description": "Delete Topic",
+                "operationId": "39c9f38232c83af3680a910468ce0e9e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Topic",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/topics/types": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a listing of the Availabe Topic Content Types Classes.",
+                "description": "Get all Topic Contents",
+                "operationId": "91e200fa9afd3b218dea36968ca9d5fd",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Course": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "summary": {
+                        "description": "summary",
+                        "type": "string"
+                    },
+                    "image_path": {
+                        "description": "image_path",
+                        "type": "string"
+                    },
+                    "video_path": {
+                        "description": "video_path",
+                        "type": "string"
+                    },
+                    "image_url": {
+                        "description": "image_url",
+                        "type": "string"
+                    },
+                    "video_url": {
+                        "description": "video_url",
+                        "type": "string"
+                    },
+                    "base_price": {
+                        "description": "base_price",
+                        "type": "string"
+                    },
+                    "duration": {
+                        "description": "duration",
+                        "type": "string"
+                    },
+                    "author_id": {
+                        "description": "author_id",
+                        "type": "integer"
+                    },
+                    "image": {
+                        "description": "image",
+                        "type": "file"
+                    },
+                    "video": {
+                        "description": "video",
+                        "type": "file"
+                    }
+                },
+                "type": "object"
+            },
+            "Lesson": {
+                "required": [
+                    "title",
+                    "order",
+                    "course_id"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "duration": {
+                        "description": "duration",
+                        "type": "string"
+                    },
+                    "order": {
+                        "description": "order",
+                        "type": "integer"
+                    },
+                    "course_id": {
+                        "description": "course_id",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Topic": {
+                "required": [
+                    "lesson_id",
+                    "order"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "title",
+                        "type": "string"
+                    },
+                    "lesson_id": {
+                        "description": "lesson_id",
+                        "type": "integer"
+                    },
+                    "topicable_id": {
+                        "description": "topicable_id",
+                        "type": "integer"
+                    },
+                    "topicable_type": {
+                        "description": "topicable_type",
+                        "type": "string"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    },
+                    "order": {
+                        "description": "order",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicAudio": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicH5P": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicImage": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicOEmbed": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicRichText": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TopicVideo": {
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             }
         }
     }
