@@ -2,9 +2,11 @@
 
 namespace EscolaLms\Courses;
 
+use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use EscolaLms\Courses\Repositories\CourseH5PProgressRepository;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
@@ -28,7 +30,8 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProgressServiceContract::class => ProgressService::class,
         CourseRepositoryContract::class => CourseRepository::class,
         CourseProgressRepositoryContract::class => CourseProgressRepository::class,
-        TopicRepositoryContract::class => TopicRepository::class
+        TopicRepositoryContract::class => TopicRepository::class,
+        CourseH5PProgressRepositoryContract::class => CourseH5PProgressRepository::class
     ];
 
     public function boot()

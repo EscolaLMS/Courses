@@ -1,11 +1,10 @@
 <?php
 
-
 namespace EscolaLms\Courses\ValueObjects;
-
 
 use Carbon\Carbon;
 use EscolaLms\Courses\Enum\ProgressStatus;
+use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
@@ -81,7 +80,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $progress = $this->courseProgressRepositoryContract->findProgress($topic, $this->user);
 
         if (($progress->status ?? ProgressStatus::INCOMPLETE) == ProgressStatus::COMPLETE) {
-            throw new RuntimeException("Lecture is already finished.");
+            throw new RuntimeException("Lesson is already finished.");
         }
 
         $secondsPassed = $progress->seconds ?? 0;
@@ -114,27 +113,32 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function getUser(): Authenticatable
     {
-        // TODO: Implement getUser() method.
+        return $this->user;
     }
 
     public function getCourse(): Course
     {
-        // TODO: Implement getCourse() method.
+        return $this->course;
     }
 
     public function start(): CourseProgressCollectionContract
     {
-        // TODO: Implement start() method.
+        if (!$this->isStarted()) {
+            $this->user->courses()->attach($this->course->getKey());
+            event(new CourseAssigned($this->user, $this->course));
+        }
+
+        return $this;
     }
 
     public function isStarted(): bool
     {
-        // TODO: Implement isStarted() method.
+        return $this->user->courses()->where('course_id', $this->course->getKey())->exists();
     }
 
     public function isFinished(): bool
     {
-        // TODO: Implement isFinished() method.
+        return $this->progress->whereNotIn('status', [ProgressStatus::COMPLETE])->count() == 0;
     }
 
     public function getProgress(): Collection
@@ -144,7 +148,19 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function setProgress(array $progress): CourseProgressCollectionContract
     {
-        // TODO: Implement setProgress() method.
+        foreach ($progress as $topicProgress) {
+            $topic = Topic::findOrFail($topicProgress['topic_id']);
+            $this->courseProgressRepositoryContract->updateInTopic(
+                $topic,
+                $this->user,
+                $topicProgress['status']
+            );
+        }
+
+        $this->progress = $this->buildProgress();
+
+        return $this;
+
     }
 
     public function getTotalSpentTime(): int

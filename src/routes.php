@@ -17,8 +17,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     Route::resource('topics', TopicAPIController::class);
     Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
 
-
-
+    
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
     Route::group(['prefix' => '/courses/attach/{id}/'], function () {
@@ -29,10 +28,10 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
 
     Route::group(['prefix' => '/progress'], function () {
         Route::get('/', [CourseProgressAPIController::class, 'index']);
-        Route::get('/{course}', [CourseProgressAPIController::class, 'show']);
-        Route::patch('/{course}', [CourseProgressAPIController::class, 'store']);
+        Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
+        Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
 
         Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
-        Route::post('/{curriculum_lectures_quiz}/h5p', [CourseProgressAPIController::class, 'h5p']);
+        Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
     });
 });
