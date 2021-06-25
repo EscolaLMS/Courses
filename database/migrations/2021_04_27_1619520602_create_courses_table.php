@@ -15,7 +15,7 @@ class CreateCoursesTable extends Migration
             $table->text('summary')->nullable();
             $table->string('image_path')->nullable();
             $table->string('video_path')->nullable();
-            $table->string('base_price')->nullable();
+            $table->integer('base_price')->nullable();
             $table->string('duration')->nullable();
             $table->bigInteger('author_id')->unsigned()->nullable();
             $table->foreign('author_id')->references('id')->on('users');

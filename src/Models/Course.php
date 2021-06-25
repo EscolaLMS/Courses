@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Storage;
  *      @OA\Property(
  *          property="base_price",
  *          description="base_price",
- *          type="string"
+ *          type="integer"
  *      ),
  *      @OA\Property(
  *          property="duration",
@@ -110,7 +110,7 @@ class Course extends Model
         'summary' => 'string',
         'image_path' => 'string',
         'video_path' => 'string',
-        'base_price' => 'string',
+        'base_price' => 'integer',
         'duration' => 'string',
         'author_id' => 'integer'
     ];
@@ -125,7 +125,7 @@ class Course extends Model
         'summary' => 'nullable|string',
         'image_path' => 'nullable|string|max:255',
         'video_path' => 'nullable|string|max:255',
-        'base_price' => 'nullable|string|max:255',
+        'base_price' => 'nullable|integer|min:99',
         'duration' => 'nullable|string|max:255',
         'author_id' => 'nullable',
         'image' => 'file|image',
@@ -196,5 +196,4 @@ class Course extends Model
     {
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
     }
-
 }
