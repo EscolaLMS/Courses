@@ -8,7 +8,8 @@
     "escolalms/core": ">=0.1.6",
     "escolalms/categories": ">=0.1",
     "escolalms/tags": ">=0.1",
-    "escolalms/auth": "^0.1"
+    "escolalms/auth": "^0.1",
+    "davidbadura/faker-markdown-generator": "^1.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",

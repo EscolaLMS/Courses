@@ -22,6 +22,8 @@ class CourseFactory extends Factory
      */
     public function definition()
     {
+        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
+
         return [
             'title' => $this->faker->sentence,
             'summary' => $this->faker->text,
@@ -30,6 +32,13 @@ class CourseFactory extends Factory
             'base_price' => 1199,
             'duration' => rand(2, 10)." hours",
             'author_id' => User::factory(),
+            
+            'active' => $this->faker->boolean,
+            'subtitle' => $this->faker->sentence,
+            'language' => $this->faker->randomElement(['en', 'pl']),
+            'description' => $this->faker->markdown,
+            'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
+           
         ];
     }
 

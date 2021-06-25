@@ -76,7 +76,32 @@ use Illuminate\Support\Facades\Storage;
  *          property="video",
  *          description="video",
  *          type="file"
- *      )
+ *      ),
+ *      @OA\Property(
+ *          property="active",
+ *          description="active",
+ *          type="boolean",
+ *      ),
+ *      @OA\Property(
+ *          property="subtitle",
+ *          description="subtitle",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="language",
+ *          description="language",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="description",
+ *          description="description",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="level",
+ *          description="level",
+ *          type="string",
+ *      ),
  * )
  */
 
@@ -112,7 +137,12 @@ class Course extends Model
         'video_path' => 'string',
         'base_price' => 'integer',
         'duration' => 'string',
-        'author_id' => 'integer'
+        'author_id' => 'integer',
+        'active' => 'boolean',
+        'subtitle' => 'string',
+        'language' =>'string',
+        'description' => 'string',
+        'level' =>'string',
     ];
 
     /**
@@ -130,6 +160,11 @@ class Course extends Model
         'author_id' => 'nullable',
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
+        'active' => 'boolean',
+        'subtitle' => 'nullable|string|max:255',
+        'language' =>'nullable|string|max:2',
+        'description' => 'nullable|string',
+        'level' =>'nullable|string|max:100',
     ];
 
     protected $appends = ['image_url', 'video_url'];

@@ -28,7 +28,8 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'video_path',
         'base_price',
         'duration',
-        'author_id'
+        'author_id',
+        'active'
     ];
 
     /**
