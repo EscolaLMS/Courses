@@ -82,6 +82,6 @@ class CoursesPolicy
             return true;
         };
 
-        return $course->users()->where('id', $user->getKey())->exists();
+        return $course->users()->where('users.id', $user->getKey())->exists();
     }
 }
