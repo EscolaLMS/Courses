@@ -160,7 +160,7 @@ class Course extends Model
         'summary' => 'nullable|string',
         'image_path' => 'nullable|string|max:255',
         'video_path' => 'nullable|string|max:255',
-        'base_price' => 'nullable|integer|min:99',
+        'base_price' => 'nullable|integer|min:0',
         'duration' => 'nullable|string|max:255',
         'author_id' => 'nullable',
         'image' => 'file|image',
