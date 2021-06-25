@@ -29,7 +29,7 @@ class CourseProgressAPIRequest extends FormRequest
     {
         return [
             'progress' => 'array',
-            'progress.*.lecture_id' => ['numeric', 'exists:curriculum_lectures_quiz,lecture_quiz_id'],
+            'progress.*.topic_id' => ['numeric', 'exists:topics,id'],
             'progress.*.status' => ['numeric', new ValidEnum(ProgressStatus::class)]
         ];
     }

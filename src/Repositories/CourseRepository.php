@@ -218,6 +218,11 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $model;
     }
 
+    public function getById($id) : Course
+    {
+        return $this->model->newQuery()->where('id', '=', $id)->first();
+    }
+
     public function delete(int $id): ?bool
     {
         $course = $this->findWith($id, ['*'], ['lessons.topics']);

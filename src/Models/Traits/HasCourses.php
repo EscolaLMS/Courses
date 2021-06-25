@@ -15,5 +15,4 @@ trait HasCourses
         /* @var $this User */
         return $this->belongsToMany(Course::class)->withTimestamps();
     }
-
 }
