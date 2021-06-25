@@ -26,6 +26,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="summary",
+ *          description="summary",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="order",
  *          description="order",
  *          type="integer",
@@ -54,7 +59,9 @@ class Lesson extends Model
         'title',
         'duration',
         'order',
-        'course_id'
+        'course_id',
+        'summary',
+        'active'
     ];
 
     /**
@@ -67,7 +74,9 @@ class Lesson extends Model
         'title' => 'string',
         'duration' => 'string',
         'order' => 'integer',
-        'course_id' => 'integer'
+        'course_id' => 'integer',
+        'summary' => 'string',
+        'active' => 'boolean'
     ];
 
     /**
@@ -79,7 +88,9 @@ class Lesson extends Model
         'title' => 'required|string|max:255',
         'duration' => 'nullable|string|max:255',
         'order' => 'required|integer',
-        'course_id' => 'required|exists:courses,id'
+        'course_id' => 'required|exists:courses,id',
+        'summary' => 'nullable|string',
+        'active' => 'boolean'
     ];
 
     /**

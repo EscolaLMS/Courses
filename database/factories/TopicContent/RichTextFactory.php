@@ -145,9 +145,11 @@ class RichTextFactory extends Factory
      */
     public function definition()
     {
+        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
+
         return [
             //'topic_id' => $this->faker->word,
-            'value' => getMDSink()
+            'value' => $this->faker->markdown
         ];
     }
 }

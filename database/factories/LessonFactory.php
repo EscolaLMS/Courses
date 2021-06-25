@@ -23,11 +23,15 @@ class LessonFactory extends Factory
      */
     public function definition()
     {
+        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
+
         return [
             'title' => $this->faker->word,
             'duration' => rand(10, 50)." minutes",
             'order' => $this->faker->randomDigitNotNull,
+            'active' => $this->faker->boolean,
             'course_id' => Course::factory(),
+            'summary' => $this->faker->markdown,
         ];
     }
 }
