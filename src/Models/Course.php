@@ -121,7 +121,12 @@ class Course extends Model
         'video_path',
         'base_price',
         'duration',
-        'author_id'
+        'author_id',
+        'active',
+        'subtitle',
+        'language',
+        'description',
+        'level',
     ];
 
     /**

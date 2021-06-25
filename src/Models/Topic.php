@@ -73,7 +73,9 @@ class Topic extends Model
         'lesson_id',
         'topicable_id',
         'topicable_type',
-        'order'
+        'order',
+        'active',
+        'preview'
     ];
 
     /**
@@ -87,7 +89,9 @@ class Topic extends Model
         'lesson_id' => 'integer',
         'topicable_id' => 'integer',
         'topicable_type' => 'string',
-        'order' => 'integer'
+        'order' => 'integer',
+        'active' => 'boolean',
+        'preview'=> 'boolean',
     ];
 
     /**
@@ -102,6 +106,8 @@ class Topic extends Model
         'topicable_type' => 'required|string|max:255',
         'order' => 'integer',
         'value' => 'required',
+        'active' => 'boolean',
+        'preview'=> 'boolean',
     ];
 
     /**
