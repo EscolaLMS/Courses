@@ -42,7 +42,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
-            '/api/progress'
+            '/api/courses/progress'
         );
         $this->response->assertStatus(200);
         $this->assertIsArray($this->response->getData());
