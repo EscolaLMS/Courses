@@ -1,14 +1,11 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Controllers;
-
 
 use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
 use EscolaLms\Courses\Http\Resources\ProgressesResource;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
