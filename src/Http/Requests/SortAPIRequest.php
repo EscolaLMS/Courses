@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SortAPIRequest extends FormRequest
@@ -18,32 +19,19 @@ class SortAPIRequest extends FormRequest
     {
         $user = auth()->user();
         $course = Course::find($this->input('course_id'));
-
         if (isset($user) && $user->can('update', $course)) {
             $class = $this->input('class');
             $ids = array_map(function ($order) {
                 return $order[0];
             }, $this->input('orders'));
-
             switch ($class) {
                 case "Lesson":
-                    $lessons = Lesson::whereIn('id', $ids)->get();
-                    foreach ($lessons as $lesson) {
-                        if ($lesson->course_id !== $course->id) {
-                            return false; // id from array is not matching course
-                        }
-                    }
-                    break;
-
+                    return Lesson::whereIn('id', $ids)->where('course_id', '<>', $course->getKey())->doesntExist();
                 case "Topic":
-                    $topics = Topic::with('lesson')->whereIn('id', $ids)->get();
-                    foreach ($topics as $topic) {
-                        if ($topic->lesson->course_id !== $course->id) {
-                            return false; // id from array is not matching course
-                        }
-                    }
-                    break;
-                }
+                    return Topic::whereIn('id', $ids)->whereHas('lesson', function(Builder $query) use($course) {
+                        $query->where('course_id', $course->getKey());
+                    })->doesntExist();
+            }
 
             return true;
         }
