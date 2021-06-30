@@ -56,7 +56,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             PaginationDto::instantiateFromRequest($request),
             $search
         )->paginate($request->get('per_page') ?? 15);
-
         return $this->sendResponse($courses->toArray(), 'Courses retrieved successfully');
     }
 
