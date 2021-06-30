@@ -7,7 +7,7 @@ use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicRichTextAPIController;
 use Illuminate\Routing\ImplicitRouteBinding;
 
-Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
     Route::post('courses/sort', [CourseAPIController::class, "sort"]);
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
