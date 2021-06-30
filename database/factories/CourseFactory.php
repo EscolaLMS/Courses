@@ -22,14 +22,23 @@ class CourseFactory extends Factory
      */
     public function definition()
     {
+        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
+
         return [
             'title' => $this->faker->sentence,
-            'summary' => $this->faker->text,
+            'summary' => $this->faker->markdown,
             'image_path' => "1.jpg",
             'video_path' => "1.mp4",
-            'base_price' => 11.99,
+            'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10)." hours",
             'author_id' => User::factory(),
+            
+            'active' => $this->faker->boolean,
+            'subtitle' => $this->faker->sentence,
+            'language' => $this->faker->randomElement(['en', 'pl']),
+            'description' => $this->faker->markdown,
+            'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
+           
         ];
     }
 

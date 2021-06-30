@@ -33,7 +33,9 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         'lesson_id',
         'topicable_id',
         'topicable_type',
-        'order'
+        'order',
+        'active',
+        'boolean'
     ];
 
     /**
@@ -121,6 +123,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'title' => $input['title'],
             'lesson_id' => $input['lesson_id'],
             'order' => $input['order'] ?? 0,
+            'active' => true,
+            'preview' => false
         ];
 
         $model = $this->model->newInstance($input);

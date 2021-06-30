@@ -32,23 +32,20 @@ class CourseResource extends JsonResource
 
         return [
             'id' => $course->getKey(),
-            'course_title' => $course->title,
-            'duration' => $course->duration,
-            'price' => $course->price_brutto,
-            'price_netto' => $course->price,
-            'strike_out_price' => $course->strike_out_price,
-            'active' => $course->is_active,
-            'shortDesc' => [
-                'title' => $course->title ?? "What you’ll learn",
-                'image' => $course->image_path,
-            ],
-            'categories' => $course->categories,
-            'instructor_id' => $course->author_id,
-            'created_at' => $course->created_at,
-            'updated_at' => $course->updated_at,
-            'finished_at' => $finishedAt ?? null,
-            'course_image' => $course->image_path
-        ];
+            'title' =>  $course->title,
+            'summary' =>  $course->summary,
+            'image_path' =>  $course->image_path,
+            'video_path' =>  $course->video_path,
+            'base_price' =>  $course->base_price,
+            'duration' =>  $course->duration,
+            'author_id' => $course->author_id,
+            
+            'active' =>  $course->active,
+            'subtitle' =>  $course->subtitle,
+            'language' =>  $course->language,
+            'description' =>  $course->description,
+            'level' =>  $course->level,
 
+        ];
     }
 }

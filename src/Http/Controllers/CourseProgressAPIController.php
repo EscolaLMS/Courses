@@ -1,8 +1,6 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Controllers;
-
 
 use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;

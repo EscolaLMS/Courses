@@ -81,7 +81,7 @@ class CoursesPolicy
         if ($user->can('update course') && $course->author_id === $user->id) {
             return true;
         };
-        // TODO: replace this with actual logic - user has brought the courses
-        return $user->can('attend course');
+
+        return $course->users()->where('users.id', $user->getKey())->exists();
     }
 }

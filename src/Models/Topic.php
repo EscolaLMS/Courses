@@ -22,6 +22,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="active",
+ *          description="active",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
+ *          property="preview",
+ *          description="preview",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
  *          property="lesson_id",
  *          description="lesson_id",
  *          type="integer",
@@ -63,7 +73,9 @@ class Topic extends Model
         'lesson_id',
         'topicable_id',
         'topicable_type',
-        'order'
+        'order',
+        'active',
+        'preview'
     ];
 
     /**
@@ -77,7 +89,9 @@ class Topic extends Model
         'lesson_id' => 'integer',
         'topicable_id' => 'integer',
         'topicable_type' => 'string',
-        'order' => 'integer'
+        'order' => 'integer',
+        'active' => 'boolean',
+        'preview'=> 'boolean',
     ];
 
     /**
@@ -92,6 +106,8 @@ class Topic extends Model
         'topicable_type' => 'required|string|max:255',
         'order' => 'integer',
         'value' => 'required',
+        'active' => 'boolean',
+        'preview'=> 'boolean',
     ];
 
     /**
