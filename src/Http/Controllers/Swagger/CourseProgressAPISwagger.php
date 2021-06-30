@@ -11,7 +11,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"progress"},
-     *      path="/api/progress",
+     *      path="/api/courses/progress",
      *      description="Get Progresses",
      *      security={
      *          {"passport": {}},
@@ -37,7 +37,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"progress"},
-     *      path="/api/progress/{course_id}",
+     *      path="/api/courses/progress/{course_id}",
      *      description="Show user course progress",
      *      security={
      *          {"passport": {}},
@@ -71,7 +71,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Patch(
      *      tags={"progress"},
-     *      path="/api/progress/{course_id}",
+     *      path="/api/courses/progress/{course_id}",
      *      description="Show user course progress",
      *      security={
      *          {"passport": {}},
@@ -124,7 +124,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Put(
      *      tags={"progress"},
-     *      path="/api/progress/{topic_id}/ping",
+     *      path="/api/courses/progress/{topic_id}/ping",
      *      description="Update time in course by ping.",
      *      security={
      *          {"passport": {}},
@@ -158,7 +158,7 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Post(
      *      tags={"progress"},
-     *      path="/api/progress/{topic_id}/h5p",
+     *      path="/api/courses/progress/{topic_id}/h5p",
      *      description="Update h5p progress in course quiz.",
      *      security={
      *          {"passport": {}},
