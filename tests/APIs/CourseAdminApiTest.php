@@ -112,6 +112,7 @@ class CourseAdminApiTest extends TestCase
             'GET',
             '/api/courses/?category_id=' . $category->getKey()
         );
+
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());
         $this->assertObjectHasAttribute('data', $this->response->getData()->data);

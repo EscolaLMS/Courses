@@ -107,7 +107,7 @@ class CourseService implements CourseServiceContract
                 $paginationDto->getSkip(),
                 $paginationDto->getLimit(),
                 $criteria
-            )->with(['categories','tags']);
+            )->with(['categories','tags', 'author']);
 
         return $query;
     }
