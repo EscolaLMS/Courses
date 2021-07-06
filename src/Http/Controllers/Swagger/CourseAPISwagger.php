@@ -176,9 +176,6 @@ interface CourseAPISwagger
      *      summary="Display the specified Course",
      *      tags={"Course"},
      *      description="Get Course",
-     *     security={
-     *         {"passport": {}},
-     *     },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Course",
