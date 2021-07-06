@@ -36,4 +36,5 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
 // public routes
 Route::group(['prefix' => 'api'], function () {
     Route::get('/courses', [CourseAPIController::class, 'index']);
+    Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
 });
