@@ -169,12 +169,7 @@
                             "application/json": {}
                         }
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             },
             "put": {
                 "tags": [
