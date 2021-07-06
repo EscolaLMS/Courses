@@ -5,8 +5,8 @@ use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 
+// endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
-
     Route::group(['prefix' => '/courses/progress'], function () {
         Route::get('/', [CourseProgressAPIController::class, 'index']);
         Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
@@ -32,3 +32,5 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
         Route::post('tags', [CourseAPIController::class, 'attachTags']);
     });
 });
+
+Route::get('/courses', [CourseAPIController::class, 'index']);
