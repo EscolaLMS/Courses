@@ -414,6 +414,9 @@ interface CourseAPISwagger
     *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
     *      tags={"Course"},
     *      description="Get Course",
+    *      security={
+    *         {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="id of Course",
