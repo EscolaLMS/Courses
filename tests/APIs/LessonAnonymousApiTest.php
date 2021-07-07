@@ -8,7 +8,7 @@ use EscolaLms\Courses\Models\Lesson;
 
 class LessonAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @test
@@ -19,11 +19,11 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/lessons',
+            '/api/admin/lessons',
             $lesson
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -35,10 +35,10 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -51,11 +51,11 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/lessons/'.$lesson->id,
+            '/api/admin/lessons/'.$lesson->id,
             $editedLesson
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -67,9 +67,9 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 }

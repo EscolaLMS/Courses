@@ -121,11 +121,121 @@ interface CourseAPISwagger
      * )
      */
 
+    /**
+    * @OA\Get(
+    *      path="/api/admin/courses",
+    *      summary="Get a listing of the Courses.",
+    *      tags={"Course"},
+    *      description="Get all Courses",
+    *      security={
+    *         {"passport": {}},
+    *      },
+    *      @OA\Parameter(
+    *          name="order_by",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="string",
+    *              enum={"created_at","title","base_price","duration"}
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="order",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="string",
+    *              enum={"ASC", "DESC"}
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="page",
+    *          description="Pagination Page Number",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="number",
+    *               default=1,
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="per_page",
+    *          description="Pagination Per Page",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="number",
+    *               default=15,
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="title",
+    *          description="Course title %LIKE%",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="string",
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="category_id",
+    *          description="Category ID. When applied all courses with given cat_id and children categories are searched",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="number",
+    *          ),
+    *      ),
+    *     @OA\Parameter(
+    *          name="author_id",
+    *          description="Author ID",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="number",
+    *          ),
+    *      ),
+    *      @OA\Parameter(
+    *          name="tag",
+    *          description="Tag name exactly",
+    *          required=false,
+    *          in="query",
+    *          @OA\Schema(
+    *              type="string",
+    *          ),
+    *      ),
+
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
+    *          @OA\Schema(
+    *              type="object",
+    *              @OA\Property(
+    *                  property="success",
+    *                  type="boolean"
+    *              ),
+    *              @OA\Property(
+    *                  property="data",
+    *                  type="array",
+    *                  @OA\Items(ref="#/components/schemas/Course")
+    *              ),
+    *              @OA\Property(
+    *                  property="message",
+    *                  type="string"
+    *              )
+    *          )
+    *      )
+    * )
+    */
+
     public function index(Request $request);
 
     /**
      * @OA\Post(
-     *      path="/api/courses",
+     *      path="/api/admin/courses",
      *      summary="Store a newly created Course in storage",
      *      tags={"Course"},
      *      description="Store Course",
@@ -172,6 +282,49 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
+     *      path="/api/admin/courses/{id}",
+     *      summary="Display the specified Course",
+     *      tags={"Course"},
+     *      description="Get Course",
+     *      security={
+     *         {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    /**
+     * @OA\Get(
      *      path="/api/courses/{id}",
      *      summary="Display the specified Course",
      *      tags={"Course"},
@@ -214,7 +367,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}/program",
+     *      path="/api/admin/courses/{id}/program",
      *      summary="Display the specified Course program/curriculum/syllabus",
      *      tags={"Course"},
      *      description="Get Course",
@@ -255,11 +408,51 @@ interface CourseAPISwagger
      * )
      */
 
+    /**
+    * @OA\Get(
+    *      path="/api/courses/{id}/program",
+    *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
+    *      tags={"Course"},
+    *      description="Get Course",
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="id of Course",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
+    *          required=true,
+    *          in="path"
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          ),
+    *          @OA\Schema(
+    *              type="object",
+    *              @OA\Property(
+    *                  property="success",
+    *                  type="boolean"
+    *              ),
+    *              @OA\Property(
+    *                  property="data",
+    *                  ref="#/components/schemas/Course"
+    *              ),
+    *              @OA\Property(
+    *                  property="message",
+    *                  type="string"
+    *              )
+    *          )
+    *      )
+    * )
+    */
+
     public function program($id, GetCourseCurriculumAPIRequest $request);
 
     /**
      * @OA\Put(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
@@ -309,7 +502,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
@@ -361,7 +554,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Remove the specified Course from storage",
      *      tags={"Course"},
      *      description="Delete Course",
@@ -407,7 +600,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/attach/{id}/categories",
+     *      path="/api/admin/courses/attach/{id}/categories",
      *      summary="Attach categories for couse",
      *     security={
      *         {"passport": {}},
@@ -443,7 +636,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/attach/{id}/tags",
+     *      path="/api/admin/courses/attach/{id}/tags",
      *      summary="Attach tags for couse",
      *      tags={"Course"},
      *      description="Attach tags for couse",
@@ -494,7 +687,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/sort",
+     *      path="/api/admin/courses/sort",
      *      summary="Sorts Lessons or Topics",
      *      tags={"Course"},
      *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example

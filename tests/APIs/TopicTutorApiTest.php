@@ -12,7 +12,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class TopicTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
 
     protected function setUp(): void
@@ -44,7 +44,7 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->assertApiResponse($topic->toArray());
@@ -68,13 +68,13 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->response->assertStatus(404);
@@ -85,7 +85,7 @@ class TopicTutorApiTest extends TestCase
         $topic = Topic::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->response->assertStatus(403);

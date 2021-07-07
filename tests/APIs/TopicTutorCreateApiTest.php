@@ -13,7 +13,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class TopicTutorCreateApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
     
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class TopicTutorCreateApiTest extends TestCase
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -70,7 +70,7 @@ class TopicTutorCreateApiTest extends TestCase
         $file = UploadedFile::fake()->image('avatar.mp3');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -100,7 +100,7 @@ class TopicTutorCreateApiTest extends TestCase
         $file = UploadedFile::fake()->image('avatar.mp4');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -126,7 +126,7 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_richtext()
     {
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -151,7 +151,7 @@ class TopicTutorCreateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
@@ -159,7 +159,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(422);
+        $this->response->assertStatus(401);
     }
 
     /////
@@ -167,7 +167,7 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_image_no_file()
     {
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -182,7 +182,7 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_audio_no_file()
     {
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -200,7 +200,7 @@ class TopicTutorCreateApiTest extends TestCase
         
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
@@ -215,7 +215,7 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_wrong_class()
     {
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/topics',
+            '/api/admin/topics',
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,

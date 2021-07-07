@@ -11,7 +11,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class LessonTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -35,7 +35,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/lessons',
+            '/api/admin/lessons',
             $lesson
         );
 
@@ -51,7 +51,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->assertApiResponse($lesson->toArray());
@@ -71,7 +71,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/lessons/'.$lesson->id,
+            '/api/admin/lessons/'.$lesson->id,
             $editedLesson
         );
 
@@ -90,13 +90,13 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->response->assertStatus(404);

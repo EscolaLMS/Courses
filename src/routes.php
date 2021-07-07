@@ -5,16 +5,8 @@ use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 
-// endpoints
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
-    Route::group(['prefix' => '/courses/progress'], function () {
-        Route::get('/', [CourseProgressAPIController::class, 'index']);
-        Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
-        Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
-
-        Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
-        Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
-    });
+// admin endpoints
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
     Route::post('courses/sort', [CourseAPIController::class, "sort"]);
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
@@ -33,8 +25,21 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
     });
 });
 
+// user endpoints
+
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
+    Route::group(['prefix' => '/courses/progress'], function () {
+        Route::get('/', [CourseProgressAPIController::class, 'index']);
+        Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
+        Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
+
+        Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
+        Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
+    });
+});
 // public routes
 Route::group(['prefix' => 'api'], function () {
+    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index']);
     Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
 });

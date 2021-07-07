@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 
 class CourseAdminApiTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test
@@ -34,7 +34,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses',
+            '/api/admin/courses',
             $course
         );
 
@@ -55,7 +55,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/'.$course->id
+            '/api/admin/courses/'.$course->id
         );
 
         $this->assertApiResponse($course->toArray());
@@ -71,7 +71,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/courses/'.$course->id,
+            '/api/admin/courses/'.$course->id,
             $editedCourse
         );
 
@@ -87,13 +87,13 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/courses/'.$course->id
+            '/api/admin/courses/'.$course->id
         );
         
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/'.$course->id
+            '/api/admin/courses/'.$course->id
         );
 
         $this->response->assertStatus(404);
@@ -110,7 +110,7 @@ class CourseAdminApiTest extends TestCase
         $course2->categories()->save($category2);
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/?category_id=' . $category->getKey()
+            '/api/admin/courses/?category_id=' . $category->getKey()
         );
 
         $this->response->assertStatus(200);
@@ -133,7 +133,7 @@ class CourseAdminApiTest extends TestCase
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/categories',
+            '/api/admin/courses/attach/'.$course->getKey().'/categories',
             ['categories' => $categoriesIds]
         );
         $this->response->assertStatus(200);
@@ -144,7 +144,7 @@ class CourseAdminApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/tags',
+            '/api/admin/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
                 [
                     'title' => 'Nowości'
@@ -165,7 +165,7 @@ class CourseAdminApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/tags',
+            '/api/admin/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
                 [
                     'title' => 'Fruit'
@@ -176,7 +176,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/?tag=Fruit',
+            '/api/admin/courses/?tag=Fruit',
         );
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());
@@ -198,7 +198,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/'.$course->id.'/program'
+            '/api/admin/courses/'.$course->id.'/program'
         );
 
         $this->response->assertStatus(200);

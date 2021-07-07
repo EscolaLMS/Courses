@@ -14,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -45,7 +45,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'multipart/form-data',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/topics/'.$this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
@@ -80,7 +80,7 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/topics/'.$this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
@@ -113,7 +113,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/topics/'.$this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
@@ -142,7 +142,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/topics/'.$this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
@@ -171,7 +171,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/topics/'.$this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
