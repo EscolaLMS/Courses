@@ -12,7 +12,7 @@ use Laravel\Passport\Passport;
 
 class CourseTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @test
@@ -35,7 +35,7 @@ class CourseTutorApiTest extends TestCase
     
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses',
+            '/api/admin/courses',
             $course
         );
 

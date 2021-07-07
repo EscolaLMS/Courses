@@ -8,7 +8,7 @@ use EscolaLms\Courses\Models\Lesson;
 
 class LessonAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @test
@@ -19,11 +19,11 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/lessons',
+            '/api/admin/lessons',
             $lesson
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -55,7 +55,7 @@ class LessonAnonymousApiTest extends TestCase
             $editedLesson
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -70,6 +70,6 @@ class LessonAnonymousApiTest extends TestCase
             '/api/admin/lessons/'.$lesson->id
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 }

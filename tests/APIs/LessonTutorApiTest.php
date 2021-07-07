@@ -11,7 +11,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class LessonTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -35,7 +35,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/lessons',
+            '/api/admin/lessons',
             $lesson
         );
 

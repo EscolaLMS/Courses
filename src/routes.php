@@ -36,11 +36,10 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
         Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
         Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
     });
-
-    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
 });
 // public routes
 Route::group(['prefix' => 'api'], function () {
+    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index']);
     Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
 });

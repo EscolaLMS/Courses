@@ -14,7 +14,7 @@ use Laravel\Passport\Passport;
 
 class CourseTutorRestrictApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @test
@@ -35,7 +35,7 @@ class CourseTutorRestrictApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses',
+            '/api/admin/courses',
             $course
         );
 

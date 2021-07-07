@@ -12,7 +12,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class TopicTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
 
     protected function setUp(): void

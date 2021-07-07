@@ -8,7 +8,7 @@ use EscolaLms\Courses\Models\Topic;
 
 class TopicAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
 
 
@@ -24,7 +24,7 @@ class TopicAnonymousApiTest extends TestCase
             '/api/admin/topics/'.$topic->id
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
    
@@ -41,7 +41,7 @@ class TopicAnonymousApiTest extends TestCase
         );
 
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -56,7 +56,7 @@ class TopicAnonymousApiTest extends TestCase
             '/api/admin/topics/'.$topic->id
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -71,6 +71,6 @@ class TopicAnonymousApiTest extends TestCase
             '/api/admin/topics/types'
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(401);
     }
 }

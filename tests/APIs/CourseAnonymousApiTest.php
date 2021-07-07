@@ -10,7 +10,7 @@ use EscolaLms\Courses\Models\Course;
 
 class CourseAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     /**
      * @test
@@ -21,11 +21,11 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/courses',
+            '/api/admin/courses',
             $course
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -39,7 +39,13 @@ class CourseAnonymousApiTest extends TestCase
             'GET',
             '/api/admin/courses/'.$course->id
         );
+        $this->response->assertStatus(401);
 
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/'.$course->id
+        );
+        
         $this->assertApiResponse($course->toArray());
     }
 
@@ -57,7 +63,7 @@ class CourseAnonymousApiTest extends TestCase
             $editedCourse
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -72,7 +78,7 @@ class CourseAnonymousApiTest extends TestCase
             '/api/admin/courses/'.$course->id
         );
         
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     public function test_anonymous_category_course()
@@ -84,6 +90,14 @@ class CourseAnonymousApiTest extends TestCase
         $course2 = Course::factory()->create();
         $course->categories()->save($category);
         $course2->categories()->save($category2);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/admin/courses?category_id=' . $category->getKey()
+        );
+
+        $this->response->assertStatus(401);
+
         $this->response = $this->json(
             'GET',
             '/api/courses?category_id=' . $category->getKey()
@@ -112,7 +126,7 @@ class CourseAnonymousApiTest extends TestCase
             ['categories' => $categoriesIds]
         );
 
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     public function test_anonymous_attach_tags_course()
@@ -133,7 +147,7 @@ class CourseAnonymousApiTest extends TestCase
                 ],
             ]]
         );
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     public function test_anonymous_attach_course_by_tag()
@@ -148,7 +162,7 @@ class CourseAnonymousApiTest extends TestCase
                 ],
             ]]
         );
-        $this->response->assertStatus(403);
+        $this->response->assertStatus(401);
     }
 
     /**
@@ -163,6 +177,13 @@ class CourseAnonymousApiTest extends TestCase
             '/api/admin/courses/'.$course->id.'/program'
         );
 
+        $this->response->assertStatus(401);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/'.$course->id.'/program'
+        );
+
         $this->response->assertStatus(403);
     }
 
@@ -173,6 +194,13 @@ class CourseAnonymousApiTest extends TestCase
         $this->response = $this->json(
             'GET',
             '/api/admin/courses/'.$course->id.'/program'
+        );
+
+        $this->response->assertStatus(401);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/'.$course->id.'/program'
         );
 
         $this->response->assertStatus(200);

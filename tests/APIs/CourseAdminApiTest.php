@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 
 class CourseAdminApiTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test
@@ -34,7 +34,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses',
+            '/api/admin/courses',
             $course
         );
 

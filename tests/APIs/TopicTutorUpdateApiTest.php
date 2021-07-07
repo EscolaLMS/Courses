@@ -14,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ WithoutMiddleware, DatabaseTransactions;
+    use /*ApiTestTrait,*/ DatabaseTransactions;
 
     protected function setUp(): void
     {
