@@ -79,7 +79,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function show($id)
     {
         /** @var Course $course */
-        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'categories', 'tags']);
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'categories', 'tags', 'author']);
 
         if (empty($course)) {
             return $this->sendError('Course not found');
