@@ -134,9 +134,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
      */
-    public function findWith(int $id, array $columns = ['*'], array $with = []): ?Course
+    public function findWith(int $id, array $columns = ['*'], array $with = [], array $withCount = []): ?Course
     {
-        $query = $this->model->newQuery()->with($with);
+        $query = $this->model->newQuery()->with($with)->withCount($withCount);
+        ;
 
         return $query->find($id, $columns);
     }
