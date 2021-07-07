@@ -37,7 +37,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/'.$course->id
+            '/api/admin/courses/'.$course->id
         );
 
         $this->assertApiResponse($course->toArray());
@@ -53,7 +53,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/courses/'.$course->id,
+            '/api/admin/courses/'.$course->id,
             $editedCourse
         );
 
@@ -69,7 +69,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/courses/'.$course->id
+            '/api/admin/courses/'.$course->id
         );
         
         $this->response->assertStatus(403);
@@ -108,7 +108,7 @@ class CourseAnonymousApiTest extends TestCase
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
         $this->response = $this->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/categories',
+            '/api/admin/courses/attach/'.$course->getKey().'/categories',
             ['categories' => $categoriesIds]
         );
 
@@ -120,7 +120,7 @@ class CourseAnonymousApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/tags',
+            '/api/admin/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
                 [
                     'title' => 'Nowości'
@@ -141,7 +141,7 @@ class CourseAnonymousApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->json(
             'POST',
-            '/api/courses/attach/'.$course->getKey().'/tags',
+            '/api/admin/courses/attach/'.$course->getKey().'/tags',
             ['tags' => [
                 [
                     'title' => 'Fruit'
@@ -160,7 +160,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/'.$course->id.'/program'
+            '/api/admin/courses/'.$course->id.'/program'
         );
 
         $this->response->assertStatus(403);
@@ -172,7 +172,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/'.$course->id.'/program'
+            '/api/admin/courses/'.$course->id.'/program'
         );
 
         $this->response->assertStatus(200);

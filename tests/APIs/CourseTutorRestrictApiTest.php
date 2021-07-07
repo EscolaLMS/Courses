@@ -56,7 +56,7 @@ class CourseTutorRestrictApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/' . $course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->assertApiResponse($course->toArray());
@@ -72,7 +72,7 @@ class CourseTutorRestrictApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/courses/' . $course->id,
+            '/api/admin/courses/' . $course->id,
             $editedCourse
         );
 
@@ -88,7 +88,7 @@ class CourseTutorRestrictApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/courses/' . $course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->response->assertStatus(403);
@@ -105,7 +105,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $course2->categories()->save($category2);
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/?category_id=' . $category->getKey()
+            '/api/admin/courses/?category_id=' . $category->getKey()
         );
         $this->response->assertStatus(200);
         $this->assertObjectHasAttribute('data', $this->response->getData());
@@ -125,7 +125,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/' . $course->getKey() . '/categories',
+            '/api/admin/courses/attach/' . $course->getKey() . '/categories',
             ['categories' => $categoriesIds]
         );
 
@@ -137,7 +137,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/' . $course->getKey() . '/tags',
+            '/api/admin/courses/attach/' . $course->getKey() . '/tags',
             ['tags' => [
                 [
                     'title' => 'Nowości'
@@ -158,7 +158,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $course = Course::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
-            '/api/courses/attach/' . $course->getKey() . '/tags',
+            '/api/admin/courses/attach/' . $course->getKey() . '/tags',
             ['tags' => [
                 [
                     'title' => 'Fruit'
@@ -180,7 +180,7 @@ class CourseTutorRestrictApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/' . $course->id . '/program'
+            '/api/admin/courses/' . $course->id . '/program'
         );
 
         $this->response->assertStatus(200);

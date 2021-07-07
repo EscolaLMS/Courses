@@ -42,7 +42,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
-            '/api/courses/progress'
+            '/api/admin/courses/progress'
         );
         $this->response->assertStatus(200);
         $this->assertIsArray($this->response->getData());
@@ -84,7 +84,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
-            '/api/courses/progress/' . $course->getKey(),
+            '/api/admin/courses/progress/' . $course->getKey(),
             ['progress' => $this->getProgressUpdate($course)]
         );
         $courseProgress = CourseProgressCollection::make($student, $course);
@@ -114,7 +114,7 @@ class CourseProgressApiTest extends TestCase
         }
         $this->response = $this->actingAs($user, 'api')->json(
             'PUT',
-            '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+            '/api/admin/courses/progress/' . $oneTopic->getKey() . '/ping'
         );
         $this->response->assertOk();
         $data = $this->response->getData();

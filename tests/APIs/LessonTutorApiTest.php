@@ -51,7 +51,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->assertApiResponse($lesson->toArray());
@@ -71,7 +71,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/lessons/'.$lesson->id,
+            '/api/admin/lessons/'.$lesson->id,
             $editedLesson
         );
 
@@ -90,13 +90,13 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->response->assertStatus(404);

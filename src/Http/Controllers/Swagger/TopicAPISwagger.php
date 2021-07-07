@@ -13,7 +13,7 @@ interface TopicAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/topics",
+     *      path="/api/admin/topics",
      *      summary="Get a listing of the Topics.",
      *      tags={"Course"},
      *      description="Get all Topics",
@@ -53,7 +53,7 @@ interface TopicAPISwagger
      * @return Response
      *
      * @OA\Post(
-     *      path="/api/topics",
+     *      path="/api/admin/topics",
      *      summary="Store a newly created Topic in storage",
      *      tags={"Course"},
      *     security={
@@ -97,7 +97,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/topics/{id}",
+     *      path="/api/admin/topics/{id}",
      *      summary="Display the specified Topic",
      *      tags={"Course"},
      *      description="Get Topic",
@@ -142,7 +142,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Put(
-     *      path="/api/topics/{id}",
+     *      path="/api/admin/topics/{id}",
      *      summary="Update the specified Topic in storage",
      *      tags={"Course"},
      *      description="Update Topic",
@@ -195,7 +195,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/topics/{id}",
+     *      path="/api/admin/topics/{id}",
      *      summary="Remove the specified Topic from storage",
      *      tags={"Course"},
      *      description="Delete Topic",
@@ -243,7 +243,7 @@ interface TopicAPISwagger
      * @return Response
      *
      * @OA\Get(
-     *      path="/api/topics/types",
+     *      path="/api/admin/topics/types",
      *      summary="Get a listing of the Availabe Topic Content Types Classes.",
      *      tags={"Course"},
      *      description="Get all Topic Contents",

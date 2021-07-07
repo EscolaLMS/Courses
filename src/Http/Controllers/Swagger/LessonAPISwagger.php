@@ -11,7 +11,7 @@ interface LessonAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/lessons",
+     *      path="/api/admin/lessons",
      *      summary="Get a listing of the Lessons.",
      *      tags={"Course"},
      *      description="Get all Lessons",
@@ -48,7 +48,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/lessons",
+     *      path="/api/admin/lessons",
      *      summary="Store a newly created Lesson in storage",
      *      tags={"Course"},
      *      description="Store Lesson",
@@ -92,7 +92,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/lessons/{id}",
+     *      path="/api/admin/lessons/{id}",
      *      summary="Display the specified Lesson",
      *      tags={"Course"},
      *      description="Get Lesson",
@@ -137,7 +137,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Put(
-     *      path="/api/lessons/{id}",
+     *      path="/api/admin/lessons/{id}",
      *      summary="Update the specified Lesson in storage",
      *      tags={"Course"},
      *      description="Update Lesson",
@@ -189,7 +189,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/lessons/{id}",
+     *      path="/api/admin/lessons/{id}",
      *      summary="Remove the specified Lesson from storage",
      *      tags={"Course"},
      *      description="Delete Lesson",

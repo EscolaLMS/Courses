@@ -21,7 +21,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->response->assertStatus(403);
@@ -37,7 +37,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
 
@@ -53,7 +53,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/topics/'.$topic->id
+            '/api/admin/topics/'.$topic->id
         );
 
         $this->response->assertStatus(403);
@@ -68,7 +68,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/topics/types'
+            '/api/admin/topics/types'
         );
 
         $this->response->assertStatus(200);

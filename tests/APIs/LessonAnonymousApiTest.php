@@ -35,7 +35,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->response->assertStatus(200);
@@ -51,7 +51,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/lessons/'.$lesson->id,
+            '/api/admin/lessons/'.$lesson->id,
             $editedLesson
         );
 
@@ -67,7 +67,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/lessons/'.$lesson->id
+            '/api/admin/lessons/'.$lesson->id
         );
 
         $this->response->assertStatus(403);

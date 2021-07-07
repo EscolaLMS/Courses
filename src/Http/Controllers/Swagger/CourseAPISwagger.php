@@ -172,7 +172,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Display the specified Course",
      *      tags={"Course"},
      *      description="Get Course",
@@ -214,7 +214,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/courses/{id}/program",
+     *      path="/api/admin/courses/{id}/program",
      *      summary="Display the specified Course program/curriculum/syllabus",
      *      tags={"Course"},
      *      description="Get Course",
@@ -259,7 +259,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Put(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
@@ -309,7 +309,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
      *      tags={"Course"},
      *      description="Update Course",
@@ -361,7 +361,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/courses/{id}",
+     *      path="/api/admin/courses/{id}",
      *      summary="Remove the specified Course from storage",
      *      tags={"Course"},
      *      description="Delete Course",
@@ -407,7 +407,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/attach/{id}/categories",
+     *      path="/api/admin/courses/attach/{id}/categories",
      *      summary="Attach categories for couse",
      *     security={
      *         {"passport": {}},
@@ -443,7 +443,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/attach/{id}/tags",
+     *      path="/api/admin/courses/attach/{id}/tags",
      *      summary="Attach tags for couse",
      *      tags={"Course"},
      *      description="Attach tags for couse",
@@ -494,7 +494,7 @@ interface CourseAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/courses/sort",
+     *      path="/api/admin/courses/sort",
      *      summary="Sorts Lessons or Topics",
      *      tags={"Course"},
      *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example
