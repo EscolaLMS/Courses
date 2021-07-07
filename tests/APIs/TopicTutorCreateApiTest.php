@@ -159,7 +159,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(422);
+        $this->response->assertStatus(401);
     }
 
     /////

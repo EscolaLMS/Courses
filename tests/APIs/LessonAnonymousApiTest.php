@@ -38,7 +38,7 @@ class LessonAnonymousApiTest extends TestCase
             '/api/admin/lessons/'.$lesson->id
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(401);
     }
 
     /**
