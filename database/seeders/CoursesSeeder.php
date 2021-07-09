@@ -45,7 +45,9 @@ class CoursesSeeder extends Seeder
         ->count(rand(5, 10))
         ->has(Lesson::factory()
             ->has(
-                Topic::factory()->afterCreating(function ($topic) use ($hasH5P) {
+                Topic::factory()
+                ->count(rand(5, 10))
+                ->afterCreating(function ($topic) use ($hasH5P) {
                     $content = $this->getRandomRichContent($hasH5P);
                     if (method_exists($content, 'updatePath')) {
                         $content = $content->updatePath($topic->id)->create();
