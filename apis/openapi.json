@@ -1266,6 +1266,10 @@
                         "description": "author_id",
                         "type": "integer"
                     },
+                    "scorm_id": {
+                        "description": "scorm_id",
+                        "type": "integer"
+                    },
                     "image": {
                         "description": "image",
                         "type": "file"
