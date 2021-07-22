@@ -29,7 +29,8 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'base_price',
         'duration',
         'author_id',
-        'active'
+        'active',
+        'scorm_id',
     ];
 
     /**

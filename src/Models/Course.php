@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
+use Peopleaps\Scorm\Model\ScormModel;
 
 /**
  * @OA\Schema(
@@ -65,6 +66,11 @@ use Illuminate\Support\Facades\Storage;
  *      @OA\Property(
  *          property="author_id",
  *          description="author_id",
+ *          type="integer",
+ *      ),
+ *     @OA\Property(
+ *          property="scorm_id",
+ *          description="scorm_id",
  *          type="integer",
  *      ),
  *      @OA\Property(
@@ -127,6 +133,7 @@ class Course extends Model
         'language',
         'description',
         'level',
+        'scorm_id'
     ];
 
     /**
@@ -148,6 +155,7 @@ class Course extends Model
         'language' =>'string',
         'description' => 'string',
         'level' =>'string',
+        'scorm_id' => 'integer'
     ];
 
     /**
@@ -162,7 +170,7 @@ class Course extends Model
         'video_path' => 'nullable|string|max:255',
         'base_price' => 'nullable|integer|min:0',
         'duration' => 'nullable|string|max:255',
-        'author_id' => 'nullable',
+        'author_id' => 'nullable|exists:users,id',
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
         'active' => 'boolean',
@@ -170,6 +178,8 @@ class Course extends Model
         'language' =>'nullable|string|max:2',
         'description' => 'nullable|string',
         'level' =>'nullable|string|max:100',
+        'scorm_id' => 'nullable|exists:scorm,id',
+
     ];
 
     protected $appends = ['image_url', 'video_url'];
@@ -235,5 +245,10 @@ class Course extends Model
     public function topic(): HasManyThrough
     {
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
+    }
+
+    public function scorm()
+    {
+        return $this->belongsTo(ScormModel::class, 'scorm_id');
     }
 }
