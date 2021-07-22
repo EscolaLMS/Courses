@@ -1,44 +1,45 @@
 {
-  "name": "escolalms/courses",
-  "description": "Escola Headless LMS Courses",
-  "type": "package",
-  "require": {
-    "php": ">=7.4",
-    "laravel/framework": ">=8.0",
-    "escolalms/core": ">=0.1.6",
-    "escolalms/categories": ">=0.1",
-    "escolalms/tags": ">=0.1",
-    "escolalms/auth": "^0.1",
-    "davidbadura/faker-markdown-generator": "^1.1"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.0",
-    "orchestra/testbench": ">=5.0"
-  },
-  "license": "MIT",
-  "authors": [{
-      "name": "Marcin Lenkowski",
-      "email": "marcin.lenkowski@escola.pl"
+    "name": "escolalms/courses",
+    "description": "Escola Headless LMS Courses",
+    "type": "package",
+    "require": {
+        "devianl2/laravel-scorm": "^2.0",
+        "php": ">=7.4",
+        "laravel/framework": ">=8.0",
+        "escolalms/core": ">=0.1.6",
+        "escolalms/categories": ">=0.1",
+        "escolalms/tags": ">=0.1",
+        "escolalms/auth": "^0.1",
+        "davidbadura/faker-markdown-generator": "^1.1"
     },
-    {
-      "name": "Mateusz Wojczal",
-      "email": "mateusz.wojczal@escola.pl"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "EscolaLms\\Courses\\": "src",
-      "EscolaLms\\Courses\\Tests\\": "tests",
-      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories",
-      "EscolaLms\\Courses\\Database\\Seeders\\": "database/seeders"
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": ">=5.0"
+    },
+    "license": "MIT",
+    "authors": [{
+            "name": "Marcin Lenkowski",
+            "email": "marcin.lenkowski@escola.pl"
+        },
+        {
+            "name": "Mateusz Wojczal",
+            "email": "mateusz.wojczal@escola.pl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "EscolaLms\\Courses\\": "src",
+            "EscolaLms\\Courses\\Tests\\": "tests",
+            "EscolaLms\\Courses\\Database\\Factories\\": "database/factories",
+            "EscolaLms\\Courses\\Database\\Seeders\\": "database/seeders"
 
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
+            ]
+        }
     }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
-      ]
-    }
-  }
 }

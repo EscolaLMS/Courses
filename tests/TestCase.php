@@ -46,6 +46,13 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', env('APP_DEBUG', true));
+
+        $app['config']->set('scorm.table_names', [
+            'user_table'   =>  'users',
+            'scorm_table'   =>  'scorm',
+            'scorm_sco_table'   =>  'scorm_sco',
+            'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
+        ]);
     }
 
     public function assertApiResponse(array $actualData)

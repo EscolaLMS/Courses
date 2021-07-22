@@ -29,7 +29,7 @@ class UpdateCoursesTable extends Migration
      */
     public function down()
     {
-        Schema::table('courses', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('active');
             $table->dropColumn('subtitle');
             $table->dropColumn('language');
