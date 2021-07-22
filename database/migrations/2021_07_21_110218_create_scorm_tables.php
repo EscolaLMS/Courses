@@ -6,6 +6,12 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateScormTables extends Migration
 {
+    private $tableNames =  [
+        'user_table'   =>  'users',
+        'scorm_table'   =>  'scorm',
+        'scorm_sco_table'   =>  'scorm_sco',
+        'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
+    ];
     /**
      * Run the migrations.
      *
@@ -13,12 +19,7 @@ class CreateScormTables extends Migration
      */
     public function up()
     {
-        $tableNames =  [
-            'user_table'   =>  'users',
-            'scorm_table'   =>  'scorm',
-            'scorm_sco_table'   =>  'scorm_sco',
-            'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
-        ];
+        $tableNames = $this->tableNames;
 
         // scorm_model
         Schema::create($tableNames['scorm_table'], function (Blueprint $table) {
@@ -96,8 +97,7 @@ class CreateScormTables extends Migration
      */
     public function down()
     {
-        $tableNames = config('scorm.table_names');
-
+        $tableNames = $this->tableNames;
         $tableName = $tableNames['scorm_sco_tracking_table'];
 
         if (empty($tableName)) {
