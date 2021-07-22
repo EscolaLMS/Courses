@@ -13,11 +13,9 @@ class UpdateCourseScormTable extends Migration
      */
     public function up()
     {
-        $tableNames = config('scorm.table_names');
-
-        Schema::table('courses', function (Blueprint $table) use ($tableNames) {
+        Schema::table('courses', function (Blueprint $table) {
             $table->bigInteger('scorm_id')->unsigned()->nullable();
-            $table->foreign('scorm_id')->references('id')->on($tableNames['scorm_table']);
+            $table->foreign('scorm_id')->references('id')->on('scorm');
         });
     }
 
