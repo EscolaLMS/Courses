@@ -80,7 +80,7 @@ class CreateScormTables extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('sco_id')->references('id')->on('scorm_sco_table');
+            $table->foreign('sco_id')->references('id')->on('scorm_sco');
         });
     }
 
