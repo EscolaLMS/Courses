@@ -6,12 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateScormTables extends Migration
 {
-    private $tableNames =  [
-        'user_table'   =>  'users',
-        'scorm_table'   =>  'scorm',
-        'scorm_sco_table'   =>  'scorm_sco',
-        'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
-    ];
+
     /**
      * Run the migrations.
      *
@@ -19,10 +14,9 @@ class CreateScormTables extends Migration
      */
     public function up()
     {
-        $tableNames = $this->tableNames;
 
         // scorm_model
-        Schema::create($tableNames['scorm_table'], function (Blueprint $table) {
+        Schema::create('scorm', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->nullableMorphs('resource');
             $table->string('version')->nullable();
@@ -35,7 +29,7 @@ class CreateScormTables extends Migration
         });
 
         // scorm_sco_model
-        Schema::create($tableNames['scorm_sco_table'], function (Blueprint $table) use ($tableNames) {
+        Schema::create('scorm_sco', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('scorm_id')->unsigned()->nullable();
             $table->string('uuid')->nullable();
@@ -55,11 +49,11 @@ class CreateScormTables extends Migration
             $table->string('prerequisites')->nullable();
             $table->timestamps();
 
-            $table->foreign('scorm_id')->references('id')->on($tableNames['scorm_table']);
+            $table->foreign('scorm_id')->references('id')->on('scorm');
         });
 
         // scorm_sco_tracking_model
-        Schema::create($tableNames['scorm_sco_tracking_table'], function (Blueprint $table) use ($tableNames) {
+        Schema::create('scorm_sco_tracking', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('sco_id')->unsigned();
@@ -85,8 +79,8 @@ class CreateScormTables extends Migration
             $table->dateTime('latest_date')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on($tableNames['user_table']);
-            $table->foreign('sco_id')->references('id')->on($tableNames['scorm_sco_table']);
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('sco_id')->references('id')->on('scorm_sco_table');
         });
     }
 
@@ -97,27 +91,8 @@ class CreateScormTables extends Migration
      */
     public function down()
     {
-        $tableNames = $this->tableNames;
-        $tableName = $tableNames['scorm_sco_tracking_table'];
-
-        if (empty($tableName)) {
-            throw new \Exception('Error: Table not found.');
-        }
-
-        $tableName = $tableNames['scorm_sco_table'];
-
-        if (empty($tableName)) {
-            throw new \Exception('Error: Table not found.');
-        }
-
-        $tableName = $tableNames['scorm_table'];
-
-        if (empty($tableName)) {
-            throw new \Exception('Error: Table not found.');
-        }
-
-        Schema::drop($tableNames['scorm_sco_tracking_table']);
-        Schema::drop($tableNames['scorm_sco_table']);
-        Schema::drop($tableNames['scorm_table']);
+        Schema::drop('scorm_sco_tracking');
+        Schema::drop('scorm_sco');
+        Schema::drop('scorm');
     }
 }
