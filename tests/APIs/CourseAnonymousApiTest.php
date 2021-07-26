@@ -210,8 +210,9 @@ class CourseAnonymousApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price'=>$priceMin]);
-        $course2 = Course::factory()->create(['base_price'=>$priceMax]);
+        $course1 = Course::factory()->create(['base_price'=>$priceMin, 'active'=>true]);
+        $course2 = Course::factory()->create(['base_price'=>$priceMax, 'active'=>true]);
+        $course3 = Course::factory()->create(['base_price'=>$priceMax + 1, 'active'=>false]);
 
         $this->response = $this->json(
             'GET',
@@ -228,5 +229,39 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax);
         $this->response->assertStatus(200);
+    }
+
+
+    public function test_anonymous_only_active()
+    {
+        $priceMin = 0;
+        $priceMax = 9999999;
+        $course1 = Course::factory()->create(['base_price'=>$priceMin, 'active'=>false]);
+        $course2 = Course::factory()->create(['base_price'=>$priceMax, 'active'=>false]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/?order_by=base_price&order=ASC'
+        );         
+        $this->response->assertStatus(200);
+
+        $courses = $this->response->getData()->data->data;
+
+        foreach ($courses as $course) {
+            $this->assertTrue($course->active, true) ;
+        }
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/?order_by=base_price&order=DESC'
+        );        
+
+        $this->response->assertStatus(200);
+        
+        $courses = $this->response->getData()->data->data;
+
+        foreach ($courses as $course) {
+            $this->assertTrue($course->active, true) ;
+        }
     }
 }
