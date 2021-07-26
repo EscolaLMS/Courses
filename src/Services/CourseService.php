@@ -36,41 +36,6 @@ class CourseService implements CourseServiceContract
 
 
 
-    public function attachCategories(Course $course, array $categories)
-    {
-        $categoriesCollection = Category::whereIn('id', $categories)->get();
-        if ($categoriesCollection) {
-            $courseCategoriesIds = $course->categories()->get()->pluck('id')->toArray();
-            foreach ($categoriesCollection as $category) {
-                // If the category is already assigned to the course, skip loop
-                if (in_array($category->getKey(), $courseCategoriesIds)) {
-                    continue;
-                }
-
-                // If the category cannot be assigned to the course, stop action
-                if (!$this->courseRepository->attachCategory($course, $category)) {
-                    abort(422, 'Operation failed');
-                }
-            }
-        }
-    }
-
-    public function attachTags(Course $course, array $tags)
-    {
-        foreach ($tags as $tag) {
-            $courseTagsIds = $course->tags()->get()->pluck('title')->toArray();
-            // If the tag is already assigned to the course, skip loop
-            if (in_array($tag['title'], $courseTagsIds)) {
-                continue;
-            }
-
-            $tagModel = new Tag($tag);
-            // If the tag cannot be assigned to the course, stop action
-            if (!$this->courseRepository->attachTag($course, $tagModel)) {
-                abort(422, 'Operation failed');
-            }
-        }
-    }
 
     public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder
     {

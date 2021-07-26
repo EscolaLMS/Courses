@@ -131,68 +131,104 @@ class CourseAdminApiTest extends TestCase
     {
         $course = Course::factory()->create();
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
+
+
+
         $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/categories',
+            'PUT',
+            '/api/admin/courses/'.$course->getKey(),
             ['categories' => $categoriesIds]
         );
+
         $this->response->assertStatus(200);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/admin/courses/'.$course->id
+        );
+
+        foreach ($this->response->getData()->data->categories as $category) {
+            $this->assertTrue(in_array($category->id,  $categoriesIds));
+        }
+       
     }
+
+    
 
     public function test_attach_tags_course()
     {
         $course = Course::factory()->create();
+
+        $tags = ['Lorem', 'Ipsum', "Bla Bla bla"];
+
         $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/tags',
-            ['tags' => [
-                [
-                    'title' => 'Nowości'
-                ],
-                [
-                    'title' => 'Promocje'
-                ],
-                [
-                    'title' => 'Owoce'
-                ],
-            ]]
+            'PUT',
+            '/api/admin/courses/'.$course->getKey(),
+            ['tags' =>  $tags]
         );
+
         $this->response->assertStatus(200);
+  
+        foreach ($this->response->getData()->data->tags as $tag) {
+            $this->assertTrue(in_array($tag->title,  $tags));
+        }
+  
     }
+
+    
 
     public function test_search_course_by_tag()
     {
         $course = Course::factory()->create();
+
+        $tags = ['LoremLorem Lorem', 'Ipsum', "Bla Bla bla"];
+
         $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/tags',
-            ['tags' => [
-                [
-                    'title' => 'Fruit'
-                ],
-            ]]
+            'PUT',
+            '/api/admin/courses/'.$course->getKey(),
+            ['tags' =>  $tags]
         );
+
         $this->response->assertStatus(200);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/?tag=Fruit',
+            '/api/admin/courses/?tag='.$tags[0],
         );
-        $this->response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $this->response->getData());
-        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
-        foreach ($this->response->getData()->data->data as $data) {
-            if ($data->id === $course->getKey()) {
-                $result[] = $data;
-            }
+
+        $coursesIds = [];
+
+        foreach ( $this->response->getData()->data->data as $course) {
+            $coursesIds[] = $course->id;
         }
-        $this->assertTrue(!empty($result));
+
+        $this->assertTrue(in_array($course->id,  $coursesIds));
+
+  
     }
+
+    
 
     /**
      * @test
      */
     public function test_read_course_program()
+    {
+        $course = Course::factory()->create();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/'.$course->id.'/program'
+        );
+
+        $this->response->assertStatus(200);
+    }
+
+
+       /**
+     * @test
+     */
+    public function test_read_course_program_scorm()
     {
         $course = Course::factory()->create();
 

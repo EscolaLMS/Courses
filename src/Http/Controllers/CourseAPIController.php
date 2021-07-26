@@ -5,8 +5,6 @@ namespace EscolaLms\Courses\Http\Controllers;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
-use EscolaLms\Courses\Http\Requests\AttachCategoriesCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\AttachTagsCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
@@ -167,39 +165,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendSuccess('Course deleted successfully');
     }
 
-    public function attachCategory(int $id, AttachCategoriesCourseAPIRequest $attachCategoriesCourseAPIRequest)
-    {
-        /** @var Course $course */
-        $course = $this->courseRepository->find($id);
-        try {
-            $this->courseServiceContract->attachCategories($course, $attachCategoriesCourseAPIRequest->input('categories'));
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
-
-        return $this->sendResponse([], 'Course updated successfully');
-    }
-
-    public function attachTags(int $id, AttachTagsCourseAPIRequest $attachTagsCourseAPIRequest)
-    {
-        /** @var Course $course */
-        $course = $this->courseRepository->find($id);
-
-        try {
-            $this->courseServiceContract->attachTags($course, $attachTagsCourseAPIRequest->input('tags'));
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
-        return $this->sendResponse([], 'Course updated successfully');
-    }
+    
 
     public function sort(SortAPIRequest $request)
     {

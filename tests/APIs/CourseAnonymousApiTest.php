@@ -116,54 +116,7 @@ class CourseAnonymousApiTest extends TestCase
         }
     }
 
-    public function test_anonymous_attach_categories_course()
-    {
-        $course = Course::factory()->create();
-        $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
-        $this->response = $this->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/categories',
-            ['categories' => $categoriesIds]
-        );
-
-        $this->response->assertStatus(401);
-    }
-
-    public function test_anonymous_attach_tags_course()
-    {
-        $course = Course::factory()->create();
-        $this->response = $this->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/tags',
-            ['tags' => [
-                [
-                    'title' => 'Nowości'
-                ],
-                [
-                    'title' => 'Promocje'
-                ],
-                [
-                    'title' => 'Owoce'
-                ],
-            ]]
-        );
-        $this->response->assertStatus(401);
-    }
-
-    public function test_anonymous_attach_course_by_tag()
-    {
-        $course = Course::factory()->create();
-        $this->response = $this->json(
-            'POST',
-            '/api/admin/courses/attach/'.$course->getKey().'/tags',
-            ['tags' => [
-                [
-                    'title' => 'Fruit'
-                ],
-            ]]
-        );
-        $this->response->assertStatus(401);
-    }
+   
 
     /**
      * @test
