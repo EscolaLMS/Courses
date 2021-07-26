@@ -116,15 +116,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return isset($search['tag']) ? $query->with('tags') : $query;
     }
 
-    public function attachCategory(Course $course, Category $category) : bool
-    {
-        return $course->categories()->save($category)->getKey();
-    }
-
-    public function attachTag(Course $course, Tag $tag) : bool
-    {
-        return $course->tags()->save($tag)->getKey();
-    }
+ 
 
     /**
      * Find model record for given id with relations

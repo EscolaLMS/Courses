@@ -12,7 +12,5 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface CourseServiceContract
 {
 
-    public function attachCategories(Course $course, array $categories);
 
-    public function attachTags(Course $course, array $tags);
 }

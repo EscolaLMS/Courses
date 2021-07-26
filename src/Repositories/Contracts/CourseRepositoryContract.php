@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface CourseRepositoryContract
 {
-    public function attachCategory(Course $course, Category $category) : bool;
-
-    public function attachTag(Course $course, Tag $tag) : bool;
 
     public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder;
 

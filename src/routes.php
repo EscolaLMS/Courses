@@ -19,10 +19,6 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
-    Route::group(['prefix' => '/courses/attach/{id}/'], function () {
-        Route::post('categories', [CourseAPIController::class, 'attachCategory']);
-        Route::post('tags', [CourseAPIController::class, 'attachTags']);
-    });
 });
 
 // user endpoints
