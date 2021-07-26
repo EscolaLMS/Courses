@@ -11,9 +11,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CourseServiceContract
 {
-    public function searchInCategory(CourseSearchDto $courseSearchDto, Category $category): LengthAwarePaginator;
-
-    public function getCoursesListByCriteria(array $criteria, ?PaginationDto $pagination = null): LengthAwarePaginator;
 
     public function attachCategories(Course $course, array $categories);
 

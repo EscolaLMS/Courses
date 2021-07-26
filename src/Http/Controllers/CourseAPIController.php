@@ -23,6 +23,8 @@ use Response;
 use EscolaLms\Courses\Exceptions\TopicException;
 use Error;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Support\Facades\Auth;
+
 
 /**
  * Class CourseController
@@ -48,6 +50,16 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function index(Request $request)
     {
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
+        $user = Auth::user();
+
+        if (isset($user) && $user->hasRole(['admin', 'tutor'])) {
+            if (isset($search['active'])) {
+                $search['active'] = $search['active'];
+            }
+           
+        } else {
+            $search['active'] = true;
+        }
 
         $orderDto = OrderDto::instantiateFromRequest($request);
 
