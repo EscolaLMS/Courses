@@ -75,7 +75,7 @@ class Video extends AbstractContent
     }
 
     // TODO: this idea is crazy
-    public static function createResourseFromRequest($input, $topicId):array
+    public static function createResourceFromRequest($input, $topicId):array
     {
         if (is_string($input['value'])) {
             unset($input['value']);

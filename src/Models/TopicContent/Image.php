@@ -73,7 +73,7 @@ class Image extends AbstractContent
     }
 
     // TODO: this idea is crazy
-    public static function createResourseFromRequest($input, $topicId):array
+    public static function createResourceFromRequest($input, $topicId):array
     {
         $tmpFile = $input['value']->getPathName();
         $sizes = getimagesize($tmpFile);

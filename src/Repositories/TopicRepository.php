@@ -130,9 +130,9 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $model = $this->model->newInstance($input);
         $model->save();
 
-        // check if `createResourseFromRequest` exisits on `Model` if so then convert input
-        if (method_exists($classType, 'createResourseFromRequest')) {
-            $content['input'] = $classType::createResourseFromRequest($content['input'], $model->id);
+        // check if `createResourceFromRequest` exisits on `Model` if so then convert input
+        if (method_exists($classType, 'createResourceFromRequest')) {
+            $content['input'] = $classType::createResourceFromRequest($content['input'], $model->id);
         }
 
         // create related 1:1 content and associate with topic
@@ -162,8 +162,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             $classType = $input['topicable_type'];
             $content = $this->getContentModel($classType, $input);
 
-            if (method_exists($classType, 'createResourseFromRequest')) {
-                $content['input'] = $classType::createResourseFromRequest($content['input'], $id);
+            if (method_exists($classType, 'createResourceFromRequest')) {
+                $content['input'] = $classType::createResourceFromRequest($content['input'], $id);
             }
 
             $content['model']->fill($content['input']);
@@ -174,8 +174,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         } elseif (isset($input['topicable_type']) && $model->topicable_type == $input['topicable_type']) {
             $classType = $input['topicable_type'];
 
-            if (method_exists($classType, 'createResourseFromRequest')) {
-                $input = $classType::createResourseFromRequest($input, $id);
+            if (method_exists($classType, 'createResourceFromRequest')) {
+                $input = $classType::createResourceFromRequest($input, $id);
             }
 
             $model->topicable->fill($input);
