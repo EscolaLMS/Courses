@@ -30,31 +30,11 @@ class CourseService implements CourseServiceContract
         $this->courseRepository = $courseRepository;
     }
 
-    public function searchInCategory(CourseSearchDto $courseSearchDto, Category $category): LengthAwarePaginator
-    {
-        $criteria = [
-            new CourseSearch($courseSearchDto->getQuery()),
-            new CourseInCategory($category),
-        ];
-
-        return $this->getCoursesListByCriteria($criteria);
-    }
 
 
 
-    public function getCoursesListByCriteria(array $criteria, ?PaginationDto $pagination = null): LengthAwarePaginator
-    {
-        if (is_null($pagination)) {
-            $page = config('app.paginate_count');
-        } else {
-            $page = $pagination->getPage();
-        }
-        $query = $this->courseRepository->queryAll()->orderBy('id', 'desc');
-        $courses = $this->courseRepository
-            ->applyCriteria($query, $criteria)
-            ->paginate();
-        return $courses;
-    }
+
+
 
     public function attachCategories(Course $course, array $categories)
     {
