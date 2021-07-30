@@ -56,6 +56,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
         foreach ($existingProgresses as $record) {
             $progress->push([
+                'topic_id' => $record->getKey(),
                 'status' => $record->status
             ]);
             $this->totalSpentTime += $record->seconds;
