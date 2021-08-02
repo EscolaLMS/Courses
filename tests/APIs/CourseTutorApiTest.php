@@ -32,7 +32,7 @@ class CourseTutorApiTest extends TestCase
         $course = Course::factory()->make([
         ])->toArray();
 
-    
+
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/admin/courses',
@@ -47,9 +47,33 @@ class CourseTutorApiTest extends TestCase
 
         $course['author_id'] = $this->user->id;
         $this->assertApiResponse($course);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/tutors'
+        );
+
+        $this->response->assertStatus(200);
+
+        $userId = $this->user->id;
+        $collection  = collect($this->response->getData()->data);
+        $contains = $collection->contains(function ($value, $key) use ($userId) {
+            return $value->id === $userId;
+        });
+
+        $this->assertTrue($contains);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/tutors/'.$userId
+        );
+
+        $this->response->assertStatus(200);
+
+        $this->assertTrue($this->response->getData()->data->id === $userId);
     }
 
-    
+
     /**
      * @test
      */
@@ -99,7 +123,7 @@ class CourseTutorApiTest extends TestCase
             'DELETE',
             '/api/admin/courses/'.$course->id
         );
-        
+
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -135,7 +159,7 @@ class CourseTutorApiTest extends TestCase
         }
     }
 
-    
+
 
     /**
      * @test
@@ -145,7 +169,7 @@ class CourseTutorApiTest extends TestCase
         $course = Course::factory()->create([
             'author_id' => $this->user->id
         ]);
-        
+
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/'.$course->id.'/program'

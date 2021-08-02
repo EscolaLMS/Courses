@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Database\Factories;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use EscolaLms\Auth\Models\User;
+use Spatie\Permission\Models\Role;
 
 class CourseFactory extends Factory
 {
@@ -31,18 +32,18 @@ class CourseFactory extends Factory
             'video_path' => "1.mp4",
             'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10)." hours",
-            'author_id' => User::factory(),
-            
+            'author_id' =>  User::role('tutor')->inRandomOrder()->first()->id,
+
             'active' => $this->faker->boolean,
             'subtitle' => $this->faker->sentence,
             'language' => $this->faker->randomElement(['en', 'pl']),
             'description' => $this->faker->markdown,
             'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
-           
+
         ];
     }
 
-    
+
     public function configure()
     {
         return $this->afterMaking(function (Course $course) {
@@ -64,7 +65,8 @@ class CourseFactory extends Factory
 
             $course->update([
                 'image_path' =>  $filename_image,
-                'video_path' => $filename_video
+                'video_path' => $filename_video,
+                'author_id' =>  User::role('tutor')->inRandomOrder()->first()->id,
             ]);
         });
     }

@@ -4,6 +4,7 @@ use EscolaLms\Courses\Http\Controllers\CourseAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
+use EscolaLms\Courses\Http\Controllers\CourseAuthorsAPIController;
 
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
@@ -38,4 +39,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index']);
     Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
+    Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);
+    Route::get('/tutors/{id}', [CourseAuthorsAPIController::class, 'show']);
 });
