@@ -25,13 +25,9 @@ class CourseFactory extends Factory
     {
         $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
-        // create a simple tutor if not existing at this stage
-        $tutors = User::role('tutor')->get();
-        if (empty($tutors)) {
-            $tutor = User::factory()->create();
-            $tutor->guard_name = 'api';
-            $tutor->assignRole('tutor');
-        }
+      
+        $author_id = null;
+        $tutor =  User::role('tutor')->inRandomOrder()->first();
         
 
         return [
@@ -41,7 +37,7 @@ class CourseFactory extends Factory
             'video_path' => "1.mp4",
             'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10)." hours",
-            'author_id' =>  User::role('tutor')->inRandomOrder()->first()->id,
+            'author_id' =>  empty($tutor) ? null : $tutor->id,
 
             'active' => $this->faker->boolean,
             'subtitle' => $this->faker->sentence,
@@ -72,10 +68,12 @@ class CourseFactory extends Factory
             copy(realpath(__DIR__."/../mocks/1.jpg"), $dest_image);
             copy(realpath(__DIR__."/../mocks/1.mp4"), $dest_video);
 
+            $tutor =  User::role('tutor')->inRandomOrder()->first();
+
             $course->update([
                 'image_path' =>  $filename_image,
                 'video_path' => $filename_video,
-                'author_id' =>  User::role('tutor')->inRandomOrder()->first()->id,
+                'author_id' =>  empty($tutor) ? null : $tutor->id,
             ]);
         });
     }
