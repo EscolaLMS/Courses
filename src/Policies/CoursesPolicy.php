@@ -28,6 +28,8 @@ class CoursesPolicy
             return Response::deny('You do not own this course.');
         };
 
+       
+
         return false;
     }
 

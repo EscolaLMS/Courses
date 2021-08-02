@@ -68,12 +68,11 @@ class CourseFactory extends Factory
             copy(realpath(__DIR__."/../mocks/1.jpg"), $dest_image);
             copy(realpath(__DIR__."/../mocks/1.mp4"), $dest_video);
 
-            $tutor =  User::role('tutor')->inRandomOrder()->first();
+
 
             $course->update([
                 'image_path' =>  $filename_image,
                 'video_path' => $filename_video,
-                'author_id' =>  empty($tutor) ? null : $tutor->id,
             ]);
         });
     }

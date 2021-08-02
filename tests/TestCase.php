@@ -46,6 +46,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', env('APP_DEBUG', true));
+        $app['config']->set('escolalms.tags.ignore_migrations', false);
 
         $app['config']->set('scorm.table_names', [
             'user_table'   =>  'users',
