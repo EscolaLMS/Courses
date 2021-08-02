@@ -8,6 +8,9 @@ use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Model;
 
 /**
  * Class CourseRepository
@@ -116,7 +119,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return isset($search['tag']) ? $query->with('tags') : $query;
     }
 
- 
+
 
     /**
      * Find model record for given id with relations
@@ -229,5 +232,30 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $course->lessons()->delete();
         $course->delete();
         return true;
+    }
+
+    public function findTutors():Collection
+    {
+        return DB::table('users')
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('courses')
+                    ->whereColumn('courses.author_id', 'users.id');
+            })
+            ->select(['id','first_name','last_name','email','path_avatar','bio'])
+            ->get();
+    }
+
+    public function findTutor($id)
+    {
+        return DB::table('users')
+            ->where('id', $id)
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('courses')
+                    ->whereColumn('courses.author_id', 'users.id');
+            })
+            ->select(['id','first_name','last_name','email','path_avatar','bio'])
+            ->first();
     }
 }

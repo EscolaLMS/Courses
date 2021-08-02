@@ -6,10 +6,10 @@
         "devianl2/laravel-scorm": "^2.0",
         "php": ">=7.4",
         "laravel/framework": ">=8.0",
-        "escolalms/core": ">=0.1.6",
-        "escolalms/categories": ">=0.1",
-        "escolalms/tags": ">=0.1",
-        "escolalms/auth": "^0.1",
+        "escolalms/core": "^1",
+        "escolalms/categories": "^0",
+        "escolalms/tags": "^0",
+        "escolalms/auth": "^0",
         "davidbadura/faker-markdown-generator": "^1.1"
     },
     "require-dev": {

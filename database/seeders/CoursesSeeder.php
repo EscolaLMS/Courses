@@ -7,18 +7,18 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
-
 use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\TopicContent\Audio;
 use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Models\TopicContent\Image;
 use EscolaLms\Courses\Models\TopicContent\H5P;
 use EscolaLms\Courses\Models\TopicContent\OEmbed;
-
-
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
+use Spatie\Permission\Models\Role;
+use DavidBadura\FakerMarkdownGenerator\FakerProvider;
+use EscolaLms\Auth\Models\User;
 
 class CoursesSeeder extends Seeder
 {
@@ -38,8 +38,25 @@ class CoursesSeeder extends Seeder
     public function run()
     {
         $this->faker = $this->makeFaker();
+        $this->faker->addProvider(new FakerProvider($this->faker));
+
+        $randomTags = [$this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name];
 
         $hasH5P = H5PContent::first() !== null;
+
+        $path = storage_path("app/public/tutor_avatar.jpg");
+
+        copy(__DIR__.'/avatar.jpg', $path);
+
+        $tutors = User::role('tutor')->get();
+
+
+        foreach ($tutors as $tutor) {
+            $tutor->update([
+                'path_avatar' => "tutor_avatar.jpg",
+                'bio' => $this->faker->markdown(),
+            ]);
+        }
 
         $courses = Course::factory()
         ->count(rand(5, 10))
@@ -62,28 +79,27 @@ class CoursesSeeder extends Seeder
             ->create();
 
         foreach ($courses as $course) {
-            $this->seedTags($course);
+            $this->seedTags($course, $randomTags);
             $this->seedCategories($course);
         }
     }
 
-    private function seedTags($model)
+    private function seedTags($model, $randomTags)
     {
         for ($i = 0; $i < 3; $i++) {
             Tag::create([
                 'morphable_id' => $model->getKey(),
                 'morphable_type' => get_class($model),
-                'title' => $this->faker->name
+                'title' => $this->faker->randomElement($randomTags)
             ]);
         }
     }
 
     private function seedCategories(Course $course)
     {
-        $categories = Category::factory(3)->create();
+        $categories = Category::inRandomOrder()->limit(3)->get();
         foreach ($categories as $category) {
             $course->categories()->save($category);
-            $this->seedTags($category);
         }
     }
 }
