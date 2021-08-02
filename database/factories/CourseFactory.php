@@ -25,6 +25,15 @@ class CourseFactory extends Factory
     {
         $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
+        // create a simple tutor if not existing at this stage
+        $tutors = User::role('tutor')->get();
+        if (empty($tutors)) {
+            $tutor = User::factory()->create();
+            $tutor->guard_name = 'api';
+            $tutor->assignRole('tutor');
+        }
+        
+
         return [
             'title' => $this->faker->sentence,
             'summary' => $this->faker->markdown,
