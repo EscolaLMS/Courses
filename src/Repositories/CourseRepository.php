@@ -234,28 +234,27 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return true;
     }
 
-    public function findTutors():Collection
+    private function tutors()
     {
         return DB::table('users')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('courses')
-                    ->whereColumn('courses.author_id', 'users.id');
-            })
-            ->select(['id','first_name','last_name','email','path_avatar','bio'])
+        ->whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('courses')
+                ->where('active', 1)
+                ->whereColumn('courses.author_id', 'users.id');
+        })
+        ->select(['id','first_name','last_name','email','path_avatar','bio']);
+    }
+
+    public function findTutors():Collection
+    {
+        $this->tutors
             ->get();
     }
 
     public function findTutor($id)
     {
-        return DB::table('users')
-            ->where('id', $id)
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('courses')
-                    ->whereColumn('courses.author_id', 'users.id');
-            })
-            ->select(['id','first_name','last_name','email','path_avatar','bio'])
+        $this->tutors
             ->first();
     }
 }
