@@ -248,13 +248,13 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function findTutors():Collection
     {
-        $this->tutors
+        $this->tutors()
             ->get();
     }
 
     public function findTutor($id)
     {
-        $this->tutors
+        $this->tutors()
             ->first();
     }
 }
