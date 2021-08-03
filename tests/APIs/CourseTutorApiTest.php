@@ -30,8 +30,8 @@ class CourseTutorApiTest extends TestCase
     public function test_create_course()
     {
         $course = Course::factory()->make([
+            'active'=>true
         ])->toArray();
-
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
