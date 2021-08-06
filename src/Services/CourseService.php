@@ -29,9 +29,11 @@ class CourseService implements CourseServiceContract
     private CourseRepositoryContract $courseRepository;
 
     public function __construct(
-        CourseRepositoryContract $courseRepository
+        CourseRepositoryContract $courseRepository,
+        ScormServiceContract $scormService
     ) {
         $this->courseRepository = $courseRepository;
+        $this->scormService = $scormService;
     }
 
     public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder
@@ -104,9 +106,9 @@ class CourseService implements CourseServiceContract
             throw new Error("This course does not have SCORM entry_url");
         }
 
-        $scormService = App::make(ScormServiceContract::class);
+        //$scormService = App::make(ScormServiceContract::class);
 
-        $data = $scormService->getScoByUuid($uuid);
+        $data = $this->scormService->getScoByUuid($uuid);
         $data['entry_url_absolute'] = Storage::url('scorm/' . $data->scorm->version . '/' . $data->scorm->uuid . '/' . $data->entry_url);
 
         $data['player'] = (object) [

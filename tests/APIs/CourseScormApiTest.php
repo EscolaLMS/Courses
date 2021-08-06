@@ -13,7 +13,7 @@ use Laravel\Passport\Passport;
 use EscolaLms\Scorm\Database\Seeders;
 use Peopleaps\Scorm\Model\ScormModel;
 
-class CourseTutorApiTest extends TestCase
+class CourseScormApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ DatabaseTransactions;
 
@@ -36,11 +36,14 @@ class CourseTutorApiTest extends TestCase
         
 
         $this->response = $this->get(
-            'GET',
-            '/api/admin/courses/'.$course->id.'/scorm'
+            '/api/courses/'.$course->id.'/scorm'
         );
 
         $this->response->assertStatus(200);
+
+        $this->assertStringContainsString('<iframe', $this->response->getContent());
+
+
 
 
     }
