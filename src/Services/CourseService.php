@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Services;
 
+use Error;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Categories\Repositories\Criteria\CourseInCategory;
 use EscolaLms\Core\Dtos\PaginationDto;
@@ -19,6 +20,9 @@ use EscolaLms\Tags\Models\Tag;
 use Illuminate\Support\Collection;
 use EscolaLms\Courses\Repositories\Criteria\CourseSearch;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\App;
+use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
 
 class CourseService implements CourseServiceContract
 {
@@ -29,13 +33,6 @@ class CourseService implements CourseServiceContract
     ) {
         $this->courseRepository = $courseRepository;
     }
-
-
-
-
-
-
-
 
     public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder
     {
@@ -52,16 +49,16 @@ class CourseService implements CourseServiceContract
                 $paginationDto->getSkip(),
                 $paginationDto->getLimit(),
                 $criteria
-            )->with(['categories','tags', 'author'])
+            )->with(['categories', 'tags', 'author'])
             ->withCount(['lessons', 'users', 'topic']);
 
         return $query;
     }
 
     /**
-    * @param OrderDto $orderDto
-    * @return array
-    */
+     * @param OrderDto $orderDto
+     * @return array
+     */
     private function prepareCriteria(OrderDto $orderDto): array
     {
         $criteria = [];
@@ -84,5 +81,41 @@ class CourseService implements CourseServiceContract
                 Topic::findOrFail($order[0])->update(['order' => $order[1]]);
             }
         }
+    }
+
+    public function getScormPlayer($courseId)
+    {
+
+        $course = Course::with(['scorm.scos'])->findOrFail($courseId);
+
+        if (empty($course->scorm_id)) {
+            throw new Error("This course does not have SCORM package!");
+        }
+
+        $uuid = false;
+        foreach ($course->scorm->scos as $sco) {
+            if (!empty($sco->entry_url)) {
+                $uuid = $sco->uuid;
+                break;
+            }
+        }
+
+        if (!$uuid) {
+            throw new Error("This course does not have SCORM entry_url");
+        }
+
+        $scormService = App::make(ScormServiceContract::class);
+
+        $data = $scormService->getScoByUuid($uuid);
+        $data['entry_url_absolute'] = Storage::url('scorm/' . $data->scorm->version . '/' . $data->scorm->uuid . '/' . $data->entry_url);
+
+        $data['player'] = (object) [
+            'lmsCommitUrl' => '/api/lms',
+            'logLevel' => 1,
+            'autoProgress' => true,
+            'cmi' => [] // cmi is user progress
+        ];
+
+        return view('scorm::player', ['data' => $data]);
     }
 }

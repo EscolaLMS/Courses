@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
 // public routes
 Route::group(['prefix' => 'api'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
+    Route::get('courses/{course}/scorm', [CourseAPIController::class, 'scorm']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index']);
     Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
     Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);

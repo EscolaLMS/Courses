@@ -450,6 +450,51 @@ interface CourseAPISwagger
     * )
     */
 
+    public function scorm($id, GetCourseCurriculumAPIRequest $request);
+
+    /**
+    * @OA\Get(
+    *      path="/api/courses/{id}/scorm",
+    *      summary="Display the specified Course scorm View to be embeede with iframe",
+    *      tags={"Course"},
+    *      description="Get Course",
+    *      security={
+    *         {"passport": {}},
+    *      },
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="id of Course",
+    *          @OA\Schema(
+    *             type="integer",
+    *         ),
+    *          required=true,
+    *          in="path"
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="text/html"
+    *          ),
+    *          @OA\Schema(
+    *              type="object",
+    *              @OA\Property(
+    *                  property="success",
+    *                  type="boolean"
+    *              ),
+    *              @OA\Property(
+    *                  property="data",
+    *                  ref="#/components/schemas/Course"
+    *              ),
+    *              @OA\Property(
+    *                  property="message",
+    *                  type="string"
+    *              )
+    *          )
+    *      )
+    * )
+    */
+
     public function program($id, GetCourseCurriculumAPIRequest $request);
 
     /**
