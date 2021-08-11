@@ -22,6 +22,7 @@ use EscolaLms\Courses\Models\TopicContent\H5P;
 use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\AuthServiceProvider;
+use EscolaLms\Auth\Http\Resources\UserResource;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        
     }
 
     public function register()
@@ -49,5 +51,9 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         TopicRepository::registerContentClass(RichText::class);
         TopicRepository::registerContentClass(H5P::class);
         TopicRepository::registerContentClass(OEmbed::class);
+
+        UserResource::extend(fn($thisObj) => [
+            'bio'=>$thisObj->bio
+        ]);
     }
 }
