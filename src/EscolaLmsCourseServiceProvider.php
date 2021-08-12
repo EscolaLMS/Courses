@@ -23,6 +23,8 @@ use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\AuthServiceProvider;
 use EscolaLms\Auth\Http\Resources\UserResource;
+use EscolaLms\Auth\Dtos\UserUpdateDto;
+use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
 {
@@ -39,7 +41,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        
     }
 
     public function register()
@@ -52,8 +53,20 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         TopicRepository::registerContentClass(H5P::class);
         TopicRepository::registerContentClass(OEmbed::class);
 
-        UserResource::extend(fn($thisObj) => [
-            'bio'=>$thisObj->bio
+        UserResource::extend(fn ($thisObj) => [
+            'bio' => $thisObj->bio
+        ]);
+
+        UserUpdateDto::extendConstructor([
+            'bio' => fn ($request) => $request->input('bio'),
+        ]);
+
+        UserUpdateDto::extendToArray([
+            'bio' => fn ($thisObj) => $thisObj->bio,
+        ]);
+
+        ProfileUpdateRequest::extendRules([
+            'bio' => ['string']
         ]);
     }
 }
