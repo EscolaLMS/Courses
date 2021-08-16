@@ -125,7 +125,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'order' => $input['order'] ?? 0,
             'active' => true,
             'preview' => false,
-            'summary' => $input['summary'],
+            'summary' => isset($input['summary']) ? $input['summary'] : null,
         ];
 
         $model = $this->model->newInstance($input);
