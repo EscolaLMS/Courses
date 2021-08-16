@@ -5,9 +5,6 @@ namespace EscolaLms\Courses\Database\Factories;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\Lesson;
-        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
-
-
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TopicFactory extends Factory
