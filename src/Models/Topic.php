@@ -52,6 +52,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="summary",
+ *          description="summary",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="order",
  *          description="order",
  *          type="integer",
@@ -75,7 +80,8 @@ class Topic extends Model
         'topicable_type',
         'order',
         'active',
-        'preview'
+        'preview',
+        'summary'
     ];
 
     /**
@@ -92,6 +98,7 @@ class Topic extends Model
         'order' => 'integer',
         'active' => 'boolean',
         'preview'=> 'boolean',
+        'summary' => 'string'
     ];
 
     /**
@@ -108,6 +115,7 @@ class Topic extends Model
         'value' => 'required',
         'active' => 'boolean',
         'preview'=> 'boolean',
+        'summary'=> 'string'
     ];
 
     /**
