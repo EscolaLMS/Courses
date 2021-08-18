@@ -2,10 +2,11 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
-class GetTopicAPIRequest extends FormRequest
+class GetCourseAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,12 +16,11 @@ class GetTopicAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $topic = $this->getTopic();
-        if (is_null($topic)) {
+        $course = $this->getCourse();
+        if (is_null($course)) {
             return true; // controller will fire 404 error
         }
-        $course = $topic->lesson->course;
-        return isset($user) ? $user->can('attend', $course) : false;
+        return Gate::check('view', $course);
     }
 
     /**
@@ -33,13 +33,13 @@ class GetTopicAPIRequest extends FormRequest
         return [];
     }
 
-    public function getTopic(): ?Topic
+    public function getCourse(): ?Course
     {
-        return Topic::find($this->route('topic'));
+        return Course::find($this->route('course'));
     }
 
     public function userIsUnprivileged(): bool
     {
-        return empty($this->user()) || $this->user()->cannot('update', $this->getTopic()->lesson->course);
+        return empty($this->user()) || $this->user()->cannot('update', $this->getCourse());
     }
 }

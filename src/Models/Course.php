@@ -2,15 +2,19 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Eloquent as Model;
-use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
-use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
+use EscolaLms\Courses\Database\Factories\CourseFactory;
+use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
+use EscolaLms\Tags\Models\Tag;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Model\ScormModel;
 
@@ -109,6 +113,10 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          type="string",
  *      ),
  * )
+ * 
+ * @property bool $active
+ * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
  */
 
 class Course extends Model
@@ -116,9 +124,6 @@ class Course extends Model
     use HasFactory;
 
     public $table = 'courses';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
 
     public $fillable = [
         'title',
@@ -152,9 +157,9 @@ class Course extends Model
         'author_id' => 'integer',
         'active' => 'boolean',
         'subtitle' => 'string',
-        'language' =>'string',
+        'language' => 'string',
         'description' => 'string',
-        'level' =>'string',
+        'level' => 'string',
         'scorm_id' => 'integer'
     ];
 
@@ -175,59 +180,52 @@ class Course extends Model
         'video' => 'file|mimes:mp4,ogg,webm',
         'active' => 'boolean',
         'subtitle' => 'nullable|string|max:255',
-        'language' =>'nullable|string|max:2',
+        'language' => 'nullable|string|max:2',
         'description' => 'nullable|string',
-        'level' =>'nullable|string|max:100',
+        'level' => 'nullable|string|max:100',
         'scorm_id' => 'nullable|exists:scorm,id',
 
     ];
 
     protected $appends = ['image_url', 'video_url'];
 
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
-    public function author()
+    public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function lessons()
+    public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class, 'course_id');
     }
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
 
-    public function tags()
+    public function tags(): MorphMany
     {
         return $this->morphMany(Tag::class, 'morphable');
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): CourseFactory
     {
         return \EscolaLms\Courses\Database\Factories\CourseFactory::new();
     }
 
-    public function getImageUrlAttribute()
+    public function getImageUrlAttribute(): ?string
     {
         if (isset($this->attributes['image_path'])) {
-            return  url(Storage::url($this->attributes['image_path']));
+            return url(Storage::url($this->attributes['image_path']));
         }
         return null;
     }
 
-    public function getVideoUrlAttribute()
+    public function getVideoUrlAttribute(): ?string
     {
         if (isset($this->attributes['video_path'])) {
-            return  url(Storage::url($this->attributes['video_path']));
+            return url(Storage::url($this->attributes['video_path']));
         }
         return null;
     }
@@ -247,8 +245,13 @@ class Course extends Model
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
     }
 
-    public function scorm()
+    public function scorm(): BelongsTo
     {
         return $this->belongsTo(ScormModel::class, 'scorm_id');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('courses.active', '=', true);
     }
 }

@@ -3,8 +3,9 @@
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
 use Illuminate\Http\Request;
 
 interface LessonAPISwagger
@@ -133,7 +134,7 @@ interface LessonAPISwagger
      * )
      */
 
-    public function show($id);
+    public function show($id, GetLessonAPIRequest $request);
 
     /**
      * @OA\Put(

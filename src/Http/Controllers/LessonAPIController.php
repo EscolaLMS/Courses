@@ -2,16 +2,16 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use Error;
+use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\LessonRepository;
 use Illuminate\Http\Request;
-use Response;
-use EscolaLms\Courses\Exceptions\TopicException;
-use Error;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -57,14 +57,15 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         return $this->sendResponse($lesson->toArray(), 'Lesson saved successfully');
     }
 
-    public function show($id)
+    public function show($id, GetLessonAPIRequest $request)
     {
-
-        /** @var Lesson $lesson */
-        $lesson = $this->lessonRepository->find($id);
+        $lesson = $request->getLesson();
 
         if (empty($lesson)) {
             return $this->sendError('Lesson not found');
+        }
+        if (!$lesson->active && $request->userIsUnprivileged()) {
+            return $this->sendError(__('Lesson not active'), 403);
         }
 
         return $this->sendResponse($lesson->toArray(), 'Lesson retrieved successfully');

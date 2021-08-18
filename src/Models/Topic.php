@@ -2,10 +2,14 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Eloquent as Model;
-
+use EscolaLms\Courses\Database\Factories\TopicFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @OA\Schema(
@@ -62,16 +66,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *          type="integer",
  *      )
  * )
+ * 
+ * @property bool $active
+ * @property-read null|\EscolaLms\Courses\Models\Lesson $lesson
  */
-
 class Topic extends Model
 {
     use HasFactory;
 
     public $table = 'topics';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
 
     public $fillable = [
         'title',
@@ -97,7 +100,7 @@ class Topic extends Model
         'topicable_type' => 'string',
         'order' => 'integer',
         'active' => 'boolean',
-        'preview'=> 'boolean',
+        'preview' => 'boolean',
         'summary' => 'string'
     ];
 
@@ -114,32 +117,26 @@ class Topic extends Model
         'order' => 'integer',
         'value' => 'required',
         'active' => 'boolean',
-        'preview'=> 'boolean',
-        'summary'=> 'string'
+        'preview' => 'boolean',
+        'summary' => 'string'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
-    public function lesson()
+    public function lesson(): BelongsTo
     {
         return $this->belongsTo(\EscolaLms\Courses\Models\Lesson::class, 'lesson_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function topicRichtexts()
+    public function topicRichtexts(): HasMany
     {
         return $this->hasMany(\EscolaLms\Courses\Models\TopicRichtext::class, 'topic_id');
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): TopicFactory
     {
         return \EscolaLms\Courses\Database\Factories\TopicFactory::new();
     }
 
-    public function topicable()
+    public function topicable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -147,5 +144,10 @@ class Topic extends Model
     public function progress(): HasOne
     {
         return $this->hasOne(CourseProgress::class, 'topic_id');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('topics.active', '=', true);
     }
 }

@@ -6,6 +6,7 @@ namespace EscolaLms\Courses\Http\Controllers\Swagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 
@@ -121,114 +122,114 @@ interface CourseAPISwagger
      */
 
     /**
-    * @OA\Get(
-    *      path="/api/admin/courses",
-    *      summary="Get a listing of the Courses.",
-    *      tags={"Course"},
-    *      description="Get all Courses",
-    *      security={
-    *         {"passport": {}},
-    *      },
-    *      @OA\Parameter(
-    *          name="order_by",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="string",
-    *              enum={"created_at","title","base_price","duration"}
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="order",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="string",
-    *              enum={"ASC", "DESC"}
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="page",
-    *          description="Pagination Page Number",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="number",
-    *               default=1,
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="per_page",
-    *          description="Pagination Per Page",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="number",
-    *               default=15,
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="title",
-    *          description="Course title %LIKE%",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="string",
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="category_id",
-    *          description="Category ID. When applied all courses with given cat_id and children categories are searched",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="number",
-    *          ),
-    *      ),
-    *     @OA\Parameter(
-    *          name="author_id",
-    *          description="Author ID",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="number",
-    *          ),
-    *      ),
-    *      @OA\Parameter(
-    *          name="tag",
-    *          description="Tag name exactly",
-    *          required=false,
-    *          in="query",
-    *          @OA\Schema(
-    *              type="string",
-    *          ),
-    *      ),
+     * @OA\Get(
+     *      path="/api/admin/courses",
+     *      summary="Get a listing of the Courses.",
+     *      tags={"Course"},
+     *      description="Get all Courses",
+     *      security={
+     *         {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *          name="order_by",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"created_at","title","base_price","duration"}
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="order",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"ASC", "DESC"}
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="page",
+     *          description="Pagination Page Number",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *               default=1,
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="per_page",
+     *          description="Pagination Per Page",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *               default=15,
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="title",
+     *          description="Course title %LIKE%",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="category_id",
+     *          description="Category ID. When applied all courses with given cat_id and children categories are searched",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *          ),
+     *      ),
+     *     @OA\Parameter(
+     *          name="author_id",
+     *          description="Author ID",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="number",
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="tag",
+     *          description="Tag name exactly",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
 
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
-    *          @OA\Schema(
-    *              type="object",
-    *              @OA\Property(
-    *                  property="success",
-    *                  type="boolean"
-    *              ),
-    *              @OA\Property(
-    *                  property="data",
-    *                  type="array",
-    *                  @OA\Items(ref="#/components/schemas/Course")
-    *              ),
-    *              @OA\Property(
-    *                  property="message",
-    *                  type="string"
-    *              )
-    *          )
-    *      )
-    * )
-    */
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @OA\Items(ref="#/components/schemas/Course")
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
 
     public function index(Request $request);
 
@@ -362,7 +363,7 @@ interface CourseAPISwagger
      * )
      */
 
-    public function show($id);
+    public function show($id, GetCourseAPIRequest $request);
 
     /**
      * @OA\Get(
@@ -408,92 +409,92 @@ interface CourseAPISwagger
      */
 
     /**
-    * @OA\Get(
-    *      path="/api/courses/{id}/program",
-    *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
-    *      tags={"Course"},
-    *      description="Get Course",
-    *      security={
-    *         {"passport": {}},
-    *      },
-    *      @OA\Parameter(
-    *          name="id",
-    *          description="id of Course",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
-    *          required=true,
-    *          in="path"
-    *      ),
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
-    *          @OA\Schema(
-    *              type="object",
-    *              @OA\Property(
-    *                  property="success",
-    *                  type="boolean"
-    *              ),
-    *              @OA\Property(
-    *                  property="data",
-    *                  ref="#/components/schemas/Course"
-    *              ),
-    *              @OA\Property(
-    *                  property="message",
-    *                  type="string"
-    *              )
-    *          )
-    *      )
-    * )
-    */
+     * @OA\Get(
+     *      path="/api/courses/{id}/program",
+     *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
+     *      tags={"Course"},
+     *      description="Get Course",
+     *      security={
+     *         {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request);
 
     /**
-    * @OA\Get(
-    *      path="/api/courses/{id}/scorm",
-    *      summary="Display the specified Course scorm View to be embeede with iframe",
-    *      tags={"Course"},
-    *      description="Get Course",
-    *      security={
-    *         {"passport": {}},
-    *      },
-    *      @OA\Parameter(
-    *          name="id",
-    *          description="id of Course",
-    *          @OA\Schema(
-    *             type="integer",
-    *         ),
-    *          required=true,
-    *          in="path"
-    *      ),
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="text/html"
-    *          ),
-    *          @OA\Schema(
-    *              type="object",
-    *              @OA\Property(
-    *                  property="success",
-    *                  type="boolean"
-    *              ),
-    *              @OA\Property(
-    *                  property="data",
-    *                  ref="#/components/schemas/Course"
-    *              ),
-    *              @OA\Property(
-    *                  property="message",
-    *                  type="string"
-    *              )
-    *          )
-    *      )
-    * )
-    */
+     * @OA\Get(
+     *      path="/api/courses/{id}/scorm",
+     *      summary="Display the specified Course scorm View to be embeede with iframe",
+     *      tags={"Course"},
+     *      description="Get Course",
+     *      security={
+     *         {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="text/html"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
 
     public function program($id, GetCourseCurriculumAPIRequest $request);
 
@@ -647,7 +648,7 @@ interface CourseAPISwagger
 
 
 
-   
+
 
     /**
      * @OA\Post(

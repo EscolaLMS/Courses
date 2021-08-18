@@ -28,8 +28,6 @@ class CoursesPolicy
             return Response::deny('You do not own this course.');
         };
 
-       
-
         return false;
     }
 
@@ -72,18 +70,29 @@ class CoursesPolicy
      * @param Course $course
      * @return bool
      */
-    public function attend(User $user, Course $course)
+    public function attend(?User $user, Course $course)
     {
         if (intval($course->base_price) === 0) {
             return true;
         }
+
+        if (empty($user)) {
+            return false;
+        }
+
         if ($user->hasRole('admin')) {
             return true;
         }
+
         if ($user->can('update course') && $course->author_id === $user->id) {
             return true;
         };
 
         return $course->users()->where('users.id', $user->getKey())->exists();
+    }
+
+    public function view(?User $user, Course $course)
+    {
+        return true;
     }
 }

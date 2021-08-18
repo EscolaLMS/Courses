@@ -21,5 +21,7 @@ interface CourseProgressRepositoryContract
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon;
 
+    public function updateUserTimeInTopic(Authenticatable $user, Topic $topic): void;
+
     public function getUserTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?UserTopicTime;
 }

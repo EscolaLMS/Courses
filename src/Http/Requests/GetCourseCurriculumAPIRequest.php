@@ -3,7 +3,9 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GetCourseCurriculumAPIRequest extends FormRequest
 {
@@ -15,11 +17,8 @@ class GetCourseCurriculumAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $course = Course::findOrFail($this->route('course'));
-        if (intval($course->base_price) === 0) {
-            return true; // this is free course, so it's free :D
-        }
-        return isset($user) ? $user->can('attend', $course) : false;
+        $course = $this->getCourse();
+        return Gate::check('attend', $course);
     }
 
     /**
@@ -30,5 +29,15 @@ class GetCourseCurriculumAPIRequest extends FormRequest
     public function rules()
     {
         return [];
+    }
+
+    public function getCourse(): Course
+    {
+        return Course::findOrFail($this->route('course'));
+    }
+
+    public function userIsUnprivileged()
+    {
+        return empty($this->user()) || $this->user()->cannot('update', $this->getCourse());
     }
 }

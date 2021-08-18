@@ -41,8 +41,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendResponse($topics->toArray(), 'Topics retrieved successfully');
     }
 
-
-
     public function store(CreateTopicAPIRequest $request)
     {
         $input = $request->all();
@@ -61,11 +59,13 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
 
     public function show($id, GetTopicAPIRequest $request)
     {
-        /** @var Topic $topic */
-        $topic = $this->topicRepository->find($id);
+        $topic = $request->getTopic();
 
         if (empty($topic)) {
             return $this->sendError('Topic not found');
+        }
+        if (!$topic->active && $request->userIsUnprivileged()) {
+            return $this->sendError(__('Topic not active'), 403);
         }
 
         return $this->sendResponse($topic->toArray(), 'Topic retrieved successfully');

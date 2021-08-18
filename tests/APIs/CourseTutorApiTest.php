@@ -1,4 +1,6 @@
-<?php namespace Tests\APIs;
+<?php
+
+namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Tags\Models\Tag;
@@ -27,10 +29,11 @@ class CourseTutorApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
     }
+
     public function test_create_course()
     {
         $course = Course::factory()->make([
-            'active'=>true
+            'active' => true
         ])->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -65,7 +68,7 @@ class CourseTutorApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/tutors/'.$userId
+            '/api/tutors/' . $userId
         );
 
         $this->response->assertStatus(200);
@@ -79,11 +82,28 @@ class CourseTutorApiTest extends TestCase
      */
     public function test_read_course()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'active' => true,
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
+        );
+
+        $this->assertApiResponse($course->toArray());
+    }
+
+    public function test_read_owned_inactive_course()
+    {
+        $course = Course::factory()->create([
+            'active' => false,
+            'author_id' => $this->user->getKey(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/' . $course->id
         );
 
         $this->assertApiResponse($course->toArray());
@@ -103,7 +123,7 @@ class CourseTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/courses/'.$course->id,
+            '/api/admin/courses/' . $course->id,
             $editedCourse
         );
 
@@ -121,14 +141,14 @@ class CourseTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->response->assertStatus(404);
@@ -172,7 +192,7 @@ class CourseTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id.'/program'
+            '/api/admin/courses/' . $course->id . '/program'
         );
 
         $this->response->assertStatus(200);
