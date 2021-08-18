@@ -29,6 +29,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
     }
+
     public function test_create_course()
     {
         $course = Course::factory()->make()->toArray();
@@ -46,13 +47,14 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-
     /**
      * @test
      */
     public function test_read_course()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'active' => true
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -118,8 +120,6 @@ class CourseTutorRestrictApiTest extends TestCase
             }
         }
     }
-
-  
 
     /**
      * @test

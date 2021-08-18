@@ -1,4 +1,6 @@
-<?php namespace Tests\APIs;
+<?php
+
+namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Tags\Models\Tag;
@@ -25,29 +27,20 @@ class CourseScormApiTest extends TestCase
     {
         parent::setUp();
         $this->seed(DatabaseSeeder::class);
-
-               
-
     }
+
     public function test_read_scorm()
     {
         $scorm = ScormModel::firstOrFail();
-        $course = Course::factory()->create(['base_price'=>0, 'scorm_id'=>$scorm->id]);
-        
+        $course = Course::factory()->create(['base_price' => 0, 'scorm_id' => $scorm->id]);
+
 
         $this->response = $this->get(
-            '/api/courses/'.$course->id.'/scorm'
+            '/api/courses/' . $course->id . '/scorm'
         );
 
         $this->response->assertStatus(200);
 
         $this->assertStringContainsString('<iframe', $this->response->getContent());
-
-
-
-
     }
-
-
-    
 }
