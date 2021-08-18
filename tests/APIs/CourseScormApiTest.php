@@ -25,8 +25,7 @@ class CourseScormApiTest extends TestCase
     public function test_read_scorm()
     {
         $scorm = ScormModel::firstOrFail();
-        $course = Course::factory()->create(['base_price' => 0, 'scorm_id' => $scorm->id]);
-
+        $course = Course::factory()->create(['base_price' => 0, 'scorm_id' => $scorm->id, 'active' => true]);
 
         $this->response = $this->get(
             '/api/courses/' . $course->id . '/scorm'
