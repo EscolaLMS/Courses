@@ -116,7 +116,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError('Course not found');
         }
 
-        $resource = ($request->user() && $request->user->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
+        $resource = ($request->user() && $request->user()->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
         return $this->sendResponse($resource->toArray($request), 'Course retrieved successfully');
     }
 
