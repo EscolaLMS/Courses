@@ -72,8 +72,8 @@ class CoursesPolicy
      */
     public function attend(?User $user, Course $course)
     {
-        if (intval($course->base_price) === 0) {
-            return $course->active;
+        if (intval($course->base_price) === 0 && $course->active) {
+            return true;
         }
 
         if (empty($user)) {
