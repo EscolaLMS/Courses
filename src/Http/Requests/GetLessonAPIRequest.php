@@ -20,7 +20,7 @@ class GetLessonAPIRequest extends FormRequest
             return true; // controller will fire 404 error
         }
         $course = $lesson->course;
-        return isset($user) ? $user->can('attend', $course) : false;
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**

@@ -64,9 +64,6 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         if (empty($lesson)) {
             return $this->sendError('Lesson not found');
         }
-        if (!$lesson->active && $request->userIsUnprivileged()) {
-            return $this->sendError(__('Lesson not active'), 403);
-        }
 
         return $this->sendResponse($lesson->toArray(), 'Lesson retrieved successfully');
     }
