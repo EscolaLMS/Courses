@@ -1,16 +1,11 @@
-<?php namespace Tests\APIs;
+<?php
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
+namespace Tests\APIs;
+
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Scorm\Database\Seeders\DatabaseSeeder;
-use Laravel\Passport\Passport;
-use EscolaLms\Scorm\Database\Seeders;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Peopleaps\Scorm\Model\ScormModel;
 
 class CourseScormApiTest extends TestCase
@@ -25,29 +20,19 @@ class CourseScormApiTest extends TestCase
     {
         parent::setUp();
         $this->seed(DatabaseSeeder::class);
-
-               
-
     }
+
     public function test_read_scorm()
     {
         $scorm = ScormModel::firstOrFail();
-        $course = Course::factory()->create(['base_price'=>0, 'scorm_id'=>$scorm->id]);
-        
+        $course = Course::factory()->create(['base_price' => 0, 'scorm_id' => $scorm->id, 'active' => true]);
 
         $this->response = $this->get(
-            '/api/courses/'.$course->id.'/scorm'
+            '/api/courses/' . $course->id . '/scorm'
         );
 
         $this->response->assertStatus(200);
 
         $this->assertStringContainsString('<iframe', $this->response->getContent());
-
-
-
-
     }
-
-
-    
 }

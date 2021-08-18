@@ -23,7 +23,6 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 });
 
 // user endpoints
-
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
     Route::group(['prefix' => '/courses/progress'], function () {
         Route::get('/', [CourseProgressAPIController::class, 'index']);
@@ -34,12 +33,13 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
         Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
     });
 });
+
 // public routes
 Route::group(['prefix' => 'api'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
     Route::get('courses/{course}/scorm', [CourseAPIController::class, 'scorm']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index']);
-    Route::get('/courses/{id}', [CourseAPIController::class, 'show']);
+    Route::get('/courses/{course}', [CourseAPIController::class, 'show']);
     Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);
     Route::get('/tutors/{id}', [CourseAuthorsAPIController::class, 'show']);
 });

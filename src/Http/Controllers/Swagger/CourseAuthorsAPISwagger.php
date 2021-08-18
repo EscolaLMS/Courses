@@ -10,7 +10,7 @@ interface CourseAuthorsAPISwagger
 {
     /**
      * @OA\Get(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/tutors",
      *      description="Get Tutors",
      *      security={
@@ -36,7 +36,7 @@ interface CourseAuthorsAPISwagger
 
     /**
      * @OA\Get(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/tutors/{id}",
      *      description="Get tutor course/author ID ",
      *      security={

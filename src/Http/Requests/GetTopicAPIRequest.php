@@ -15,12 +15,12 @@ class GetTopicAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $topic = Topic::find($this->route('topic'));
-        if (!isset($topic)) {
+        $topic = $this->getTopic();
+        if (is_null($topic)) {
             return true; // controller will fire 404 error
         }
         $course = $topic->lesson->course;
-        return isset($user) ? $user->can('attend', $course) : false;
+        return isset($user) ? $user->can('update', $course) : false;
     }
 
     /**
@@ -30,6 +30,11 @@ class GetTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return [ ];
+        return [];
+    }
+
+    public function getTopic(): ?Topic
+    {
+        return Topic::find($this->route('topic'));
     }
 }

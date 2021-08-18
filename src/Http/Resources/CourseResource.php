@@ -45,7 +45,6 @@ class CourseResource extends JsonResource
             'language' =>  $course->language,
             'description' =>  $course->description,
             'level' =>  $course->level,
-
         ];
     }
 }

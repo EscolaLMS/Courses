@@ -3,11 +3,10 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
-class GetCourseCurriculumAPIRequest extends FormRequest
+class GetCourseAPIRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,7 +17,10 @@ class GetCourseCurriculumAPIRequest extends FormRequest
     {
         $user = auth()->user();
         $course = $this->getCourse();
-        return Gate::check('attend', $course);
+        if (is_null($course)) {
+            return true; // controller will fire 404 error
+        }
+        return Gate::check('view', $course);
     }
 
     /**
@@ -31,8 +33,8 @@ class GetCourseCurriculumAPIRequest extends FormRequest
         return [];
     }
 
-    public function getCourse(): Course
+    public function getCourse(): ?Course
     {
-        return Course::findOrFail($this->route('course'));
+        return Course::find($this->route('course'));
     }
 }

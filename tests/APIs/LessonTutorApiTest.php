@@ -1,9 +1,9 @@
-<?php namespace Tests\APIs;
+<?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+namespace Tests\APIs;
+
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
 
@@ -47,11 +47,16 @@ class LessonTutorApiTest extends TestCase
      */
     public function test_read_lesson()
     {
-        $lesson = Lesson::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => $this->user->id
+        ]);
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->getKey()
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/lessons/'.$lesson->id
+            '/api/admin/lessons/' . $lesson->id
         );
 
         $this->assertApiResponse($lesson->toArray());
@@ -71,7 +76,7 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/lessons/'.$lesson->id,
+            '/api/admin/lessons/' . $lesson->id,
             $editedLesson
         );
 
@@ -90,13 +95,13 @@ class LessonTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/lessons/'.$lesson->id
+            '/api/admin/lessons/' . $lesson->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/lessons/'.$lesson->id
+            '/api/admin/lessons/' . $lesson->id
         );
 
         $this->response->assertStatus(404);

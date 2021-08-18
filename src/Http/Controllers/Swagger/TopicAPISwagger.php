@@ -15,7 +15,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/admin/topics",
      *      summary="Get a listing of the Topics.",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get all Topics",
      *     security={
      *         {"passport": {}},
@@ -55,25 +55,25 @@ interface TopicAPISwagger
      * @OA\Post(
      *      path="/api/admin/topics",
      *      summary="Store a newly created Topic in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *     security={
      *         {"passport": {}},
      *     },
      *      description="Store Topic. Depending on `topicable_type` values are different. Endpoint does create both `Topic` and 1:1 related `Content` based on creating class ",
-    *      @OA\RequestBody(
-    *          required=true,
-    *          @OA\MediaType(
-    *              mediaType="application/x-www-form-urlencoded",
-    *              @OA\Schema(ref="#/components/schemas/Topic")
-    *          )
-    *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/x-www-form-urlencoded",
+     *              @OA\Schema(ref="#/components/schemas/Topic")
+     *          )
+     *      ),
 
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -99,7 +99,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/admin/topics/{id}",
      *      summary="Display the specified Topic",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get Topic",
      *     security={
      *         {"passport": {}},
@@ -144,7 +144,7 @@ interface TopicAPISwagger
      * @OA\Put(
      *      path="/api/admin/topics/{id}",
      *      summary="Update the specified Topic in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Update Topic",
      *     security={
      *         {"passport": {}},
@@ -197,7 +197,7 @@ interface TopicAPISwagger
      * @OA\Delete(
      *      path="/api/admin/topics/{id}",
      *      summary="Remove the specified Topic from storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Delete Topic",
      *     security={
      *         {"passport": {}},
@@ -245,7 +245,7 @@ interface TopicAPISwagger
      * @OA\Get(
      *      path="/api/admin/topics/types",
      *      summary="Get a listing of the Availabe Topic Content Types Classes.",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get all Topic Contents",
      *     security={
      *         {"passport": {}},
@@ -253,9 +253,9 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-    *          @OA\MediaType(
-    *              mediaType="application/json"
-    *          ),
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

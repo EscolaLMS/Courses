@@ -5,22 +5,20 @@ namespace EscolaLms\Courses\Repositories;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Model;
 
 /**
  * Class CourseRepository
  * @package EscolaLms\Courses\Repositories
  * @version April 27, 2021, 11:19 am UTC
-*/
+ */
 
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
-
     /**
      * @var array
      */
@@ -55,7 +53,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
         return $output;
     }
-
 
     /**
      * Return searchable fields
@@ -119,8 +116,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return isset($search['tag']) ? $query->with('tags') : $query;
     }
 
-
-
     /**
      * Find model record for given id with relations
      *
@@ -133,19 +128,16 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     public function findWith(int $id, array $columns = ['*'], array $with = [], array $withCount = []): ?Course
     {
         $query = $this->model->newQuery()->with($with)->withCount($withCount);
-        ;
 
         return $query->find($id, $columns);
     }
 
     /**
      * Create model record
-     *
-     * @param array $input
-     *
-     * @return Model
+     * 
+     * @return Course
      */
-    public function create(array $input): Course
+    public function create(array $input): Model
     {
         $input['author_id'] = Auth::id();
         $model = $this->model->newInstance($input);
@@ -173,12 +165,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     /**
      * Update model record for given id
      *
-     * @param array $input
-     * @param int $id
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     * @return Course
      */
-    public function update(array $input, int $id): Course
+    public function update(array $input, int $id): Model
     {
         $query = $this->model->newQuery();
 
@@ -215,7 +204,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $model;
     }
 
-    public function getById($id) : Course
+    public function getById($id): Course
     {
         return $this->model->newQuery()->where('id', '=', $id)->first();
     }
@@ -237,16 +226,16 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     private function tutors()
     {
         return DB::table('users')
-        ->whereExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('courses')
-                ->where('active', 1)
-                ->whereColumn('courses.author_id', 'users.id');
-        })
-        ->select(['id','first_name','last_name','email','path_avatar','bio']);
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('courses')
+                    ->where('active', 1)
+                    ->whereColumn('courses.author_id', 'users.id');
+            })
+            ->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
     }
 
-    public function findTutors():Collection
+    public function findTutors(): Collection
     {
         return $this->tutors()->get();
     }

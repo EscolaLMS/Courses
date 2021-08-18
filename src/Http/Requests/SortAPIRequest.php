@@ -28,8 +28,8 @@ class SortAPIRequest extends FormRequest
                 case "Lesson":
                     return Lesson::whereIn('id', $ids)->where('course_id', '<>', $course->getKey())->doesntExist();
                 case "Topic":
-                    return Topic::whereIn('id', $ids)->whereHas('lesson', function(Builder $query) use($course) {
-                        $query->where('course_id', $course->getKey());
+                    return Topic::whereIn('id', $ids)->whereHas('lesson', function (Builder $query) use ($course) {
+                        $query->where('course_id', '<>', $course->getKey());
                     })->doesntExist();
             }
 
@@ -48,7 +48,7 @@ class SortAPIRequest extends FormRequest
     {
         return [
             'course_id' => ['required', 'numeric', 'exists:courses,id'],
-            'class' => ['required','in:Lesson,Topic'],
+            'class' => ['required', 'in:Lesson,Topic'],
             'orders' => ['required', 'array'],
             'orders.*' => ['required', 'array'],
         ];

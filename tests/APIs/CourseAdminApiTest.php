@@ -3,14 +3,12 @@
 namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use Laravel\Passport\Passport;
-use Spatie\Permission\Models\Role;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseAdminApiTest extends TestCase
 {
@@ -28,6 +26,7 @@ class CourseAdminApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
     }
+
     public function test_create_course()
     {
         $course = Course::factory()->make()->toArray();
@@ -45,7 +44,6 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-    
     /**
      * @test
      */
@@ -55,7 +53,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->assertApiResponse($course->toArray());
@@ -71,7 +69,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/courses/'.$course->id,
+            '/api/admin/courses/' . $course->id,
             $editedCourse
         );
 
@@ -87,13 +85,13 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
-        
+
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->response->assertStatus(404);
@@ -136,7 +134,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/courses/'.$course->getKey(),
+            '/api/admin/courses/' . $course->getKey(),
             ['categories' => $categoriesIds]
         );
 
@@ -144,16 +142,15 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
         foreach ($this->response->getData()->data->categories as $category) {
             $this->assertTrue(in_array($category->id,  $categoriesIds));
         }
-       
     }
 
-    
+
 
     public function test_attach_tags_course()
     {
@@ -163,19 +160,18 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/courses/'.$course->getKey(),
+            '/api/admin/courses/' . $course->getKey(),
             ['tags' =>  $tags]
         );
 
         $this->response->assertStatus(200);
-  
+
         foreach ($this->response->getData()->data->tags as $tag) {
             $this->assertTrue(in_array($tag->title,  $tags));
         }
-  
     }
 
-    
+
 
     public function test_search_course_by_tag()
     {
@@ -185,7 +181,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
-            '/api/admin/courses/'.$course->getKey(),
+            '/api/admin/courses/' . $course->getKey(),
             ['tags' =>  $tags]
         );
 
@@ -193,21 +189,19 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/?tag='.$tags[0],
+            '/api/admin/courses/?tag=' . $tags[0],
         );
 
         $coursesIds = [];
 
-        foreach ( $this->response->getData()->data->data as $course) {
+        foreach ($this->response->getData()->data->data as $course) {
             $coursesIds[] = $course->id;
         }
 
         $this->assertTrue(in_array($course->id,  $coursesIds));
-
-  
     }
 
-    
+
 
     /**
      * @test
@@ -218,14 +212,14 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id.'/program'
+            '/api/admin/courses/' . $course->id . '/program'
         );
 
         $this->response->assertStatus(200);
     }
 
 
-       /**
+    /**
      * @test
      */
     public function test_read_course_program_scorm()
@@ -234,7 +228,7 @@ class CourseAdminApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/'.$course->id.'/program'
+            '/api/admin/courses/' . $course->id . '/program'
         );
 
         $this->response->assertStatus(200);
@@ -244,16 +238,16 @@ class CourseAdminApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 999999;
-        $course1 = Course::factory()->create(['base_price'=>$priceMin, 'active'=>true]);
-        $course2 = Course::factory()->create(['base_price'=>$priceMax, 'active'=>true]);
-        $course3 = Course::factory()->create(['base_price'=>$priceMax + 1, 'active'=>false]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => true]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => true]);
+        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'active' => false]);
 
-    
+
 
         $this->response = $this->json(
             'GET',
             '/api/courses/?order_by=base_price&order=DESC'
-        );        
+        );
 
         $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax);
         $this->response->assertStatus(200);
@@ -261,7 +255,7 @@ class CourseAdminApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/?order_by=base_price&order=DESC'
-        );        
+        );
 
         $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax + 1);
         $this->response->assertStatus(200);
@@ -273,24 +267,85 @@ class CourseAdminApiTest extends TestCase
         $this->response = $this->json(
             'GET',
             '/api/courses/?active=true'
-        );         
+        );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true) ;
+            $this->assertTrue($course->active, true);
         }
 
         $this->response = $this->json(
             'GET',
             '/api/courses/?active=false'
-        );         
+        );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, false) ;
+            $this->assertTrue($course->active, false);
         }
     }
 
+    public function test_admin_sort_lessons_in_course()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->id
+        ]);
+        $topic = Topic::factory()->create([
+            'lesson_id' => $lesson->id
+        ]);
+        $lesson2 = Lesson::factory()->create([
+            'course_id' => $course->id
+        ]);
+        $topic2 = Topic::factory()->create([
+            'lesson_id' => $lesson->id
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses/sort',
+            [
+                'class' => 'Lesson',
+                'course_id' => $course->getKey(),
+                'orders' => [
+                    [$lesson2->getKey(), 0],
+                    [$lesson->getKey(), 1]
+                ]
+            ]
+        );
+        $this->response->assertOk();
+    }
+
+    public function test_admin_sort_topics_in_lesson()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->id
+        ]);
+        $topic = Topic::factory()->create([
+            'lesson_id' => $lesson->id
+        ]);
+        $lesson2 = Lesson::factory()->create([
+            'course_id' => $course->id
+        ]);
+        $topic2 = Topic::factory()->create([
+            'lesson_id' => $lesson->id
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses/sort',
+            [
+                'class' => 'Topic',
+                'course_id' => $course->getKey(),
+                'orders' => [
+                    [$topic2->getKey(), 0],
+                    [$topic->getKey(), 1]
+                ]
+            ]
+        );
+        $this->response->assertOk();
+    }
 }

@@ -3,14 +3,10 @@
 namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use Laravel\Passport\Passport;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseTutorRestrictApiTest extends TestCase
 {
@@ -29,6 +25,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
     }
+
     public function test_create_course()
     {
         $course = Course::factory()->make()->toArray();
@@ -46,13 +43,14 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-
     /**
      * @test
      */
     public function test_read_course()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'active' => true
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -118,8 +116,6 @@ class CourseTutorRestrictApiTest extends TestCase
             }
         }
     }
-
-  
 
     /**
      * @test

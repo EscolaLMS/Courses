@@ -2,9 +2,12 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Eloquent as Model;
-
+use EscolaLms\Courses\Database\Factories\LessonFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @OA\Schema(
@@ -41,19 +44,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *          type="integer",
  *      )
  * )
+ * 
+ * @property bool $active
+ * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
  */
-
 class Lesson extends Model
 {
     use HasFactory;
 
     public $table = 'lessons';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-
 
     public $fillable = [
         'title',
@@ -93,24 +92,23 @@ class Lesson extends Model
         'active' => 'boolean'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function topics()
+    public function topics(): HasMany
     {
         return $this->hasMany(Topic::class, 'lesson_id');
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): LessonFactory
     {
         return \EscolaLms\Courses\Database\Factories\LessonFactory::new();
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('lessons.active', '=', true);
     }
 }
