@@ -45,7 +45,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'language' =>  $course->language,
             'description' => $course->description,
             'level' =>  $course->level,
-            'lessons' => LessonWithTopicsAdminResource::collection($course->lessons()),
+            'lessons' => LessonWithTopicsAdminResource::collection($course->lessons),
         ];
     }
 }
