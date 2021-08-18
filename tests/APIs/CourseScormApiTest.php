@@ -2,17 +2,10 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Scorm\Database\Seeders\DatabaseSeeder;
-use Laravel\Passport\Passport;
-use EscolaLms\Scorm\Database\Seeders;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Peopleaps\Scorm\Model\ScormModel;
 
 class CourseScormApiTest extends TestCase

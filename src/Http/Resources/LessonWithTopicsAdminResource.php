@@ -3,10 +3,9 @@
 namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LessonWithTopicsResource extends JsonResource
+class LessonWithTopicsAdminResource extends JsonResource
 {
     public function __construct(Lesson $resource)
     {
@@ -25,8 +24,6 @@ class LessonWithTopicsResource extends JsonResource
     {
         $lesson = $this->getResource();
 
-        $topics = $lesson->topics->filter(fn (Topic $topic) => $topic->active);
-
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -37,7 +34,7 @@ class LessonWithTopicsResource extends JsonResource
             'duration' => $this->duration,
             'active' => $this->active,
             'author_id' => $this->author_id,
-            'topics' => TopicResource::collection($topics)
+            'topics' => TopicResource::collection($lesson->topics)
         ];
     }
 }

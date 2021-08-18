@@ -37,9 +37,4 @@ class GetTopicAPIRequest extends FormRequest
     {
         return Topic::find($this->route('topic'));
     }
-
-    public function userIsUnprivileged(): bool
-    {
-        return empty($this->user()) || $this->user()->cannot('update', $this->getTopic()->lesson->course);
-    }
 }

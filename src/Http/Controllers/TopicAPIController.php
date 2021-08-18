@@ -64,9 +64,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         if (empty($topic)) {
             return $this->sendError('Topic not found');
         }
-        if (!$topic->active && $request->userIsUnprivileged()) {
-            return $this->sendError(__('Topic not active'), 403);
-        }
 
         return $this->sendResponse($topic->toArray(), 'Topic retrieved successfully');
     }

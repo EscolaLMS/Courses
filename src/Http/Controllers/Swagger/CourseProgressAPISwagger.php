@@ -10,7 +10,7 @@ interface CourseProgressAPISwagger
 {
     /**
      * @OA\Get(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/courses/progress",
      *      description="Get Progresses",
      *      security={
@@ -36,7 +36,7 @@ interface CourseProgressAPISwagger
 
     /**
      * @OA\Get(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/courses/progress/{course_id}",
      *      description="Show user course progress",
      *      security={
@@ -70,7 +70,7 @@ interface CourseProgressAPISwagger
 
     /**
      * @OA\Patch(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/courses/progress/{course_id}",
      *      description="Show user course progress",
      *      security={
@@ -123,7 +123,7 @@ interface CourseProgressAPISwagger
 
     /**
      * @OA\Put(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/courses/progress/{topic_id}/ping",
      *      description="Update time in course by ping.",
      *      security={
@@ -157,7 +157,7 @@ interface CourseProgressAPISwagger
 
     /**
      * @OA\Post(
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      path="/api/courses/progress/{topic_id}/h5p",
      *      description="Update h5p progress in course quiz.",
      *      security={

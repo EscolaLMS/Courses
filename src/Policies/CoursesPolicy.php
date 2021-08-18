@@ -73,6 +73,27 @@ class CoursesPolicy
     public function attend(?User $user, Course $course)
     {
         if (intval($course->base_price) === 0) {
+            return $course->active;
+        }
+
+        if (empty($user)) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        if ($user->can('update course') && $course->author_id === $user->id) {
+            return true;
+        };
+
+        return $course->active && $course->users()->where('users.id', $user->getKey())->exists();
+    }
+
+    public function view(?User $user, Course $course)
+    {
+        if ($course->active) {
             return true;
         }
 
@@ -88,11 +109,6 @@ class CoursesPolicy
             return true;
         };
 
-        return $course->users()->where('users.id', $user->getKey())->exists();
-    }
-
-    public function view(?User $user, Course $course)
-    {
-        return true;
+        return false;
     }
 }

@@ -21,6 +21,7 @@ use Response;
 use EscolaLms\Courses\Exceptions\TopicException;
 use Error;
 use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
+use EscolaLms\Courses\Http\Resources\CourseWithProgramAdminResource;
 use EscolaLms\Courses\Http\Resources\CourseWithProgramResource;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Illuminate\Support\Facades\Auth;
@@ -94,9 +95,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         if (empty($course)) {
             return $this->sendError('Course not found');
         }
-        if (!$course->active && $request->userIsUnprivileged()) {
-            return $this->sendError(__('Course is inactive'), 403);
-        }
 
         return $this->sendResponse($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'author')->loadCount('users')->toArray(), 'Course retrieved successfully');
     }
@@ -117,11 +115,9 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         if (empty($course)) {
             return $this->sendError('Course not found');
         }
-        if (!$course->active && $request->userIsUnprivileged()) {
-            return $this->sendError(__('Course not active'), 403);
-        }
 
-        return $this->sendResponse(CourseWithProgramResource::make($course)->toArray($request), 'Course retrieved successfully');
+        $resource = ($request->user() && $request->user->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
+        return $this->sendResponse($resource->toArray($request), 'Course retrieved successfully');
     }
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)

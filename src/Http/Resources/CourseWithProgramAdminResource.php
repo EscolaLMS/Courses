@@ -3,11 +3,9 @@
 namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourseWithProgramResource extends JsonResource
+class CourseWithProgramAdminResource extends JsonResource
 {
     public function __construct(Course $resource)
     {
@@ -30,8 +28,6 @@ class CourseWithProgramResource extends JsonResource
 
         $course = $this->getResource();
 
-        $lessons = $course->lessons->filter(fn (Lesson $lesson) => $lesson->active);
-
         return [
             'id' => $course->getKey(),
             'title' => $course->title,
@@ -49,7 +45,7 @@ class CourseWithProgramResource extends JsonResource
             'language' =>  $course->language,
             'description' => $course->description,
             'level' =>  $course->level,
-            'lessons' => LessonWithTopicsResource::collection($lessons),
+            'lessons' => LessonWithTopicsAdminResource::collection($course->lessons()),
         ];
     }
 }

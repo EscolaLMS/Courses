@@ -3,16 +3,12 @@
 namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-use Laravel\Passport\Passport;
-use Spatie\Permission\Models\Role;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseAdminApiTest extends TestCase
 {

@@ -14,7 +14,7 @@ interface LessonAPISwagger
      * @OA\Get(
      *      path="/api/admin/lessons",
      *      summary="Get a listing of the Lessons.",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get all Lessons",
      *     security={
      *         {"passport": {}},
@@ -51,7 +51,7 @@ interface LessonAPISwagger
      * @OA\Post(
      *      path="/api/admin/lessons",
      *      summary="Store a newly created Lesson in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Store Lesson",
      *     security={
      *         {"passport": {}},
@@ -95,7 +95,7 @@ interface LessonAPISwagger
      * @OA\Get(
      *      path="/api/admin/lessons/{id}",
      *      summary="Display the specified Lesson",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get Lesson",
      *     security={
      *         {"passport": {}},
@@ -140,7 +140,7 @@ interface LessonAPISwagger
      * @OA\Put(
      *      path="/api/admin/lessons/{id}",
      *      summary="Update the specified Lesson in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Update Lesson",
      *     security={
      *         {"passport": {}},
@@ -192,7 +192,7 @@ interface LessonAPISwagger
      * @OA\Delete(
      *      path="/api/admin/lessons/{id}",
      *      summary="Remove the specified Lesson from storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Delete Lesson",
      *     security={
      *         {"passport": {}},

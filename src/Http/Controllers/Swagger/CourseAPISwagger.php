@@ -18,7 +18,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/courses",
      *      summary="Get a listing of the Courses.",
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      description="Get all Courses",
      *      @OA\Parameter(
      *          name="order_by",
@@ -125,7 +125,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/admin/courses",
      *      summary="Get a listing of the Courses.",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get all Courses",
      *      security={
      *         {"passport": {}},
@@ -237,7 +237,7 @@ interface CourseAPISwagger
      * @OA\Post(
      *      path="/api/admin/courses",
      *      summary="Store a newly created Course in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Store Course",
      *     security={
      *         {"passport": {}},
@@ -284,7 +284,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/admin/courses/{id}",
      *      summary="Display the specified Course",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get Course",
      *      security={
      *         {"passport": {}},
@@ -327,7 +327,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/courses/{id}",
      *      summary="Display the specified Course",
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      description="Get Course",
      *      @OA\Parameter(
      *          name="id",
@@ -369,7 +369,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/admin/courses/{id}/program",
      *      summary="Display the specified Course program/curriculum/syllabus",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Get Course",
      *     security={
      *         {"passport": {}},
@@ -412,7 +412,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/courses/{id}/program",
      *      summary="Display the specified Course program/curriculum/syllabus. No token required when course is free",
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      description="Get Course",
      *      security={
      *         {"passport": {}},
@@ -457,7 +457,7 @@ interface CourseAPISwagger
      * @OA\Get(
      *      path="/api/courses/{id}/scorm",
      *      summary="Display the specified Course scorm View to be embeede with iframe",
-     *      tags={"Course"},
+     *      tags={"Courses"},
      *      description="Get Course",
      *      security={
      *         {"passport": {}},
@@ -502,7 +502,7 @@ interface CourseAPISwagger
      * @OA\Put(
      *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Update Course",
      *     security={
      *         {"passport": {}},
@@ -552,7 +552,7 @@ interface CourseAPISwagger
      * @OA\Post(
      *      path="/api/admin/courses/{id}",
      *      summary="Update the specified Course in storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Update Course",
      *     security={
      *         {"passport": {}},
@@ -604,7 +604,7 @@ interface CourseAPISwagger
      * @OA\Delete(
      *      path="/api/admin/courses/{id}",
      *      summary="Remove the specified Course from storage",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Delete Course",
      *     security={
      *         {"passport": {}},
@@ -654,7 +654,7 @@ interface CourseAPISwagger
      * @OA\Post(
      *      path="/api/admin/courses/sort",
      *      summary="Sorts Lessons or Topics",
-     *      tags={"Course"},
+     *      tags={"Admin Courses"},
      *      description="Sorts Lessons or Topics by sending course_id, class (Topic or Lesson) and array of tuple [class_id, order]. Example
      * `{""class"":""Lesson"",""orders"":[[3,0],[2,1],[4,2],[5,3],[6,4],[7,5],[1,6],[71,7]], ""course_id"":1}`
      * ",

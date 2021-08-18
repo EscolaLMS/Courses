@@ -37,9 +37,4 @@ class GetCourseAPIRequest extends FormRequest
     {
         return Course::find($this->route('course'));
     }
-
-    public function userIsUnprivileged(): bool
-    {
-        return empty($this->user()) || $this->user()->cannot('update', $this->getCourse());
-    }
 }
