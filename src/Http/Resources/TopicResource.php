@@ -22,6 +22,7 @@ class TopicResource extends JsonResource
             'preview' => $this->preview,
             'topicable_id' => $this->topicable_id,
             'topicable_type' => $this->topicable_type,
+            'topicable' => $this->topicable,
             'summary' => $this->summary,
         ];
     }
