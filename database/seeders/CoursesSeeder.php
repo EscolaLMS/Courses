@@ -59,7 +59,31 @@ class CoursesSeeder extends Seeder
         }
 
         $courses = Course::factory()
-        ->count(rand(5, 10))
+        ->count(rand(1, 1))
+        ->afterCreating(function ($course) use ($hasH5P) {
+            Lesson::factory(['course_id'=>$course->id])
+            ->count(rand(5, 10))
+            ->afterCreating(function ($lesson) use ($hasH5P) {
+                Topic::factory(['lesson_id'=>$lesson->id])
+                ->count(rand(5, 10))
+                ->afterCreating(function ($topic) use ($hasH5P) {
+                    $content = $this->getRandomRichContent($hasH5P);
+                    if (method_exists($content, 'updatePath')) {
+                        $content = $content->updatePath($topic->id)->create();
+                    } else {
+                        $content = $content->create();
+                    }
+
+                    $topic->topicable()->associate($content)->save();
+                })
+                ->create();
+            })
+            ->create();
+        })
+        ->create();
+        ;
+
+        /*
         ->has(Lesson::factory()
             ->has(
                 Topic::factory()
@@ -77,6 +101,7 @@ class CoursesSeeder extends Seeder
             )
             ->count(rand(5, 10)))
             ->create();
+            */
 
         foreach ($courses as $course) {
             $this->seedTags($course, $randomTags);
