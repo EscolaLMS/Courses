@@ -1,18 +1,16 @@
 <?php
 
-
 namespace EscolaLms\Courses\Models\Traits;
 
-
-use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\CourseUserPivot;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasCourses
 {
     public function courses(): BelongsToMany
     {
-        /* @var $this User */
-        return $this->belongsToMany(Course::class)->withTimestamps();
+        /* @var $this \EscolaLms\Core\Models\User */
+        return $this->belongsToMany(Course::class)->using(CourseUserPivot::class);
     }
 }
