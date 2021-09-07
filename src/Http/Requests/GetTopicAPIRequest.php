@@ -19,8 +19,7 @@ class GetTopicAPIRequest extends FormRequest
         if (is_null($topic)) {
             return true; // controller will fire 404 error
         }
-        $course = $topic->lesson->course;
-        return isset($user) ? $user->can('update', $course) : false;
+        return isset($user) && $user->can('view', $topic);
     }
 
     /**

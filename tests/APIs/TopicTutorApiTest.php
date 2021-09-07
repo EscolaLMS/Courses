@@ -1,19 +1,18 @@
-<?php namespace Tests\APIs;
+<?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\Lesson;
+namespace Tests\APIs;
+
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class TopicTutorApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ DatabaseTransactions;
-
 
     protected function setUp(): void
     {
@@ -40,17 +39,17 @@ class TopicTutorApiTest extends TestCase
             'lesson_id' => $lesson->id
         ]);
 
-        
+
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->assertApiResponse($topic->toArray());
     }
 
-   
+
     /**
      * @test
      */
@@ -68,13 +67,13 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(404);
@@ -85,7 +84,7 @@ class TopicTutorApiTest extends TestCase
         $topic = Topic::factory()->create();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(403);

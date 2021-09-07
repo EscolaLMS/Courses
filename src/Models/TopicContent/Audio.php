@@ -2,9 +2,8 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use Eloquent as Model;
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\AbstractContent;
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,9 +14,9 @@ use Illuminate\Support\Facades\Storage;
  *      @OA\Property(
  *          property="id",
  *          description="id",
-*          @OA\Schema(
-*             type="integer",
-*         )
+ *          @OA\Schema(
+ *             type="integer",
+ *         )
  *      ),
  *      @OA\Property(
  *          property="value",
@@ -73,7 +72,7 @@ class Audio extends AbstractContent
         return \EscolaLms\Courses\Database\Factories\TopicContent\AudioFactory::new();
     }
     // TODO: this idea is crazy
-    public static function createResourceFromRequest($input, $topicId):array
+    public static function createResourceFromRequest($input, $topicId): array
     {
         $tmpFile = $input['value']->getPathName();
         $path = $input['value']->store("public/topic/$topicId/audios");

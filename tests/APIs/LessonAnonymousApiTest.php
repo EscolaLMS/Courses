@@ -1,4 +1,6 @@
-<?php namespace Tests\APIs;
+<?php
+
+namespace Tests\APIs;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -35,7 +37,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/admin/lessons/'.$lesson->id
+            '/api/admin/lessons/' . $lesson->id
         );
 
         $this->response->assertStatus(401);
@@ -51,7 +53,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/admin/lessons/'.$lesson->id,
+            '/api/admin/lessons/' . $lesson->id,
             $editedLesson
         );
 
@@ -67,7 +69,7 @@ class LessonAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/admin/lessons/'.$lesson->id
+            '/api/admin/lessons/' . $lesson->id
         );
 
         $this->response->assertStatus(401);

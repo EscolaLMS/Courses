@@ -21,8 +21,7 @@ class DeleteTopicAPIRequest extends FormRequest
         if (!isset($topic)) {
             return true; // controller will fire 404 error
         }
-        $course = $topic->lesson->course;
-        return isset($user) ? $user->can('update', $course) : false;
+        return isset($user) && $user->can('delete', $topic);
     }
 
     /**

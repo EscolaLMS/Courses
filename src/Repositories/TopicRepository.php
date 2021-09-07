@@ -14,7 +14,7 @@ use Error;
  * Class TopicRepository
  * @package EscolaLms\Courses\Repositories
  * @version April 27, 2021, 11:21 am UTC
-*/
+ */
 
 class TopicRepository extends BaseRepository implements TopicRepositoryContract
 {
@@ -60,7 +60,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      * @param string $class fullname of a class that can be content
      * @return array list of unique classes
      */
-    public static function registerContentClass(string $class):array
+    public static function registerContentClass(string $class): array
     {
         if (!in_array($class, self::$contentClasses)) {
             self::$contentClasses[] = $class;
@@ -100,7 +100,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         ];
     }
 
-    public function getById($id) : Topic
+    public function getById($id): Topic
     {
         return $this->model->newQuery()->where('id', '=', $id)->first();
     }

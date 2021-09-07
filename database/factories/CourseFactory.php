@@ -25,10 +25,10 @@ class CourseFactory extends Factory
     {
         $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
-      
+
         $author_id = null;
         $tutor =  User::role('tutor')->inRandomOrder()->first();
-        
+
 
         return [
             'title' => $this->faker->sentence,
@@ -36,15 +36,13 @@ class CourseFactory extends Factory
             'image_path' => "1.jpg",
             'video_path' => "1.mp4",
             'base_price' => $this->faker->randomElement([1000, 1999, 0]),
-            'duration' => rand(2, 10)." hours",
+            'duration' => rand(2, 10) . " hours",
             'author_id' =>  empty($tutor) ? null : $tutor->id,
-
             'active' => $this->faker->boolean,
             'subtitle' => $this->faker->sentence,
             'language' => $this->faker->randomElement(['en', 'pl']),
             'description' => $this->faker->markdown,
             'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
-
         ];
     }
 
@@ -57,18 +55,16 @@ class CourseFactory extends Factory
             //
             $id = $course->id;
             $word = $this->faker->word;
-            $filename_image = "course/$id/".$word.".jpg";
-            $filename_video = "course/$id/".$word.".mp4";
+            $filename_image = "course/$id/" . $word . ".jpg";
+            $filename_video = "course/$id/" . $word . ".mp4";
             $dest_image = storage_path("app/public/$filename_image");
             $dest_video = storage_path("app/public/$filename_video");
             $destDir = dirname($dest_image);
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);
             }
-            copy(realpath(__DIR__."/../mocks/1.jpg"), $dest_image);
-            copy(realpath(__DIR__."/../mocks/1.mp4"), $dest_video);
-
-
+            copy(realpath(__DIR__ . "/../mocks/1.jpg"), $dest_image);
+            copy(realpath(__DIR__ . "/../mocks/1.mp4"), $dest_video);
 
             $course->update([
                 'image_path' =>  $filename_image,

@@ -42,6 +42,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
     public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null): void
     {
         $update = ['status' => $status];
+
         if (!is_null($seconds)) {
             $update['seconds'] = $seconds;
         }

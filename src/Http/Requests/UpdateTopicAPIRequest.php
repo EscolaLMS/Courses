@@ -16,8 +16,7 @@ class UpdateTopicAPIRequest extends FormRequest
     {
         $user = auth()->user();
         $topic = Topic::find($this->route('topic'));
-        $course = $topic->lesson->course;
-        return isset($user) ? $user->can('update', $course) : false;
+        return isset($user) && $user->can('update', $topic);
     }
 
     /**

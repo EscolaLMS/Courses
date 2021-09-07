@@ -2,10 +2,8 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use Eloquent as Model;
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\AbstractContent;
-
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -15,9 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *      @OA\Property(
  *          property="id",
  *          description="id",
-*          @OA\Schema(
-*             type="integer",
-*         )
+ *          @OA\Schema(
+ *             type="integer",
+ *         )
  *      ),
  *      @OA\Property(
  *          property="value",

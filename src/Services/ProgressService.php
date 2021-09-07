@@ -21,8 +21,7 @@ class ProgressService implements ProgressServiceContract
 
     public function __construct(
         CourseH5PProgressRepositoryContract $courseH5PProgressContract
-    )
-    {
+    ) {
         $this->courseH5PProgressContract = $courseH5PProgressContract;
     }
 
@@ -51,7 +50,6 @@ class ProgressService implements ProgressServiceContract
 
         return $result;
     }
-
 
     public function ping(Authenticatable $user, Topic $topic): void
     {
@@ -92,5 +90,4 @@ class ProgressService implements ProgressServiceContract
 
         return null;
     }
-
 }

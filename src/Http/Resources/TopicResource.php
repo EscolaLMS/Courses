@@ -24,6 +24,7 @@ class TopicResource extends JsonResource
             'topicable_type' => $this->topicable_type,
             'topicable' => $this->topicable,
             'summary' => $this->summary,
+            'resources' => TopicResourceResource::collection($this->resources),
         ];
     }
 }
