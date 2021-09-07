@@ -2,23 +2,24 @@
 
 namespace EscolaLms\Courses\Database\Seeders;
 
+use DavidBadura\FakerMarkdownGenerator\FakerProvider;
+use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Models\TopicContent\Audio;
-use EscolaLms\Courses\Models\TopicContent\Video;
-use EscolaLms\Courses\Models\TopicContent\Image;
 use EscolaLms\Courses\Models\TopicContent\H5P;
+use EscolaLms\Courses\Models\TopicContent\Image;
 use EscolaLms\Courses\Models\TopicContent\OEmbed;
+use EscolaLms\Courses\Models\TopicContent\PDF;
+use EscolaLms\Courses\Models\TopicContent\RichText;
+use EscolaLms\Courses\Models\TopicContent\Video;
+use EscolaLms\Courses\Models\TopicResource;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
-use Spatie\Permission\Models\Role;
-use DavidBadura\FakerMarkdownGenerator\FakerProvider;
-use EscolaLms\Auth\Models\User;
 
 class CoursesSeeder extends Seeder
 {
@@ -26,7 +27,7 @@ class CoursesSeeder extends Seeder
 
     private function getRandomRichContent($withH5P = false)
     {
-        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), OEmbed::factory()];
+        $classes = [RichText::factory(), Audio::factory(), Video::factory(), Image::factory(), OEmbed::factory(), PDF::factory()];
 
         if ($withH5P) {
             $classes[] = H5P::factory();
@@ -42,11 +43,15 @@ class CoursesSeeder extends Seeder
 
         $randomTags = [$this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name, $this->faker->name];
 
-        $hasH5P = H5PContent::first() !== null;
+        if (class_exists(EscolaLms\HeadlessH5P\Models\H5PContent::class)) {
+            $hasH5P = H5PContent::first() !== null;
+        } else {
+            $hasH5P = false;
+        }
 
         $path = storage_path("app/public/tutor_avatar.jpg");
 
-        copy(__DIR__.'/avatar.jpg', $path);
+        copy(__DIR__ . '/avatar.jpg', $path);
 
         $tutors = User::role('tutor')->get();
 
@@ -59,31 +64,30 @@ class CoursesSeeder extends Seeder
         }
 
         $courses = Course::factory()
-        ->count(rand(5, 10))
-        ->afterCreating(function ($course) use ($hasH5P) {
-            Lesson::factory(['course_id'=>$course->id])
             ->count(rand(5, 10))
-            ->afterCreating(function ($lesson) use ($hasH5P) {
-                Topic::factory(['lesson_id'=>$lesson->id])
-                ->count(rand(5, 10))
-                ->afterCreating(function ($topic) use ($hasH5P) {
-                    $content = $this->getRandomRichContent($hasH5P);
-                    if (method_exists($content, 'updatePath')) {
-                        $content = $content->updatePath($topic->id)->create();
-                    } else {
-                        $content = $content->create();
-                    }
+            ->afterCreating(function ($course) use ($hasH5P) {
+                Lesson::factory(['course_id' => $course->id])
+                    ->count(rand(5, 10))
+                    ->afterCreating(function ($lesson) use ($hasH5P) {
+                        Topic::factory(['lesson_id' => $lesson->id])
+                            ->count(rand(5, 10))
+                            ->afterCreating(function ($topic) use ($hasH5P) {
+                                $content = $this->getRandomRichContent($hasH5P);
+                                if (method_exists($content, 'updatePath')) {
+                                    $content = $content->updatePath($topic->id)->create();
+                                } else {
+                                    $content = $content->create();
+                                }
 
-                    $topic->topicable()->associate($content)->save();
-                })
-                ->create();
+                                $topic->topicable()->associate($content)->save();
+
+                                TopicResource::factory()->count(rand(1, 3))->forTopic($topic)->create();
+                            })
+                            ->create();
+                    })
+                    ->create();
             })
-            ->create();
-        })
-        ->create();
-        ;
-
-
+            ->create();;
 
         foreach ($courses as $course) {
             $this->seedTags($course, $randomTags);
