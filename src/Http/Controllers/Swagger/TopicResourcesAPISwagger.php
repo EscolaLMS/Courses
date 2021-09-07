@@ -118,7 +118,7 @@ interface TopicResourcesAPISwagger
      *      path="/topics/{topic_id}/resources/{resource_id}",
      *      summary="Delete resource",
      *      tags={"Admin Courses"},
-     *      description="Delete resource,
+     *      description="Delete resource",
      *      security={
      *          {"passport": {}},
      *      },
@@ -168,7 +168,7 @@ interface TopicResourcesAPISwagger
      *      path="/topics/{topic_id}/resources/{resource_id}",
      *      summary="Rename resource",
      *      tags={"Admin Courses"},
-     *      description="Rename resource,
+     *      description="Rename resource",
      *      security={
      *          {"passport": {}},
      *      },
