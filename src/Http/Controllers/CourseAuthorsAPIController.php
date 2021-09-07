@@ -2,18 +2,10 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
-use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
-use EscolaLms\Courses\Http\Resources\ProgressesResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Exception;
-use Error;
 
 class CourseAuthorsAPIController extends AppBaseController implements CourseAuthorsAPISwagger
 {

@@ -1,6 +1,7 @@
-<?php namespace Tests\APIs;
+<?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+namespace Tests\APIs;
+
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
 //use Tests\ApiTestTrait;
@@ -9,8 +10,6 @@ use EscolaLms\Courses\Models\Topic;
 class TopicAnonymousApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ DatabaseTransactions;
-
-
 
     /**
      * @test
@@ -21,13 +20,12 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(401);
     }
 
-   
     /**
      * @test
      */
@@ -37,7 +35,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
 
@@ -53,7 +51,7 @@ class TopicAnonymousApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(401);

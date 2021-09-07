@@ -23,8 +23,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         ProgressServiceContract $progressServiceContract,
         TopicRepositoryContract $topicRepositoryContract,
         CourseRepositoryContract $courseRepositoryContract
-    )
-    {
+    ) {
         $this->progressServiceContract = $progressServiceContract;
         $this->topicRepositoryContract = $topicRepositoryContract;
         $this->courseRepositoryContract = $courseRepositoryContract;
@@ -96,5 +95,4 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
             return $this->sendError($e->getMessage(), 400);
         }
     }
-
 }

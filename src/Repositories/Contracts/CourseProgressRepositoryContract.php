@@ -3,13 +3,14 @@
 namespace EscolaLms\Courses\Repositories\Contracts;
 
 use Carbon\Carbon;
+use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-interface CourseProgressRepositoryContract
+interface CourseProgressRepositoryContract extends BaseRepositoryContract
 {
     public function findProgress(Topic $topic, Authenticatable $user): ?CourseProgress;
 

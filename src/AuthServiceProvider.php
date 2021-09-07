@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Policies\CoursesPolicy;
+use EscolaLms\Courses\Policies\LessonPolicy;
+use EscolaLms\Courses\Policies\TopicPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Course::class => CoursesPolicy::class,
+        Lesson::class => LessonPolicy::class,
+        Topic::class => TopicPolicy::class,
     ];
 
     /**
@@ -28,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        if (! $this->app->routesAreCached()) {
+        if (!$this->app->routesAreCached()) {
             Passport::routes();
         }
     }

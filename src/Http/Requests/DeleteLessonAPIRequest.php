@@ -18,8 +18,7 @@ class DeleteLessonAPIRequest extends FormRequest
     {
         $user = auth()->user();
         $lesson = Lesson::find($this->route('lesson'));
-        $course = $lesson->course;
-        return isset($user) ? $user->can('update', $course) : false;
+        return isset($user) && $user->can('delete', $lesson);
     }
 
     /**

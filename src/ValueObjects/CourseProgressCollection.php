@@ -27,8 +27,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function __construct(
         CourseProgressRepositoryContract $courseProgressRepositoryContract
-    )
-    {
+    ) {
         $this->courseProgressRepositoryContract = $courseProgressRepositoryContract;
     }
 
@@ -161,7 +160,6 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->progress = $this->buildProgress();
 
         return $this;
-
     }
 
     public function getTotalSpentTime(): int

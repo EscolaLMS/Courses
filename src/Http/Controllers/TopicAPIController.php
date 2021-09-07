@@ -2,17 +2,16 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use Error;
+use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\TopicAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
-use Response;
-use EscolaLms\Courses\Exceptions\TopicException;
-use Error;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**

@@ -130,8 +130,6 @@ class CourseAdminApiTest extends TestCase
         $course = Course::factory()->create();
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
 
-
-
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/admin/courses/' . $course->getKey(),
@@ -170,8 +168,6 @@ class CourseAdminApiTest extends TestCase
             $this->assertTrue(in_array($tag->title,  $tags));
         }
     }
-
-
 
     public function test_search_course_by_tag()
     {

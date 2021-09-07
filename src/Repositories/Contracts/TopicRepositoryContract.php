@@ -1,12 +1,11 @@
 <?php
 
-
 namespace EscolaLms\Courses\Repositories\Contracts;
 
-
+use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
 use EscolaLms\Courses\Models\Topic;
 
-interface TopicRepositoryContract
+interface TopicRepositoryContract extends BaseRepositoryContract
 {
-    public function getById($id) : Topic;
+    public function getById($id): Topic;
 }

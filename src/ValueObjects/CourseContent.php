@@ -25,15 +25,15 @@ class CourseContent extends ValueObject implements DtoContract, ValueObjectContr
     {
         $this->course = $course;
         $this->topics = [];
-//        foreach ($this->getSections() as $section) {
-//            $this->topics[$section->getKey()] = $this->courseService->getTopics($section);
-//
-//            foreach ($this->topics[$section->getKey()] as $topic) {
-//                if (!($topic instanceof Topic)) {
-//                    continue;
-//                }
-//            }
-//        }
+        //        foreach ($this->getSections() as $section) {
+        //            $this->topics[$section->getKey()] = $this->courseService->getTopics($section);
+        //
+        //            foreach ($this->topics[$section->getKey()] as $topic) {
+        //                if (!($topic instanceof Topic)) {
+        //                    continue;
+        //                }
+        //            }
+        //        }
 
         return $this;
     }
@@ -76,5 +76,4 @@ class CourseContent extends ValueObject implements DtoContract, ValueObjectContr
     {
         return $this->getCourse()->flashcards()->count();
     }
-
 }

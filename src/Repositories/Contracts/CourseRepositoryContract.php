@@ -1,17 +1,12 @@
 <?php
 
-
 namespace EscolaLms\Courses\Repositories\Contracts;
 
-
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Tags\Models\Tag;
+use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
-interface CourseRepositoryContract
+interface CourseRepositoryContract extends BaseRepositoryContract
 {
-
     public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder;
 
     public function queryAll(): Builder;

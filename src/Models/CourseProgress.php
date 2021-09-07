@@ -62,6 +62,4 @@ class CourseProgress extends Model
     {
         return $this->belongsTo(Topic::class, 'topic_id');
     }
-
-
 }

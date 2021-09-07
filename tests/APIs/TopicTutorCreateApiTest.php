@@ -1,20 +1,19 @@
-<?php namespace Tests\APIs;
+<?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Course;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\UploadedFile;
+namespace Tests\APIs;
+
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class TopicTutorCreateApiTest extends TestCase
 {
     use /*ApiTestTrait,*/ DatabaseTransactions;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,7 +55,7 @@ class TopicTutorCreateApiTest extends TestCase
         $topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/".$path);
+        Storage::disk('local')->assertExists("/" . $path);
 
         $this->assertDatabaseHas('topic_images', [
             'value' => $path
@@ -67,7 +66,7 @@ class TopicTutorCreateApiTest extends TestCase
     {
         Storage::fake('local');
 
-        $file = UploadedFile::fake()->image('avatar.mp3');
+        $file = UploadedFile::fake()->create('avatar.mp3');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/admin/topics',
@@ -86,9 +85,39 @@ class TopicTutorCreateApiTest extends TestCase
         $topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/".$path);
+        Storage::disk('local')->assertExists("/" . $path);
 
         $this->assertDatabaseHas('topic_audios', [
+            'value' => $path
+        ]);
+    }
+
+    public function test_create_topic_pdf()
+    {
+        Storage::fake('local');
+
+        $file = UploadedFile::fake()->create('test.pdf');
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/topics',
+            [
+                'title' => 'Hello World',
+                'lesson_id' => $this->lesson->id,
+                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\PDF',
+                'value' => $file
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+
+        $topicId = $data->data->id;
+        $path = $data->data->topicable->value;
+
+        Storage::disk('local')->assertExists("/" . $path);
+
+        $this->assertDatabaseHas('topic_pdfs', [
             'value' => $path
         ]);
     }
@@ -116,7 +145,7 @@ class TopicTutorCreateApiTest extends TestCase
         $topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/".$path);
+        Storage::disk('local')->assertExists("/" . $path);
 
         $this->assertDatabaseHas('topic_videos', [
             'value' => $path
@@ -197,7 +226,6 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_video_no_file()
     {
         $course = Course::factory()->create();
-        
 
         $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/admin/topics',

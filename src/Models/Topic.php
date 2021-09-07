@@ -146,6 +146,11 @@ class Topic extends Model
         return $this->hasOne(CourseProgress::class, 'topic_id');
     }
 
+    public function resources(): HasMany
+    {
+        return $this->hasMany(TopicResource::class, 'topic_id');
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('topics.active', '=', true);
