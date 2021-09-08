@@ -19,7 +19,7 @@ use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 class TestCase extends \EscolaLms\Core\Tests\TestCase
 {
     protected $response;
-   
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,17 +47,19 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('auth.providers.users.model', UserTest::class);
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
-        $app['config']->set('app.debug', env('APP_DEBUG', true));
+        $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
         $app['config']->set('escolalms.tags.ignore_migrations', false);
 
-        $app['config']->set('scorm', [ 'table_names' =>  [
-            'user_table'   =>  'users',
-            'scorm_table'   =>  'scorm',
-            'scorm_sco_table'   =>  'scorm_sco',
-            'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
-        ],
-        // Scorm directory. You may create a custom path in file system
-        'disk'  =>  'local']);
+        $app['config']->set('scorm', [
+            'table_names' =>  [
+                'user_table'   =>  'users',
+                'scorm_table'   =>  'scorm',
+                'scorm_sco_table'   =>  'scorm_sco',
+                'scorm_sco_tracking_table'   =>  'scorm_sco_tracking',
+            ],
+            // Scorm directory. You may create a custom path in file system
+            'disk'  =>  'local'
+        ]);
     }
 
     public function assertApiResponse(array $actualData)
