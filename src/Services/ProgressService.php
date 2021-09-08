@@ -5,8 +5,10 @@ namespace EscolaLms\Courses\Services;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Events\CourseCompleted;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\User as CoursesUser;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
@@ -26,9 +28,20 @@ class ProgressService implements ProgressServiceContract
     public function getByUser(User $user): Collection
     {
         $progresses = new Collection();
+        /** @var CoursesUser $user */
+        $user = CoursesUser::find($user->getKey());
         foreach ($user->courses as $course) {
             $course->progress = CourseProgressCollection::make($user, $course);
             $progresses->push($course);
+        }
+        foreach ($user->groups as $group) {
+            /** @var Group $group */
+            foreach ($group->courses as $course) {
+                if (!$progresses->contains('id', $course->getKey())) {
+                    $course->progress = CourseProgressCollection::make($user, $course);
+                    $progresses->push($course);
+                }
+            }
         }
         return $progresses;
     }

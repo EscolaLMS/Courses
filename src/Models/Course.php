@@ -2,12 +2,9 @@
 
 namespace EscolaLms\Courses\Models;
 
-use EscolaLms\Auth\Dtos\UserGroupDto;
-use EscolaLms\Auth\Models\Group;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
-use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
