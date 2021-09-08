@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Auth\Http\Resources\UserGroupResource;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use EscolaLms\Courses\Http\Controllers\Swagger\CoursesAccessAPISwagger;
 use EscolaLms\Courses\Http\Requests\AddAccessAPIRequest;
 use EscolaLms\Courses\Http\Requests\ListAccessAPIRequest;
 use EscolaLms\Courses\Http\Requests\RemoveAccessAPIRequest;
@@ -12,7 +13,7 @@ use EscolaLms\Courses\Http\Resources\UserShortResource;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Http\JsonResponse;
 
-class CourseAccessAPIController extends EscolaLmsBaseController
+class CourseAccessAPIController extends EscolaLmsBaseController implements CoursesAccessAPISwagger
 {
     public function list(int $course_id, ListAccessAPIRequest $request): JsonResponse
     {
@@ -20,7 +21,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController
         return $this->sendAccessListResponse($course, __('Access List'));
     }
 
-    public function add(int $course_id, AddAccessAPIRequest $request)
+    public function add(int $course_id, AddAccessAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
         if ($request->has('users')) {
@@ -32,7 +33,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController
         return $this->sendAccessListResponse($course, __('Added to access list'));
     }
 
-    public function remove(int $course_id, RemoveAccessAPIRequest $request)
+    public function remove(int $course_id, RemoveAccessAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
         if ($request->has('users')) {
@@ -44,7 +45,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController
         return $this->sendAccessListResponse($course, __('Removed from access list'));
     }
 
-    public function set(int $course_id, SetAccessAPIRequest $request)
+    public function set(int $course_id, SetAccessAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
         if ($request->has('users')) {

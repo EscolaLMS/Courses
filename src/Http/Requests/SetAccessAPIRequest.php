@@ -11,9 +11,9 @@ class SetAccessAPIRequest extends CourseAccessAPIRequest
     {
         return array_merge(parent::rules(), [
             'groups' => ['sometimes', 'array'],
-            'groups.*' => ['integer', Rule::exists('groups', 'id')],
+            'groups.*' => ['sometimes', 'integer', Rule::exists('groups', 'id')],
             'users' => ['sometimes', 'array'],
-            'users.*' => ['integer', Rule::exists('users', 'id')],
+            'users.*' => ['sometimes', 'integer', Rule::exists('users', 'id')],
         ]);
     }
 }
