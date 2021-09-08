@@ -87,7 +87,7 @@ class CoursesSeeder extends Seeder
                     })
                     ->create();
             })
-            ->create();;
+            ->create();
 
         foreach ($courses as $course) {
             $this->seedTags($course, $randomTags);
