@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Courses\Models;
 
+use EscolaLms\Auth\Dtos\UserGroupDto;
+use EscolaLms\Auth\Models\Group;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
@@ -233,6 +235,11 @@ class Course extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->using(CourseUserPivot::class);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class);
     }
 
     public function progress(): HasMany

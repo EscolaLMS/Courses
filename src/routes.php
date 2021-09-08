@@ -1,5 +1,6 @@
 <?php
 
+use EscolaLms\Courses\Http\Controllers\CourseAccessAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
@@ -17,10 +18,16 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
     Route::get('topics/types', [TopicAPIController::class, 'classes']);
     Route::resource('topics', TopicAPIController::class);
     Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
+
     Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list']);
     Route::post('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'upload']);
     Route::patch('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'rename']);
     Route::delete('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'delete']);
+
+    Route::get('courses/{course_id}/access', [CourseAccessAPIController::class, 'list']);
+    Route::post('courses/{course_id}/access/add', [CourseAccessAPIController::class, 'add']);
+    Route::post('courses/{course_id}/access/remove', [CourseAccessAPIController::class, 'remove']);
+    Route::post('courses/{course_id}/access/set', [CourseAccessAPIController::class, 'set']);
 
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);

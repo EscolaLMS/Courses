@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
+use EscolaLms\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
+
 class DeleteTopicResourceAPIRequest extends TopicResourceAPIRequest
 {
     public function getTopicResourceId(): int

@@ -2,10 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Course;
-
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateTopicAPIRequest extends FormRequest

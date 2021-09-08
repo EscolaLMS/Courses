@@ -3,26 +3,18 @@
 namespace EscolaLms\Courses\Services;
 
 use Error;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Repositories\Criteria\CourseInCategory;
-use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Courses\Dto\CourseSearchDto;
+use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use EscolaLms\Tags\Models\Tag;
-use Illuminate\Support\Collection;
 use EscolaLms\Courses\Repositories\Criteria\CourseSearch;
+use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\App;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
 
 class CourseService implements CourseServiceContract
 {
@@ -87,7 +79,6 @@ class CourseService implements CourseServiceContract
 
     public function getScormPlayer($courseId)
     {
-
         $course = Course::with(['scorm.scos'])->findOrFail($courseId);
 
         if (empty($course->scorm_id)) {

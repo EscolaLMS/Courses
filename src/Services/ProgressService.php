@@ -1,8 +1,6 @@
 <?php
 
-
 namespace EscolaLms\Courses\Services;
-
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Events\CourseCompleted;

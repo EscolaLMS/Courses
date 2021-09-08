@@ -25,6 +25,6 @@ class CreateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return array_merge(Course::$rules, ['title' => ['required','string', "min:3"]]);
+        return array_merge(Course::$rules, ['title' => ['required', 'string', "min:3"]]);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
 use EscolaLms\Courses\Models\Topic;

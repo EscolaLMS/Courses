@@ -5,9 +5,9 @@ namespace EscolaLms\Courses\Database\Seeders;
 use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Services\ProgressService;
-use EscolaLms\Courses\Tests\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 

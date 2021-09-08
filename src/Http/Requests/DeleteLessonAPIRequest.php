@@ -2,9 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class DeleteLessonAPIRequest extends FormRequest
