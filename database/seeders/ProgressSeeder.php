@@ -8,15 +8,17 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Tests\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 
 class ProgressSeeder extends Seeder
 {
     public function run()
     {
+        /** @var Collection $students */
         $students = User::role(UserRole::STUDENT)->whereHas('courses')->take(10)->get();
-        if (empty($students)) {
-            User::role(UserRole::STUDENT)->take(10)->get();
+        if ($students->isEmpty()) {
+            $students = User::role(UserRole::STUDENT)->take(10)->get();
             foreach ($students as $student) {
                 $student->courses()->save(Course::inRandomOrder()->first());
             }
