@@ -5,7 +5,6 @@ namespace EscolaLms\Courses\Models;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
-use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -233,6 +232,11 @@ class Course extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->using(CourseUserPivot::class);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class);
     }
 
     public function progress(): HasMany

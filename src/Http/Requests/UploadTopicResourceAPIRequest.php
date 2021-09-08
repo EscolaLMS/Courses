@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
+use EscolaLms\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
 use Illuminate\Http\UploadedFile;
 
 class UploadTopicResourceAPIRequest extends TopicResourceAPIRequest

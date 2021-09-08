@@ -3,14 +3,11 @@
 
 namespace EscolaLms\Courses\Services\Contracts;
 
-use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Courses\Dto\CourseSearchDto;
-use EscolaLms\Courses\Models\Course;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 interface CourseServiceContract
 {
-
-
+    public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder;
 }

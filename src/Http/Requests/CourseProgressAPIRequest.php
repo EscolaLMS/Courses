@@ -1,8 +1,6 @@
 <?php
 
-
 namespace EscolaLms\Courses\Http\Requests;
-
 
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Rules\ValidEnum;

@@ -645,11 +645,6 @@ interface CourseAPISwagger
 
     public function destroy($id, DeleteCourseAPIRequest $request);
 
-
-
-
-
-
     /**
      * @OA\Post(
      *      path="/api/admin/courses/sort",

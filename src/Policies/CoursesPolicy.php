@@ -88,7 +88,7 @@ class CoursesPolicy
             return true;
         };
 
-        return $course->active && $course->users()->where('users.id', $user->getKey())->exists();
+        return $course->active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
     }
 
     public function view(?User $user, Course $course)

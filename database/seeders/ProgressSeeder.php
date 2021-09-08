@@ -5,9 +5,9 @@ namespace EscolaLms\Courses\Database\Seeders;
 use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Services\ProgressService;
-use EscolaLms\Courses\Tests\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 
@@ -20,12 +20,14 @@ class ProgressSeeder extends Seeder
         if ($students->isEmpty()) {
             $students = User::role(UserRole::STUDENT)->take(10)->get();
             foreach ($students as $student) {
-                $student->courses()->save(Course::inRandomOrder()->first());
+                /** @var User $student */
+                $student->courses()->syncWithoutDetaching([Course::inRandomOrder()->first()->getKey()]);
             }
         }
         $progressService = app(ProgressService::class);
         $progressRepository = app(CourseProgressRepository::class);
         foreach ($students as $student) {
+            /** @var User $student */
             $progressedCourses = $progressService->getByUser($student);
             foreach ($progressedCourses as $course) {
                 /** @var Course $course */
