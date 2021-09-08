@@ -20,12 +20,14 @@ class ProgressSeeder extends Seeder
         if ($students->isEmpty()) {
             $students = User::role(UserRole::STUDENT)->take(10)->get();
             foreach ($students as $student) {
-                $student->courses()->save(Course::inRandomOrder()->first());
+                /** @var User $student */
+                $student->courses()->syncWithoutDetaching([Course::inRandomOrder()->first()->getKey()]);
             }
         }
         $progressService = app(ProgressService::class);
         $progressRepository = app(CourseProgressRepository::class);
         foreach ($students as $student) {
+            /** @var User $student */
             $progressedCourses = $progressService->getByUser($student);
             foreach ($progressedCourses as $course) {
                 /** @var Course $course */
