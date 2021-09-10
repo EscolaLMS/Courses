@@ -27,19 +27,18 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_course()
     {
         $user = User::factory()->create();
-        $courses = Course::factory(5)->create();
-        $topics = Topic::factory(2)->create();
-        foreach ($courses as $course) {
-            foreach ($topics as $topic) {
-                CourseProgress::create([
-                    'user_id' => $user->getKey(),
-                    'course_id' => $course->getKey(),
-                    'topic_id' => $topic->getKey(),
-                    'status' => 1
-                ]);
-            }
-            $user->courses()->save($course);
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topics = Topic::factory(2)->create(['lesson_id' => $lesson->getKey()]);
+        foreach ($topics as $topic) {
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'course_id' => $course->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => 1
+            ]);
         }
+        $user->courses()->save($course);
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
