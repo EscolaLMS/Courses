@@ -29,6 +29,7 @@ class TopicFactory extends Factory
             'title' => $this->faker->word,
             'active' => $this->faker->boolean,
             'preview' => $this->faker->boolean,
+            'lesson_id' => Lesson::inRandomOrder()->first()->id,
             'order' => $this->faker->randomDigitNotNull,
             'summary' => $this->faker->markdown,
         ];
