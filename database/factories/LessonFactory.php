@@ -24,12 +24,13 @@ class LessonFactory extends Factory
     {
         $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
+        $course = Course::inRandomOrder()->first();
         return [
             'title' => $this->faker->word,
             'duration' => rand(10, 50) . " minutes",
             'order' => $this->faker->randomDigitNotNull,
             'active' => $this->faker->boolean,
-            'course_id' =>  Course::inRandomOrder()->first()->id,
+            'course_id' => $course ? $course->id : null,
             'summary' => $this->faker->markdown,
         ];
     }

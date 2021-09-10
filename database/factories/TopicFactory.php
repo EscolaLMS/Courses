@@ -25,11 +25,12 @@ class TopicFactory extends Factory
     {
         $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
+        $lesson = Lesson::inRandomOrder()->first();
         return [
             'title' => $this->faker->word,
             'active' => $this->faker->boolean,
             'preview' => $this->faker->boolean,
-            'lesson_id' => Lesson::inRandomOrder()->first()->id,
+            'lesson_id' => $lesson ? $lesson->id : null,
             'order' => $this->faker->randomDigitNotNull,
             'summary' => $this->faker->markdown,
         ];
