@@ -7,6 +7,7 @@ use EscolaLms\Core\Repositories\Contracts\ConfigRepositoryContract;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\MakeServices;
@@ -44,6 +45,30 @@ class CourseProgressApiTest extends TestCase
             'GET',
             '/api/courses/progress'
         );
+        $this->response->assertStatus(200);
+        $this->assertIsArray($this->response->getData());
+        foreach ($this->response->getData() as $data) {
+            $this->assertObjectHasAttribute('course', $data);
+            $this->assertObjectHasAttribute('progress', $data);
+            $this->assertNotEmpty($data->progress);
+        }
+    }
+
+    public function test_show_progress_course_from_group()
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory(['course_id' => $course->getKey()])->create();
+        $topic = Topic::factory(['lesson_id' => $lesson->getKey()])->create();
+        $group = Group::factory()->create();
+        $group->users()->attach($user);
+        $group->courses()->attach($course->getKey());
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress'
+        );
+
         $this->response->assertStatus(200);
         $this->assertIsArray($this->response->getData());
         foreach ($this->response->getData() as $data) {

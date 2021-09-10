@@ -29,13 +29,18 @@ class ProgressService implements ProgressServiceContract
     {
         $progresses = new Collection();
         /** @var CoursesUser $user */
-        $user = CoursesUser::find($user->getKey());
+        if (!$user instanceof CoursesUser) {
+            $user = CoursesUser::find($user->getKey());
+        }
         foreach ($user->courses as $course) {
             $course->progress = CourseProgressCollection::make($user, $course);
             $progresses->push($course);
         }
         foreach ($user->groups as $group) {
             /** @var Group $group */
+            if (!$group instanceof Group) {
+                $group = Group::find($group->getKey());
+            }
             foreach ($group->courses as $course) {
                 if (!$progresses->contains('id', $course->getKey())) {
                     $course->progress = CourseProgressCollection::make($user, $course);
