@@ -9,6 +9,8 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class CourseAdminApiTest extends TestCase
 {
@@ -343,5 +345,60 @@ class CourseAdminApiTest extends TestCase
             ]
         );
         $this->response->assertOk();
+    }
+
+    /**
+     * @test
+     */
+    public function test_create_admin_course_poster()
+    {
+        Storage::fake('local');
+        $poster = UploadedFile::fake()->image('poster.jpg');
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses',
+            [
+                'title' => "Test create course poster",
+                'poster' => $poster
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+        $path = $data->data->poster_path;
+
+        Storage::disk('local')->assertExists('/' . $path);
+        $this->assertDatabaseHas('courses', [
+            'poster_path' => $path
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_admin_course_poster()
+    {
+        $course = Course::factory()->create();
+
+        Storage::fake('local');
+        $poster = UploadedFile::fake()->image('poster.jpg');
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses/' . $course->id,
+            [
+                'poster' => $poster
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+        $path = $data->data->poster_path;
+
+        Storage::disk('local')->assertExists('/' . $path);
+        $this->assertDatabaseHas('courses', [
+            'poster_path' => $path
+        ]);
     }
 }
