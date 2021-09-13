@@ -32,6 +32,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'author_id',
         'active',
         'scorm_id',
+        'poster_path',
     ];
 
     /**
@@ -155,6 +156,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $update['image_path'] = $input['image']->store("public/course/$courseId/images");
         }
 
+        if (isset($input['poster'])) {
+            $update['poster_path'] = $input['poster']->store("public/course/$courseId/posters");
+        }
+
         if (count($update)) {
             $model->update($update);
         }
@@ -179,6 +184,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         if (isset($input['image'])) {
             $input['image_path'] = $input['image']->store("public/course/$id/images");
+        }
+
+        if (isset($input['poster'])) {
+            $input['poster_path'] = $input['poster']->store("public/course/$id/posters");
         }
 
         if (isset($input['categories']) && is_array($input['categories'])) {

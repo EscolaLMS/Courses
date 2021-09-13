@@ -111,6 +111,21 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          description="level",
  *          type="string",
  *      ),
+ *      @OA\Property(
+ *          property="poster",
+ *          description="poster",
+ *          type="file",
+ *      ),
+ *      @OA\Property(
+ *          property="poster_path",
+ *          description="poster_path",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="poster_url",
+ *          description="poster_url",
+ *          type="string"
+ *      ),
  * )
  * 
  * @property bool $active
@@ -137,7 +152,8 @@ class Course extends Model
         'language',
         'description',
         'level',
-        'scorm_id'
+        'scorm_id',
+        'poster_path',
     ];
 
     /**
@@ -159,7 +175,8 @@ class Course extends Model
         'language' => 'string',
         'description' => 'string',
         'level' => 'string',
-        'scorm_id' => 'integer'
+        'scorm_id' => 'integer',
+        'poster_path' => 'string',
     ];
 
     /**
@@ -183,10 +200,11 @@ class Course extends Model
         'description' => 'nullable|string',
         'level' => 'nullable|string|max:100',
         'scorm_id' => 'nullable|exists:scorm,id',
-
+        'poster_path' => 'nullable|string|max:255',
+        'poster' => 'file|image',
     ];
 
-    protected $appends = ['image_url', 'video_url'];
+    protected $appends = ['image_url', 'video_url', 'poster_url'];
 
     public function author(): BelongsTo
     {
@@ -225,6 +243,14 @@ class Course extends Model
     {
         if (isset($this->attributes['video_path'])) {
             return url(Storage::url($this->attributes['video_path']));
+        }
+        return null;
+    }
+
+    public function getPosterUrlAttribute(): ?string
+    {
+        if (isset($this->attributes['poster_path'])) {
+            return url(Storage::url($this->attributes['poster_path']));
         }
         return null;
     }

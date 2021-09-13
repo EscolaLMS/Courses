@@ -46,6 +46,8 @@ class CourseWithProgramAdminResource extends JsonResource
             'description' => $course->description,
             'level' =>  $course->level,
             'lessons' => LessonWithTopicsAdminResource::collection($course->lessons),
+            'poster_path' =>  $course->poster_path,
+            'poster_url' =>  $course->poster_url,
         ];
     }
 }

@@ -50,6 +50,8 @@ class CourseWithProgramResource extends JsonResource
             'description' => $course->description,
             'level' =>  $course->level,
             'lessons' => LessonWithTopicsResource::collection($lessons),
+            'poster_path' =>  $course->poster_path,
+            'poster_url' =>  $course->poster_url,
         ];
     }
 }

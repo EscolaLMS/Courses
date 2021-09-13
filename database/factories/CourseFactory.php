@@ -43,6 +43,7 @@ class CourseFactory extends Factory
             'language' => $this->faker->randomElement(['en', 'pl']),
             'description' => $this->faker->markdown,
             'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
+            'poster_path' => "poster.jpg",
         ];
     }
 
@@ -57,18 +58,22 @@ class CourseFactory extends Factory
             $word = $this->faker->word;
             $filename_image = "course/$id/" . $word . ".jpg";
             $filename_video = "course/$id/" . $word . ".mp4";
+            $filename_poster = "course/$id/" . $word . "poster.jpg";
             $dest_image = storage_path("app/public/$filename_image");
             $dest_video = storage_path("app/public/$filename_video");
+            $dest_poster = storage_path("app/public/$filename_poster");
             $destDir = dirname($dest_image);
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);
             }
             copy(realpath(__DIR__ . "/../mocks/1.jpg"), $dest_image);
             copy(realpath(__DIR__ . "/../mocks/1.mp4"), $dest_video);
+            copy(realpath(__DIR__ . "/../mocks/poster.jpg"), $dest_poster);
 
             $course->update([
                 'image_path' =>  $filename_image,
                 'video_path' => $filename_video,
+                'poster_path' => $filename_poster,
             ]);
         });
     }
