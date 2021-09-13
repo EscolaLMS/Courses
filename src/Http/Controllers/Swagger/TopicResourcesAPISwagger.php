@@ -12,7 +12,7 @@ interface TopicResourcesAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/topics/{topic_id}/resources/",
+     *      path="/api/admin/topics/{topic_id}/resources/",
      *      summary="Get list of resources",
      *      tags={"Admin Courses"},
      *      description="Get list of resources",
@@ -57,7 +57,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/topics/{topic_id}/resources/",
+     *      path="/api/admin/topics/{topic_id}/resources/",
      *      summary="Post new resource",
      *      tags={"Admin Courses"},
      *      description="Post new resource",
@@ -115,7 +115,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/topics/{topic_id}/resources/{resource_id}",
+     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}",
      *      summary="Delete resource",
      *      tags={"Admin Courses"},
      *      description="Delete resource",
@@ -165,7 +165,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Patch(
-     *      path="/topics/{topic_id}/resources/{resource_id}",
+     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}",
      *      summary="Rename resource",
      *      tags={"Admin Courses"},
      *      description="Rename resource",
