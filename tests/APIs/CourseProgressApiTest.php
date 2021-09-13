@@ -33,7 +33,6 @@ class CourseProgressApiTest extends TestCase
         foreach ($topics as $topic) {
             CourseProgress::create([
                 'user_id' => $user->getKey(),
-                'course_id' => $course->getKey(),
                 'topic_id' => $topic->getKey(),
                 'status' => 1
             ]);
@@ -77,31 +76,22 @@ class CourseProgressApiTest extends TestCase
         }
     }
 
-    public function test_update_course_progress(): array
+    public function test_update_course_progress(): void
     {
         Mail::fake();
         Notification::fake();
         Queue::fake();
-        $user = User::factory()->create();
-        $course = Course::factory()->create();
+
         $courses = Course::factory(5)->create();
-        $topics = Topic::factory(2)->create();
         foreach ($courses as $course) {
             $lesson = Lesson::factory([
                 'course_id' => $course->getKey()
             ])->create();
-            foreach ($topics as $topic) {
-                $topic->lesson_id = $lesson->getKey();
-                $topic->save();
-                CourseProgress::create([
-                    'user_id' => $user->getKey(),
-                    'course_id' => $course->getKey(),
-                    'topic_id' => $topic->getKey(),
-                    'status' => 1
-                ]);
-            }
-            $user->courses()->save($course);
+            $topics = Topic::factory(2)->create([
+                'lesson_id' => $lesson->getKey()
+            ]);
         }
+
         $student = User::factory([
             'points' => 0,
         ])->create();
@@ -114,9 +104,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        return [$course, $student, $courseProgress];
     }
-
 
     public function test_ping_progress_course()
     {
@@ -129,7 +117,6 @@ class CourseProgressApiTest extends TestCase
                 $oneTopic = $topic;
                 CourseProgress::create([
                     'user_id' => $user->getKey(),
-                    'course_id' => $course->getKey(),
                     'topic_id' => $topic->getKey(),
                     'status' => 0
                 ]);

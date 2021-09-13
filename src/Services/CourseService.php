@@ -44,7 +44,7 @@ class CourseService implements CourseServiceContract
                 $paginationDto->getLimit(),
                 $criteria
             )->with(['categories', 'tags', 'author'])
-            ->withCount(['lessons', 'users', 'topic']);
+            ->withCount(['lessons', 'users', 'topics']);
 
         return $query;
     }

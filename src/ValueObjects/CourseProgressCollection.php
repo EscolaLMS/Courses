@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
@@ -45,9 +46,9 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     private function buildProgress(): Collection
     {
         $progress = new Collection();
-        $existingProgresses = ($this->course->progress()->where('user_id', $this->user->getKey())->get());
+        $existingProgresses = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->course->topics->pluck('id'))->get();
         $topicsWithoutProgress = $this->course
-            ->topic()
+            ->topics()
             ->whereNotIn(
                 'topics.id',
                 $existingProgresses->pluck('topic_id')
