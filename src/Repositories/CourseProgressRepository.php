@@ -53,7 +53,6 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
 
         $topic->progress()->updateOrCreate([
             'user_id' => $user->getKey(),
-            'course_id' => $topic->lesson->course->getKey()
         ], $update);
     }
 

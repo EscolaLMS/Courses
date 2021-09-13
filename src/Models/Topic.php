@@ -141,9 +141,9 @@ class Topic extends Model
         return $this->morphTo();
     }
 
-    public function progress(): HasOne
+    public function progress(): HasMany
     {
-        return $this->hasOne(CourseProgress::class, 'topic_id');
+        return $this->hasMany(CourseProgress::class, 'topic_id');
     }
 
     public function resources(): HasMany
