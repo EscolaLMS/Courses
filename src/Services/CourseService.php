@@ -77,7 +77,7 @@ class CourseService implements CourseServiceContract
         }
     }
 
-    public function getScormPlayer($courseId)
+    public function getScormPlayer(int $courseId)
     {
         $course = Course::with(['scorm.scos'])->findOrFail($courseId);
 

@@ -10,4 +10,5 @@ use Illuminate\Database\Eloquent\Builder;
 interface CourseServiceContract
 {
     public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder;
+    public function getScormPlayer(int $courseId);
 }
