@@ -218,4 +218,27 @@ class CourseAnonymousApiTest extends TestCase
             $this->assertTrue($course->active, true);
         }
     }
+
+    /**
+     * @test
+     */
+    public function test_search_courses_by_ids()
+    {
+        $firstCourse = Course::factory()->create(['active' => true]);
+        $secondCourse = Course::factory()->create(['active' => true]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses?ids[]=' . $firstCourse->id . '&ids[]=' . $secondCourse->id
+        );
+
+        $this->response->assertStatus(200);
+
+        $courses = $this->response->getData()->data->data;
+        $this->assertCount(2, $courses);
+        $this->assertEquals($firstCourse->id, $courses[0]->id);
+        $this->assertEquals($secondCourse->id, $courses[1]->id);
+
+        $this->assertEquals(2, $this->response->getData()->data->total);
+    }
 }

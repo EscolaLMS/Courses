@@ -104,6 +104,11 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $query = $this->applyCriteria($query, $criteria);
         }
 
+        /** search by id in array */
+        if (isset($search['ids']) && !empty($search['ids'])) {
+            $query->whereIn('id', array_filter($search['ids'], 'is_numeric'));
+        }
+
         /** search by TAG */
 
         if (isset($search['tag']) && $search['tag']) {
@@ -112,7 +117,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             });
             unset($search['tag']);
         }
-
 
         return isset($search['tag']) ? $query->with('tags') : $query;
     }
