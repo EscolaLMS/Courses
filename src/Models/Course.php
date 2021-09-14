@@ -265,12 +265,7 @@ class Course extends Model
         return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class);
     }
 
-    public function progress(): HasMany
-    {
-        return $this->hasMany(CourseProgress::class, 'course_id');
-    }
-
-    public function topic(): HasManyThrough
+    public function topics(): HasManyThrough
     {
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
     }
