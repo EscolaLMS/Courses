@@ -107,6 +107,32 @@ class CourseAccessApiTest extends TestCase
         );
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'data' => [
+                'id',
+                'title',
+                'summary',
+                'image_path',
+                'image_url',
+                'video_path',
+                'video_url',
+                'base_price',
+                'duration',
+                'author_id',
+                'scorm_id',
+                'scorm',
+                'active',
+                'subtitle',
+                'language',
+                'description',
+                'level',
+                'lessons',
+                'poster_path',
+                'poster_url',
+            ],
+            'message',
+        ]);
     }
 
     private function assertUserCanNotReadProgram(User $user, Course $course)
