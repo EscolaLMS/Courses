@@ -6,7 +6,7 @@ use EscolaLms\Courses\Models\AbstractContent;
 use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
-
+use EscolaLms\Courses\Events\VideoUpdated;
 /**
  * @OA\Schema(
  *      schema="TopicVideo",
@@ -34,6 +34,10 @@ class Video extends AbstractContent
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
+
+    protected $dispatchesEvents = [
+        'saved' => VideoUpdated::class,
+    ];
 
     public $fillable = [
         'value',

@@ -64,6 +64,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *          property="order",
  *          description="order",
  *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="json",
+ *          description="json",
+ *          type="object",
  *      )
  * )
  * 
@@ -84,7 +89,8 @@ class Topic extends Model
         'order',
         'active',
         'preview',
-        'summary'
+        'summary',
+        'json'
     ];
 
     /**
@@ -101,7 +107,8 @@ class Topic extends Model
         'order' => 'integer',
         'active' => 'boolean',
         'preview' => 'boolean',
-        'summary' => 'string'
+        'summary' => 'string',
+        'json' => 'json'
     ];
 
     /**
@@ -118,7 +125,8 @@ class Topic extends Model
         'value' => 'required',
         'active' => 'boolean',
         'preview' => 'boolean',
-        'summary' => 'string'
+        'summary' => 'string',
+        'json' => 'json'
     ];
 
     public function lesson(): BelongsTo
