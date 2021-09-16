@@ -108,7 +108,7 @@ class Topic extends Model
         'active' => 'boolean',
         'preview' => 'boolean',
         'summary' => 'string',
-        'json' => 'json'
+        'json' => 'array'
     ];
 
     /**

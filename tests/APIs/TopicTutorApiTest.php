@@ -37,7 +37,7 @@ class TopicTutorApiTest extends TestCase
         ]);
         $topic = Topic::factory()->create([
             'lesson_id' => $lesson->id,
-            'json' => json_encode(['foo' => 'bar', 'bar' => 'foo'])
+            'json' => ['foo' => 'bar', 'bar' => 'foo']
         ]);
 
 
@@ -48,6 +48,7 @@ class TopicTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($topic->toArray());
+
         $this->response->assertJsonPath('data.json.foo', 'bar');
         $this->response->assertJsonPath('data.json.bar', 'foo');
 
