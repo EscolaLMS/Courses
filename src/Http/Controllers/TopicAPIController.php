@@ -9,6 +9,7 @@ use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Http\Resources\TopicResource;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             $request->get('limit')
         );
 
-        return $this->sendResponse($topics->toArray(), 'Topics retrieved successfully');
+        return $this->sendResponseForResource(TopicResource::collection($topics), 'Topics retrieved successfully');
     }
 
     public function store(CreateTopicAPIRequest $request)
@@ -53,7 +54,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($topic->toArray(), 'Topic saved successfully');
+        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic saved successfully');
     }
 
     public function show($id, GetTopicAPIRequest $request)
@@ -64,7 +65,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError('Topic not found');
         }
 
-        return $this->sendResponse($topic->toArray(), 'Topic retrieved successfully');
+        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic retrieved successfully');
     }
 
     public function update($id, UpdateTopicAPIRequest $request)
@@ -88,7 +89,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($topic->toArray(), 'Topic updated successfully');
+        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic updated successfully');
     }
 
     public function destroy($id, DeleteTopicAPIRequest $request)

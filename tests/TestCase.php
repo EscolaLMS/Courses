@@ -3,18 +3,16 @@
 namespace EscolaLms\Courses\Tests;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
+use EscolaLms\Courses\AuthServiceProvider;
+use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
+use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Courses\Policies\CoursesPolicy;
-use EscolaLms\Courses\AuthServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 
 class TestCase extends \EscolaLms\Core\Tests\TestCase
 {
@@ -36,8 +34,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsCategoriesServiceProvider::class,
             EscolaLmsCourseServiceProvider::class,
             AuthServiceProvider::class,
+            EscolaLmsScormServiceProvider::class,
             EscolaLmsTagsServiceProvider::class,
-            EscolaLmsScormServiceProvider::class
 
         ];
     }
@@ -75,7 +73,6 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
 
     public function assertApiSuccess()
     {
-        $this->response->assertStatus(200);
         $this->response->assertJson(['success' => true]);
     }
 

@@ -41,7 +41,7 @@ class CourseAdminApiTest extends TestCase
 
         $course['author_id'] = $this->user->id;
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $this->assertApiResponse($course);
     }
@@ -114,12 +114,13 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $this->response->getData());
-        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        $this->response->assertJsonStructure([
+            'data'
+        ]);
 
         $courses_ids = [$category->getKey(), $category2->getKey()];
 
-        foreach ($this->response->getData()->data->data as $data) {
+        foreach ($this->response->getData()->data as $data) {
             foreach ($data->categories as $courseCategory) {
                 $this->assertTrue(in_array($courseCategory->id, $courses_ids));
             }
@@ -149,8 +150,6 @@ class CourseAdminApiTest extends TestCase
             $this->assertTrue(in_array($category->id,  $categoriesIds));
         }
     }
-
-
 
     public function test_attach_tags_course()
     {
@@ -192,14 +191,12 @@ class CourseAdminApiTest extends TestCase
 
         $coursesIds = [];
 
-        foreach ($this->response->getData()->data->data as $course) {
+        foreach ($this->response->getData()->data as $course) {
             $coursesIds[] = $course->id;
         }
 
         $this->assertTrue(in_array($course->id,  $coursesIds));
     }
-
-
 
     /**
      * @test
@@ -215,7 +212,6 @@ class CourseAdminApiTest extends TestCase
 
         $this->response->assertStatus(200);
     }
-
 
     /**
      * @test
@@ -247,7 +243,7 @@ class CourseAdminApiTest extends TestCase
             '/api/courses/?order_by=base_price&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax);
+        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax);
         $this->response->assertStatus(200);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -255,7 +251,7 @@ class CourseAdminApiTest extends TestCase
             '/api/courses/?order_by=base_price&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax + 1);
+        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax + 1);
         $this->response->assertStatus(200);
     }
 
@@ -267,7 +263,7 @@ class CourseAdminApiTest extends TestCase
             '/api/courses/?active=true'
         );
         $this->response->assertStatus(200);
-        $courses = $this->response->getData()->data->data;
+        $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
             $this->assertTrue($course->active, true);
@@ -278,7 +274,7 @@ class CourseAdminApiTest extends TestCase
             '/api/courses/?active=false'
         );
         $this->response->assertStatus(200);
-        $courses = $this->response->getData()->data->data;
+        $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
             $this->assertTrue($course->active, false);
@@ -363,7 +359,7 @@ class CourseAdminApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
         $path = $data->data->poster_path;

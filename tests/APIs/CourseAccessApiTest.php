@@ -4,6 +4,7 @@ namespace Tests\APIs;
 
 use EscolaLms\Auth\Models\Group;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Http\Resources\UserGroupResource;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
@@ -48,10 +49,7 @@ class CourseAccessApiTest extends TestCase
                 ]
             ],
             'groups' => [
-                [
-                    'id' => $group->id,
-                    'name' => $group->name,
-                ]
+                UserGroupResource::make($group)->toArray(null)
             ]
         ]);
     }
@@ -75,10 +73,7 @@ class CourseAccessApiTest extends TestCase
                 ]
             ],
             'groups' => [
-                [
-                    'id' => $group->id,
-                    'name' => $group->name,
-                ]
+                UserGroupResource::make($group)->toArray(null)
             ]
         ]);
 

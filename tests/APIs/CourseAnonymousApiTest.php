@@ -6,11 +6,10 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-//use Tests\ApiTestTrait;
 
 class CourseAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test
@@ -106,12 +105,13 @@ class CourseAnonymousApiTest extends TestCase
         );
 
         $this->response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $this->response->getData());
-        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        $this->response->assertJsonStructure([
+            'data'
+        ]);
 
         $courses_ids = [$category->getKey(), $category2->getKey()];
 
-        foreach ($this->response->getData()->data->data as $data) {
+        foreach ($this->response->getData()->data as $data) {
             foreach ($data->categories as $courseCategory) {
                 $this->assertTrue(in_array($courseCategory->id, $courses_ids));
             }
@@ -173,7 +173,7 @@ class CourseAnonymousApiTest extends TestCase
             '/api/courses/?order_by=base_price&order=ASC'
         );
 
-        $this->assertEquals($this->response->getData()->data->data[0]->base_price, 0);
+        $this->assertEquals($this->response->getData()->data[0]->base_price, 0);
         $this->response->assertStatus(200);
 
         $this->response = $this->json(
@@ -181,7 +181,7 @@ class CourseAnonymousApiTest extends TestCase
             '/api/courses/?order_by=base_price&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data->data[0]->base_price, $priceMax);
+        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax);
         $this->response->assertStatus(200);
     }
 
@@ -199,7 +199,7 @@ class CourseAnonymousApiTest extends TestCase
         );
         $this->response->assertStatus(200);
 
-        $courses = $this->response->getData()->data->data;
+        $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
             $this->assertTrue($course->active, true);
@@ -212,7 +212,7 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response->assertStatus(200);
 
-        $courses = $this->response->getData()->data->data;
+        $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
             $this->assertTrue($course->active, true);
@@ -234,11 +234,15 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response->assertStatus(200);
 
-        $courses = $this->response->getData()->data->data;
+        $courses = $this->response->getData()->data;
         $this->assertCount(2, $courses);
-        $this->assertEquals($firstCourse->id, $courses[0]->id);
-        $this->assertEquals($secondCourse->id, $courses[1]->id);
+        $this->response->assertJsonFragment([
+            'id' => $firstCourse->id,
+        ]);
+        $this->response->assertJsonFragment([
+            'id' => $secondCourse->id,
+        ]);
 
-        $this->assertEquals(2, $this->response->getData()->data->total);
+        $this->assertEquals(2, $this->response->getData()->meta->total);
     }
 }

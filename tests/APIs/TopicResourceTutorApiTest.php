@@ -30,7 +30,6 @@ class TopicResourceTutorApiTest extends TestCase
         $this->topic = Topic::factory()->create(['lesson_id' => $this->lesson->id]);
     }
 
-
     public function test_create_resource()
     {
         Storage::fake('local');

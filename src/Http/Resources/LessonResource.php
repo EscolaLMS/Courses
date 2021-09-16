@@ -23,7 +23,9 @@ class LessonResource extends JsonResource
             'base_price' => $this->base_price,
             'duration' => $this->duration,
             'active' => $this->active,
-            'author_id' => $this->author_id
+            'author_id' => $this->author_id,
+            'order' => $this->order,
+            'course_id' => $this->course_id,
         ];
     }
 }

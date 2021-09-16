@@ -32,7 +32,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     public function index(Request $request): JsonResponse
     {
         try {
-            return (new ProgressesResource($this->progressServiceContract->getByUser($request->user())))->response();
+            return $this->sendResponseForResource(ProgressesResource::make($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }
@@ -45,7 +45,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         try {
             $course = $this->courseRepositoryContract->getById($course_id);
-            return new JsonResponse(CourseProgressCollection::make($request->user(), $course)->getProgress());
+            return $this->sendResponse(CourseProgressCollection::make($request->user(), $course)->getProgress(), __('Progress'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }
@@ -59,7 +59,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         try {
             $course = $this->courseRepositoryContract->getById($course_id);
             $progress = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
-            return new JsonResponse($progress->getProgress());
+            return $this->sendResponse($progress->getProgress(), __('Saved progress'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }
@@ -70,7 +70,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         try {
             $topic = $this->topicRepositoryContract->getById($topic_id);
             $this->progressServiceContract->ping($request->user(), $topic);
-            return (new Status(true))->response();
+            return $this->sendResponseForResource(new Status(true), 'Status');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }
@@ -90,7 +90,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
                 $request->input('data'),
             );
 
-            return (new Status(true))->response();
+            return $this->sendResponseForResource(new Status(true), 'Status');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }

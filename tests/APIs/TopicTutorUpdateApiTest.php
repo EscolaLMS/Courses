@@ -8,13 +8,12 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
