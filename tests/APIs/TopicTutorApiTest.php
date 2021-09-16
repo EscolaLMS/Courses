@@ -35,10 +35,9 @@ class TopicTutorApiTest extends TestCase
             'course_id' => $course->id
         ]);
         $topic = Topic::factory()->create([
-            'lesson_id' => $lesson->id
+            'lesson_id' => $lesson->id,
+            'json' => ['foo' => 'bar', 'bar' => 'foo']
         ]);
-
-
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -46,6 +45,9 @@ class TopicTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($topic->toArray());
+
+        $this->response->assertJsonPath('data.json.foo', 'bar');
+        $this->response->assertJsonPath('data.json.bar', 'foo');
     }
 
 

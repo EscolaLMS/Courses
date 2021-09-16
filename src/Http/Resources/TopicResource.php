@@ -26,6 +26,7 @@ class TopicResource extends JsonResource
             'summary' => $this->summary,
             'resources' => TopicResourceResource::collection($this->resources),
             'order' => $this->order,
+            'json' => $this->json,
         ];
     }
 }
