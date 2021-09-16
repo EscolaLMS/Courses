@@ -36,7 +36,8 @@ class TopicTutorApiTest extends TestCase
             'course_id' => $course->id
         ]);
         $topic = Topic::factory()->create([
-            'lesson_id' => $lesson->id
+            'lesson_id' => $lesson->id,
+            'json' => json_encode(['foo'=>'bar', 'bar'=>'foo'])
         ]);
 
 
@@ -47,6 +48,8 @@ class TopicTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($topic->toArray());
+        $this->assertJsonFragment(['foo' => 'bar']);
+        $this->assertJsonFragment(['bar' => 'foo']);
     }
 
 
