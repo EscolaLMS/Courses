@@ -1,9 +1,8 @@
 <?php
 
-namespace Escolalms\Courses\Http\Resources;
+namespace EscolaLms\Courses\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-
 use Peopleaps\Scorm\Model\ScormModel;
 
 class ScormResource extends JsonResource
