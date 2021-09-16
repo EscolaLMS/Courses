@@ -48,8 +48,8 @@ class TopicTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($topic->toArray());
-        $this->assertJsonFragment(['foo' => 'bar']);
-        $this->assertJsonFragment(['bar' => 'foo']);
+        $this->response->assertJsonFragment(['foo' => 'bar']);
+        $this->response->assertJsonFragment(['bar' => 'foo']);
     }
 
 
