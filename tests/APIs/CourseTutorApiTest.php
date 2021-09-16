@@ -3,18 +3,14 @@
 namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Tags\Models\Tag;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
-use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use Laravel\Passport\Passport;
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test
@@ -42,7 +38,7 @@ class CourseTutorApiTest extends TestCase
             $course
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $content = json_decode($this->response->getContent());
 
@@ -168,11 +164,12 @@ class CourseTutorApiTest extends TestCase
             '/api/admin/courses/?category_id=' . $category->getKey()
         );
         $this->response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $this->response->getData());
-        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        $this->response->assertJsonStructure([
+            'data'
+        ]);
         $courses_ids = [$category->getKey(), $category2->getKey()];
 
-        foreach ($this->response->getData()->data->data as $data) {
+        foreach ($this->response->getData()->data as $data) {
             foreach ($data->categories as $courseCategory) {
                 $this->assertTrue(in_array($courseCategory->id, $courses_ids));
             }

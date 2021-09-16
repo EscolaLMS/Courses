@@ -2,13 +2,12 @@
 
 namespace Tests\APIs;
 
+use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 
 class TopicTutorApiTest extends TestCase
 {
@@ -40,8 +39,6 @@ class TopicTutorApiTest extends TestCase
             'json' => ['foo' => 'bar', 'bar' => 'foo']
         ]);
 
-
-
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/topics/' . $topic->id
@@ -51,7 +48,6 @@ class TopicTutorApiTest extends TestCase
 
         $this->response->assertJsonPath('data.json.foo', 'bar');
         $this->response->assertJsonPath('data.json.bar', 'foo');
-
     }
 
 

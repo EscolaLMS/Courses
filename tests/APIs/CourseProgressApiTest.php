@@ -2,8 +2,6 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
-use EscolaLms\Core\Models\Config;
-use EscolaLms\Core\Repositories\Contracts\ConfigRepositoryContract;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
@@ -44,12 +42,14 @@ class CourseProgressApiTest extends TestCase
             '/api/courses/progress'
         );
         $this->response->assertStatus(200);
-        $this->assertIsArray($this->response->getData());
-        foreach ($this->response->getData() as $data) {
-            $this->assertObjectHasAttribute('course', $data);
-            $this->assertObjectHasAttribute('progress', $data);
-            $this->assertNotEmpty($data->progress);
-        }
+        $this->response->assertJsonStructure([
+            'data' => [
+                [
+                    'course',
+                    'progress'
+                ]
+            ]
+        ]);
     }
 
     public function test_show_progress_course_from_group()
@@ -68,12 +68,14 @@ class CourseProgressApiTest extends TestCase
         );
 
         $this->response->assertStatus(200);
-        $this->assertIsArray($this->response->getData());
-        foreach ($this->response->getData() as $data) {
-            $this->assertObjectHasAttribute('course', $data);
-            $this->assertObjectHasAttribute('progress', $data);
-            $this->assertNotEmpty($data->progress);
-        }
+        $this->response->assertJsonStructure([
+            'data' => [
+                [
+                    'course',
+                    'progress'
+                ]
+            ]
+        ]);
     }
 
     public function test_update_course_progress(): void
@@ -128,8 +130,11 @@ class CourseProgressApiTest extends TestCase
             '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
         );
         $this->response->assertOk();
-        $data = $this->response->getData();
-        $this->assertObjectHasAttribute('status', $data);
-        $this->assertTrue($data->status);
+        $this->response->assertJsonStructure([
+            'data' => [
+                'status'
+            ]
+        ]);
+        $this->assertTrue($this->response->getData()->data->status);
     }
 }

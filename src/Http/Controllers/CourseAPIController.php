@@ -14,6 +14,7 @@ use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
+use EscolaLms\Courses\Http\Resources\CourseSimpleResource;
 use EscolaLms\Courses\Http\Resources\CourseWithProgramAdminResource;
 use EscolaLms\Courses\Http\Resources\CourseWithProgramResource;
 use EscolaLms\Courses\Models\Course;
@@ -65,7 +66,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             PaginationDto::instantiateFromRequest($request),
             $search
         )->paginate($request->get('per_page') ?? 15);
-        return $this->sendResponse($courses->toArray(), 'Courses retrieved successfully');
+        return $this->sendResponseForResource(CourseSimpleResource::collection($courses), 'Courses retrieved successfully');
     }
 
     public function store(CreateCourseAPIRequest $request)
@@ -82,7 +83,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($course->toArray(), 'Course saved successfully');
+        return $this->sendResponseForResource(CourseSimpleResource::make($course), 'Course saved successfully');
     }
 
     public function show($id, GetCourseAPIRequest $request)
@@ -93,7 +94,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError('Course not found');
         }
 
-        return $this->sendResponse($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'author')->loadCount('users')->toArray(), 'Course retrieved successfully');
+        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'author')->loadCount('users')), 'Course retrieved successfully');
     }
 
     public function program($id, GetCourseCurriculumAPIRequest $request)
@@ -114,7 +115,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         }
 
         $resource = ($request->user() && $request->user()->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
-        return $this->sendResponse($resource->toArray($request), 'Course retrieved successfully');
+        return $this->sendResponseForResource($resource, 'Course retrieved successfully');
     }
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
@@ -151,7 +152,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($course->toArray(), 'Course updated successfully');
+        return $this->sendResponseForResource(CourseSimpleResource::make($course), 'Course updated successfully');
     }
 
     public function destroy($id, DeleteCourseAPIRequest $request)

@@ -10,7 +10,7 @@ use Peopleaps\Scorm\Model\ScormModel;
 
 class CourseScormApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test

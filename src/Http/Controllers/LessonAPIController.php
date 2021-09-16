@@ -9,6 +9,7 @@ use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
+use EscolaLms\Courses\Http\Resources\LessonResource;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\LessonRepository;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             $request->get('limit')
         );
 
-        return $this->sendResponse($lessons->toArray(), 'Lessons retrieved successfully');
+        return $this->sendResponseForResource(LessonResource::collection($lessons), 'Lessons retrieved successfully');
     }
 
     public function store(CreateLessonAPIRequest $request)
@@ -54,7 +55,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson saved successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson saved successfully');
     }
 
     public function show($id, GetLessonAPIRequest $request)
@@ -65,7 +66,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             return $this->sendError('Lesson not found');
         }
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson retrieved successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson retrieved successfully');
     }
 
     public function update($id, UpdateLessonAPIRequest $request)
@@ -89,7 +90,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponse($lesson->toArray(), 'Lesson updated successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson updated successfully');
     }
 
     public function destroy($id, DeleteLessonAPIRequest $request)

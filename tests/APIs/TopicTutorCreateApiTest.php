@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TopicTutorCreateApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -48,7 +48,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
 
@@ -78,7 +78,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
 
@@ -108,7 +108,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
 
@@ -138,7 +138,7 @@ class TopicTutorCreateApiTest extends TestCase
             ]
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
 
@@ -163,7 +163,7 @@ class TopicTutorCreateApiTest extends TestCase
                 'value' => 'lorem ipsum'
             ]
         );
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $data = json_decode($this->response->getContent());
 
@@ -190,8 +190,6 @@ class TopicTutorCreateApiTest extends TestCase
 
         $this->response->assertStatus(401);
     }
-
-    /////
 
     public function test_create_topic_image_no_file()
     {

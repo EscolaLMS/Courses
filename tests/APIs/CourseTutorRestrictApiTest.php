@@ -36,7 +36,7 @@ class CourseTutorRestrictApiTest extends TestCase
             $course
         );
 
-        $this->response->assertStatus(200);
+        $this->response->assertStatus(201);
 
         $course['author_id'] = $this->user->id;
 
@@ -106,11 +106,12 @@ class CourseTutorRestrictApiTest extends TestCase
             '/api/admin/courses/?category_id=' . $category->getKey()
         );
         $this->response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $this->response->getData());
-        $this->assertObjectHasAttribute('data', $this->response->getData()->data);
+        $this->response->assertJsonStructure([
+            'data'
+        ]);
         $courses_ids = [$category->getKey(), $category2->getKey()];
 
-        foreach ($this->response->getData()->data->data as $data) {
+        foreach ($this->response->getData()->data as $data) {
             foreach ($data->categories as $courseCategory) {
                 $this->assertTrue(in_array($courseCategory->id, $courses_ids));
             }

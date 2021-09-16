@@ -2,13 +2,13 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use EscolaLms\Auth\Http\Resources\UserGroupResource;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\Courses\Http\Controllers\Swagger\CoursesAccessAPISwagger;
 use EscolaLms\Courses\Http\Requests\AddAccessAPIRequest;
 use EscolaLms\Courses\Http\Requests\ListAccessAPIRequest;
 use EscolaLms\Courses\Http\Requests\RemoveAccessAPIRequest;
 use EscolaLms\Courses\Http\Requests\SetAccessAPIRequest;
+use EscolaLms\Courses\Http\Resources\UserGroupResource;
 use EscolaLms\Courses\Http\Resources\UserShortResource;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Http\JsonResponse;

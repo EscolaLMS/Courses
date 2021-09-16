@@ -4,7 +4,6 @@ namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\ValueObjects\CourseContent;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
@@ -24,11 +23,6 @@ class CourseResource extends JsonResource
         }
 
         $course = $this->resource->getCourse();
-
-        if ($course && $request->user()) {
-            $courseProgressCollection = CourseProgressCollection::make($request->user(), $course);
-            $finishedAt = $courseProgressCollection->getFinishDate();
-        }
 
         return [
             'id' => $course->getKey(),

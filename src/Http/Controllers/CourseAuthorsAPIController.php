@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
+use EscolaLms\Courses\Http\Resources\TutorResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
     public function index(Request $request): JsonResponse
     {
         $tutors = $this->courseRepositoryContract->findTutors();
-        return $this->sendResponse($tutors->toArray(), 'Tutors retrieved successfully');
+        return $this->sendResponseForResource(TutorResource::collection($tutors), 'Tutors retrieved successfully');
     }
 
     /**
@@ -36,6 +37,6 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
         if (empty($tutor)) {
             return $this->sendError('Not found', 404);
         }
-        return $this->sendResponse($tutor, 'Tutor retrieved successfully');
+        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
     }
 }
