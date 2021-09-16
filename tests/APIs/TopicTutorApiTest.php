@@ -48,7 +48,9 @@ class TopicTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($topic->toArray());
-        $this->response->assertJsonFragment(['foo' => 'bar', 'bar' => 'foo']);
+        $this->response->assertJsonPath('data.json.foo', 'bar');
+        $this->response->assertJsonPath('data.json.bar', 'foo');
+
     }
 
 
