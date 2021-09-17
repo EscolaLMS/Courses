@@ -35,6 +35,7 @@ class UpdateTopicAPIRequest extends FormRequest
             'topicable_type' => 'string|max:255',
             'order' => 'integer',
             'summary' => 'string',
+            'can_skip' => 'boolean',
         ];
     }
 }

@@ -126,6 +126,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'active' => true,
             'preview' => false,
             'summary' => isset($input['summary']) ? $input['summary'] : null,
+            'can_skip' => (bool) ($input['can_skip'] ?? false),
         ];
 
         $model = $this->model->newInstance($input);

@@ -27,6 +27,7 @@ class TopicResource extends JsonResource
             'resources' => TopicResourceResource::collection($this->resources),
             'order' => $this->order,
             'json' => $this->json,
+            'can_skip' => $this->can_skip,
         ];
     }
 }

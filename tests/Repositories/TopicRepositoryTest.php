@@ -1,22 +1,24 @@
-<?php namespace Tests\Repositories;
+<?php
 
+namespace Tests\Repositories;
+
+use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
-
-//use Tests\ApiTestTrait;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TopicRepositoryTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @var TopicRepository
      */
     protected $topicRepo;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $this->topicRepo = \App::make(TopicRepository::class);
@@ -27,7 +29,9 @@ class TopicRepositoryTest extends TestCase
      */
     public function test_create_topic()
     {
-        $topic = Topic::factory()->make()->toArray();
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
         $topic['topicable_type'] = "EscolaLms\Courses\Models\TopicContent\RichText";
         $topic['value'] = "lorem ipsum";
 

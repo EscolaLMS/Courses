@@ -31,6 +31,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *          type="boolean"
  *      ),
  *      @OA\Property(
+ *          property="can_skip",
+ *          description="can skip",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
  *          property="preview",
  *          description="preview",
  *          type="boolean"
@@ -90,7 +95,8 @@ class Topic extends Model
         'active',
         'preview',
         'summary',
-        'json'
+        'json',
+        'can_skip',
     ];
 
     /**
@@ -108,7 +114,8 @@ class Topic extends Model
         'active' => 'boolean',
         'preview' => 'boolean',
         'summary' => 'string',
-        'json' => 'array'
+        'json' => 'array',
+        'can_skip' => 'boolean',
     ];
 
     /**
@@ -126,7 +133,8 @@ class Topic extends Model
         'active' => 'boolean',
         'preview' => 'boolean',
         'summary' => 'string',
-        'json' => 'json'
+        'json' => 'json',
+        'can_skip' => 'boolean',
     ];
 
     public function lesson(): BelongsTo
