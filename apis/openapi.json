@@ -1751,6 +1751,10 @@
                         "description": "active",
                         "type": "boolean"
                     },
+                    "can_skip": {
+                        "description": "can skip",
+                        "type": "boolean"
+                    },
                     "preview": {
                         "description": "preview",
                         "type": "boolean"
