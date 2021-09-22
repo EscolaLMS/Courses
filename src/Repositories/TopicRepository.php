@@ -2,13 +2,18 @@
 
 namespace EscolaLms\Courses\Repositories;
 
+use Error;
+use EscolaLms\Courses\Exceptions\TopicException;
+use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
+use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Models\Contracts\TopicContentContract;
+use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use Illuminate\Support\Facades\App;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
-use EscolaLms\Courses\Exceptions\TopicException;
-use Error;
 
 /**
  * Class TopicRepository
@@ -62,42 +67,15 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      */
     public static function registerContentClass(string $class): array
     {
-        if (!in_array($class, self::$contentClasses)) {
+        if (!in_array($class, self::$contentClasses) && class_exists($class) && (is_a($class, TopicContentContract::class))) {
             self::$contentClasses[] = $class;
         }
         return self::$contentClasses;
     }
 
-    public function availableContentClasses(): array
+    public static function availableContentClasses(): array
     {
         return self::$contentClasses;
-    }
-
-    private function getContentModel($classType, $input)
-    {
-        if (!in_array($classType, self::$contentClasses)) {
-            throw new Error("Type '$classType' is not allowed");
-        }
-
-        $contentModel = App::make($classType);
-        $contentFillable = $contentModel->fillable;
-
-        // get only input by Models fillable attribute
-        $contentInput = array_filter($input, function ($key) use ($contentFillable) {
-            return in_array($key, $contentFillable);
-        }, ARRAY_FILTER_USE_KEY);
-
-        // Validate against Models `rules` array
-        $validator = Validator::make($contentInput, $classType::$rules);
-
-        if ($validator->fails()) {
-            throw new TopicException(TopicException::CONTENT_VALIDATION, $validator->errors()->toArray());
-        }
-
-        return [
-            'model' => $contentModel,
-            'input' => $contentInput
-        ];
     }
 
     public function getById($id): Topic
@@ -108,17 +86,10 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     /**
      * Create model record
      *
-     * @param array $input
-     *
      * @return Topic
      */
     public function create(array $input): Topic
     {
-        // initialise mode from allowed list string
-        $classType = $input["topicable_type"];
-        $content = $this->getContentModel($classType, $input);
-
-        // saves topic to gets its ID, for later referncing
         $input = [
             'title' => $input['title'],
             'lesson_id' => $input['lesson_id'],
@@ -132,19 +103,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $model = $this->model->newInstance($input);
         $model->save();
 
-        // check if `createResourceFromRequest` exisits on `Model` if so then convert input
-        if (method_exists($classType, 'createResourceFromRequest')) {
-            $content['input'] = $classType::createResourceFromRequest($content['input'], $model->id);
-        }
-
-        // create related 1:1 content and associate with topic
-        $content['model']->fill($content['input']);
-        $content['model']->save();
-        $model->topicable()->associate($content['model'])->save();
-        $model->load('topicable');
         return $model;
     }
-
 
     /**
      * Update model record for given id
@@ -159,36 +119,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $query = $this->model->newQuery();
 
         $model = $query->with('topicable')->findOrFail($id);
-
-        if (isset($input['topicable_type']) && $model->topicable_type != $input['topicable_type']) {
-            $classType = $input['topicable_type'];
-            $content = $this->getContentModel($classType, $input);
-
-            if (method_exists($classType, 'createResourceFromRequest')) {
-                $content['input'] = $classType::createResourceFromRequest($content['input'], $id);
-            }
-
-            $content['model']->fill($content['input']);
-            $content['model']->save();
-
-            //$model->topicable()->delete();
-            $model->topicable()->associate($content['model'])->save();
-        } elseif (isset($input['topicable_type']) && $model->topicable_type == $input['topicable_type']) {
-            $classType = $input['topicable_type'];
-
-            if (method_exists($classType, 'createResourceFromRequest')) {
-                $input = $classType::createResourceFromRequest($input, $id);
-            }
-
-            $model->topicable->fill($input);
-            $model->topicable->save();
-        }
-
-        $modelFillable = $model->fillable;
-
-        $input = array_filter($input, function ($key) use ($modelFillable) {
-            return in_array($key, $modelFillable);
-        }, ARRAY_FILTER_USE_KEY);
 
         $model->fill($input);
 
