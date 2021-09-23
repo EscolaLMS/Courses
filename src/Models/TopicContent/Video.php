@@ -21,7 +21,7 @@ use EscolaLms\Courses\Events\VideoUpdated;
  *          property="value",
  *          description="value",
  *          type="string"
- *      )
+ *      ),
  *      @OA\Property(
  *          property="poster",
  *          description="poster",
@@ -78,7 +78,7 @@ class Video extends AbstractTopicFileContent
     public function getPosterUrlAttribute(): ?string
     {
         if (isset($this->poster)) {
-            return url(Storage::url($this->poster));
+            return Storage::disk(config('courses.topic_content_disk'))->url($this->poster);
         }
         return null;
     }
