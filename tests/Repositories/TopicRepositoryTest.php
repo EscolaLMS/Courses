@@ -55,7 +55,8 @@ class TopicRepositoryTest extends TestCase
         $topic['value'] = "lorem ipsum";
 
         /** @var CreateTopicApiRequestMock $request */
-        $request = app(CreateTopicApiRequestMock::class);
+        $request = new CreateTopicApiRequestMock();
+        $request->setContainer(app());
         $request->replace($topic)->manualValidation();
 
         $createdTopic = $this->topicRepo->createFromRequest($request);
@@ -107,7 +108,8 @@ class TopicRepositoryTest extends TestCase
         $topic['value'] = "lorem ipsum";
 
         /** @var CreateTopicApiRequestMock $request */
-        $request = app(CreateTopicApiRequestMock::class);
+        $request = new CreateTopicApiRequestMock();
+        $request->setContainer(app());
         $request->replace($topic)->manualValidation();
 
         $createdTopic = $this->topicRepo->createFromRequest($request);
@@ -130,7 +132,8 @@ class TopicRepositoryTest extends TestCase
         $fakeTopic['topic'] = $createdTopic->getKey();
 
         /** @var UpdateTopicApiRequestMock $request2 */
-        $request2 = app(UpdateTopicApiRequestMock::class);
+        $request2 = new UpdateTopicApiRequestMock();
+        $request2->setContainer(app());
         $request2->replace($fakeTopic)->manualValidation();
 
         $updatedTopic = $this->topicRepo->updateFromRequest($request2);
@@ -151,7 +154,8 @@ class TopicRepositoryTest extends TestCase
         $fakeTopic2['topic'] = $createdTopic->getKey();
 
         /** @var UpdateTopicApiRequestMock $request3 */
-        $request3 = app(UpdateTopicApiRequestMock::class);
+        $request3 = new UpdateTopicApiRequestMock();
+        $request3->setContainer(app());
         $request3->replace($fakeTopic2)->manualValidation();
 
         $updatedTopic2 = $this->topicRepo->updateFromRequest($request3);
