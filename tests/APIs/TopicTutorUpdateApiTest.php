@@ -102,6 +102,94 @@ class TopicTutorUpdateApiTest extends TestCase
         ]);
     }
 
+    public function test_update_topic_audio_with_new_file()
+    {
+        Storage::fake('local');
+
+        $file = UploadedFile::fake()->create('avatar.mp3');
+
+        $this->response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->actingAs($this->user, 'api')->post(
+            '/api/admin/topics/' . $this->topic->id,
+            [
+                'title' => 'Hello World',
+                'lesson_id' => $this->topic->lesson_id,
+                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
+                'value' => $file
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+
+        $path = $data->data->topicable->value;
+
+        Storage::disk('local')->assertExists("/" . $path);
+
+        $this->assertDatabaseHas('topic_audios', [
+            'id' => $data->data->topicable->id,
+            'value' => $path
+        ]);
+
+        // ***
+        // Update sending another file as value
+        // ***
+
+        $file2 = UploadedFile::fake()->create('another.mp3');
+
+        $this->response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->actingAs($this->user, 'api')->post(
+            '/api/admin/topics/' . $this->topic->id,
+            [
+                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
+                'value' => $file2
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+
+        $path = $data->data->topicable->value;
+
+        Storage::disk('local')->assertExists("/" . $path);
+
+        $this->assertDatabaseHas('topic_audios', [
+            'id' => $data->data->topicable->id,
+            'value' => $path
+        ]);
+
+        // ***
+        // Update sending current file path as value
+        // ***
+
+        $this->response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->actingAs($this->user, 'api')->post(
+            '/api/admin/topics/' . $this->topic->id,
+            [
+                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
+                'value' => $path
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = json_decode($this->response->getContent());
+
+        $path = $data->data->topicable->value;
+
+        Storage::disk('local')->assertExists("/" . $path);
+
+        $this->assertDatabaseHas('topic_audios', [
+            'id' => $data->data->topicable->id,
+            'value' => $path
+        ]);
+    }
+
     public function test_update_topic_video()
     {
         Storage::fake('local');
