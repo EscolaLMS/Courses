@@ -2,9 +2,7 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +18,7 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
             if (is_array($key_rules)) {
                 return in_array('file', $key_rules) || in_array('image', $key_rules);
             }
-            return (strpos('file', $key_rules) !== false) || (strpos('image', $key_rules));
+            return strpos('file', $key_rules) !== false || strpos('image', $key_rules) !== false;
         }));
     }
 
@@ -28,7 +26,7 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
     {
         if (empty($base_path)) {
             if ($this->topic) {
-                $base_path = $this->topic->getStorageDirectoryAttribute();
+                $base_path = $this->topic->storage_directory;
             } else {
                 $base_path = "topic-content/" . $this->getKey() . "/";
             }
