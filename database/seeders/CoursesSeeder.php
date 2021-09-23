@@ -38,6 +38,9 @@ class CoursesSeeder extends Seeder
 
     public function run()
     {
+        Video::unsetEventDispatcher();
+        Video::flushEventListeners();
+
         $this->faker = $this->makeFaker();
         $this->faker->addProvider(new FakerProvider($this->faker));
 
