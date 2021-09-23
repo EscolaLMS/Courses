@@ -78,7 +78,7 @@ class Video extends AbstractTopicFileContent
     public function getPosterUrlAttribute(): ?string
     {
         if (isset($this->poster)) {
-            return Storage::disk(config('courses.topic_content_disk'))->url($this->poster);
+            return url(Storage::url($this->poster));
         }
         return null;
     }
