@@ -203,7 +203,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
         $attributes = $validator->validated();
         if ($model instanceof TopicFileContentContract) {
-            $attributes = array_filter($attributes, fn ($attribute_key) => !in_array($attribute_key, $model->getFileKeys()), ARRAY_FILTER_USE_KEY);
+            $attributes = array_filter($attributes, fn ($attribute_key) => !in_array($attribute_key, $model->getFileKeyNames()), ARRAY_FILTER_USE_KEY);
             $model->storeUploadsFromRequest($request, $topic->storage_directory);
         }
         $model->fill($attributes);
@@ -228,7 +228,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
         $attributes = $validator->validated();
         if ($topicContent instanceof TopicFileContentContract) {
-            $attributes = array_filter($attributes, fn ($attribute_key) => !in_array($attribute_key, $topicContent->getFileKeys()), ARRAY_FILTER_USE_KEY);
+            $attributes = array_filter($attributes, fn ($attribute_key) => !in_array($attribute_key, $topicContent->getFileKeyNames()), ARRAY_FILTER_USE_KEY);
             $topicContent->storeUploadsFromRequest($request);
         }
         $topicContent->fill($attributes);

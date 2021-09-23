@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Validation\Rule;
 
@@ -173,6 +174,9 @@ class Topic extends Model
 
     public function getStorageDirectoryAttribute(): string
     {
+        if ($this->lesson && $this->lesson->course_id) {
+            return 'course/' . $this->lesson->course_id . "/topic/" .  $this->getKey()  . "/";
+        }
         return "topic/" .  $this->getKey()  . "/";
     }
 }

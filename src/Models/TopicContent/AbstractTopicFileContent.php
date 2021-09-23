@@ -5,21 +5,24 @@ namespace EscolaLms\Courses\Models\TopicContent;
 use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 abstract class AbstractTopicFileContent extends AbstractTopicContent implements TopicFileContentContract
 {
     protected $appends = ['url'];
 
-    public function getFileKeys(): array
+    public function getFileKeyNames(): array
     {
-        $rules = $this->rules();
-        return array_keys(array_filter($rules, function ($key_rules) {
-            if (is_array($key_rules)) {
-                return in_array('file', $key_rules) || in_array('image', $key_rules);
-            }
-            return strpos('file', $key_rules) !== false || strpos('image', $key_rules) !== false;
-        }));
+        return Collection::make($this->rules())
+            ->filter(function ($field_rules) {
+                if (is_array($field_rules)) {
+                    return in_array('file', $field_rules) || in_array('image', $field_rules);
+                }
+                return strpos('file', $field_rules) !== false || strpos('image', $field_rules) !== false;
+            })
+            ->keys()
+            ->toArray();
     }
 
     public function generateStoragePath(?string $base_path = null): string
@@ -41,7 +44,7 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
 
     public function storeUploadsFromRequest(FormRequest $request, ?string $path = null): self
     {
-        foreach ($this->getFileKeys() as $file_key) {
+        foreach ($this->getFileKeyNames() as $file_key) {
             $file = $request->file($file_key);
             if ($file) {
                 $this->storeUpload($file, $file_key, $path);
@@ -53,6 +56,7 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
 
     protected function processUploadedFiles(): void
     {
+        // do something in child classes
     }
 
     protected function storeUpload(UploadedFile $file, string $key = 'value', ?string $path = null): string
