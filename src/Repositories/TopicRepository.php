@@ -160,18 +160,17 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             }
 
             $topicContent = null;
+
             if ($request->has('topicable_id')) {
                 $topicContent = $class::find($request->input('topicable_id'));
-            } elseif ($request->input('topicable_type') === $topic->topicable_type) {
+            } elseif ($class === $topic->topicable_type) {
                 $topicContent = $topic->topicable;
             }
 
-            if ($request->hasAny(array_keys($class::rules()))) {
-                if (empty($topicContent)) {
-                    $topicContent = $this->createTopicContentModelFromRequest($request, $topic);
-                } else {
-                    $topicContent = $this->updateTopicContentModelFromRequest($request, $topicContent);
-                }
+            if (empty($topicContent)) {
+                $topicContent = $this->createTopicContentModelFromRequest($request, $topic);
+            } elseif ($request->hasAny(array_keys($class::rules()))) {
+                $topicContent = $this->updateTopicContentModelFromRequest($request, $topicContent);
             }
 
             $topic->topicable()->associate($topicContent);

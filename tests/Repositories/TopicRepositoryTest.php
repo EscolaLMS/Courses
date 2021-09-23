@@ -2,7 +2,6 @@
 
 namespace Tests\Repositories;
 
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -12,7 +11,6 @@ use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Mocks\UpdateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\TestCase;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TopicRepositoryTest extends TestCase
