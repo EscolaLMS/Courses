@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Services;
 use Error;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Dtos\PaginationDto;
+use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -28,7 +29,7 @@ class CourseService implements CourseServiceContract
         $this->scormService = $scormService;
     }
 
-    public function getCoursesListWithOrdering(OrderDto $orderDto, PaginationDto $paginationDto, array $search = []): Builder
+    public function getCoursesListWithOrdering(OrderDto $orderDto, array $search = []): Builder
     {
         $criteria = $this->prepareCriteria($orderDto);
 
@@ -36,14 +37,15 @@ class CourseService implements CourseServiceContract
             $criteria[] = new CourseSearch($search['title']);
             unset($search['title']);
         }
+        if (isset($search['free']) && $search['free']) {
+            $criteria[] = new EqualCriterion('base_price', 0);
+            unset($search['free']);
+        }
 
-        $query = $this->courseRepository
-            ->allQueryBuilder(
-                $search,
-                $paginationDto->getSkip(),
-                $paginationDto->getLimit(),
-                $criteria
-            )->with(['categories', 'tags', 'author'])
+        $query = $this->courseRepository->allQueryBuilder(
+            $search,
+            $criteria
+        )->with(['categories', 'tags', 'author'])
             ->withCount(['lessons', 'users', 'topics']);
 
         return $query;

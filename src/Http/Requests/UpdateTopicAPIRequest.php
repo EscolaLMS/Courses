@@ -15,8 +15,7 @@ class UpdateTopicAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $topic = Topic::find($this->route('topic'));
-        return isset($user) && $user->can('update', $topic);
+        return isset($user) && $user->can('update', $this->getTopic());
     }
 
     /**
@@ -26,16 +25,13 @@ class UpdateTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title' => 'string|max:255',
-            'lesson_id' => 'integer|exists:lessons,id',
-            'active' => 'boolean',
-            'preview' => 'boolean',
-            'topicable_id' => 'integer',
-            'topicable_type' => 'string|max:255',
-            'order' => 'integer',
-            'summary' => 'string',
-            'can_skip' => 'boolean',
-        ];
+        $rules = Topic::rules();
+        unset($rules['json']);
+        return $rules;
+    }
+
+    public function getTopic(): ?Topic
+    {
+        return Topic::find($this->route('topic'));
     }
 }

@@ -2,11 +2,10 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Models\AbstractContent;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 use EscolaLms\Courses\Events\VideoUpdated;
+
 /**
  * @OA\Schema(
  *      schema="TopicVideo",
@@ -23,17 +22,19 @@ use EscolaLms\Courses\Events\VideoUpdated;
  *          description="value",
  *          type="string"
  *      )
+ *      @OA\Property(
+ *          property="poster",
+ *          description="poster",
+ *          type="string"
+ *      )
  * )
  */
 
-class Video extends AbstractContent
+class Video extends AbstractTopicFileContent
 {
     use HasFactory;
 
     public $table = 'topic_videos';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
 
     protected $dispatchesEvents = [
         'saved' => VideoUpdated::class,
@@ -41,75 +42,43 @@ class Video extends AbstractContent
 
     public $fillable = [
         'value',
-        'poster'
+        'poster',
+        'width',
+        'height',
     ];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
-        'value' => 'string'
+        'value' => 'string',
+        'poster' => 'string',
+        'width' => 'integer',
+        'height' => 'integer',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'value' => 'file|mimes:mp4,ogg,webm',
-        'poster' => 'file|image'
-    ];
+    public static function rules(): array
+    {
+        return [
+            'value' => ['file', 'mimes:mp4,ogg,webm'],
+            'poster' => ['file', 'image']
+        ];
+    }
 
     protected $appends = ['url', 'poster_url'];
-
-    public function topic()
-    {
-        return $this->morphOne(Topic::class, 'topicable');
-    }
 
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicContent\VideoFactory::new();
     }
 
-    // TODO: this idea is crazy
-    public static function createResourceFromRequest($input, $topicId): array
+    public function getStoragePathFinalSegment(): string
     {
-        if (is_string($input['value'])) {
-            unset($input['value']);
-            return $input;
-        }
-        if ($input['value']) {
-            $tmpFile = $input['value']->getPathName();
-            $path = $input['value']->store("topic/$topicId/videos");
-
-            if (isset($input['poster'])) {
-                $poster = $input['poster']->store("public/topic/$topicId/videos");
-            }
-
-            return [
-                'value' => $path,
-                'width' => 0,
-                'height' => 0,
-                'poster' => isset($poster) ? $poster : null
-            ];
-        }
-        return $input;
+        return 'video';
     }
 
-    public function getUrlAttribute()
+    public function getPosterUrlAttribute(): ?string
     {
-        return  url(Storage::url($this->attributes['value']));
-    }
-
-    public function getPosterUrlAttribute()
-    {
-        if (isset($this->attributes['value'])) {
-            return  url(Storage::url($this->attributes['value']));
+        if (isset($this->poster)) {
+            return url(Storage::url($this->poster));
         }
         return null;
     }

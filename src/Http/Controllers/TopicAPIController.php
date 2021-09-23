@@ -19,7 +19,6 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * Class TopicController
  * @package App\Http\Controllers
  */
-
 class TopicAPIController extends AppBaseController implements TopicAPISwagger
 {
     /** @var  TopicRepository */
@@ -43,9 +42,8 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
 
     public function store(CreateTopicAPIRequest $request)
     {
-        $input = $request->all();
         try {
-            $topic = $this->topicRepository->create($input);
+            $topic = $this->topicRepository->createFromRequest($request);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
@@ -70,17 +68,12 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
 
     public function update($id, UpdateTopicAPIRequest $request)
     {
-        $input = $request->all();
-
-        /** @var Topic $topic */
-        $topic = $this->topicRepository->find($id);
-
-        if (empty($topic)) {
+        if (is_null($request->getTopic())) {
             return $this->sendError('Topic not found', 404);
         }
 
         try {
-            $topic = $this->topicRepository->update($input, $id);
+            $topic = $this->topicRepository->updateFromRequest($request);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
