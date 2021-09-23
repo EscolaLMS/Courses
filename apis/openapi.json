@@ -1891,6 +1891,10 @@
                     "value": {
                         "description": "value",
                         "type": "string"
+                    },
+                    "poster": {
+                        "description": "poster",
+                        "type": "string"
                     }
                 },
                 "type": "object"
