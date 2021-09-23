@@ -31,6 +31,8 @@ class CreateTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return Topic::$rules;
+        $rules = Topic::rules();
+        $rules['lesson_id'][] = 'required';
+        return $rules;
     }
 }

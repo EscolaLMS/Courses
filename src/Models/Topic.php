@@ -3,13 +3,16 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Courses\Database\Factories\TopicFactory;
+use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
@@ -118,24 +121,21 @@ class Topic extends Model
         'can_skip' => 'boolean',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'title' => 'nullable|string|max:255',
-        'lesson_id' => 'required|exists:lessons,id',
-        'topicable_id' => 'integer',
-        'topicable_type' => 'required|string|max:255',
-        'order' => 'integer',
-        'value' => 'required',
-        'active' => 'boolean',
-        'preview' => 'boolean',
-        'summary' => 'string',
-        'json' => 'json',
-        'can_skip' => 'boolean',
-    ];
+    public static function rules(): array
+    {
+        return [
+            'title' => ['string', 'max:255'],
+            'summary' => ['string'],
+            'lesson_id' => ['integer', 'exists:lessons,id'],
+            'topicable_id' => ['integer'],
+            'topicable_type' => ['required_with:topicable_id', 'string', Rule::in(TopicRepository::availableContentClasses())],
+            'order' => ['integer'],
+            'active' => ['boolean'],
+            'preview' => ['boolean'],
+            'can_skip' => ['boolean'],
+            'json' => ['json'],
+        ];
+    }
 
     public function lesson(): BelongsTo
     {
@@ -170,5 +170,13 @@ class Topic extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('topics.active', '=', true);
+    }
+
+    public function getStorageDirectoryAttribute(): string
+    {
+        if ($this->lesson && $this->lesson->course_id) {
+            return 'course/' . $this->lesson->course_id . "/topic/" .  $this->getKey()  . "/";
+        }
+        return "topic/" .  $this->getKey()  . "/";
     }
 }

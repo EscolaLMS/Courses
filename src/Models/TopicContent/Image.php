@@ -2,9 +2,10 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Models\AbstractContent;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -26,43 +27,32 @@ use Illuminate\Support\Facades\Storage;
  * )
  */
 
-class Image extends AbstractContent
+class Image extends AbstractTopicFileContent
 {
     use HasFactory;
 
     public $table = 'topic_images';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-    public $fillable = [
-        'value'
+    protected $fillable = [
+        'value',
+        'width',
+        'height',
     ];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
-        'value' => 'string'
+        'value' => 'string',
+        'width' => 'integer',
+        'height' => 'integer',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'value' => 'required|image'
-    ];
-
-    protected $appends = ['url'];
-
-    public function topic()
+    public static function rules(): array
     {
-        return $this->morphOne(Topic::class, 'topicable');
+        return  [
+            'value' => ['required', 'image'],
+            'width' => ['sometimes', 'integer'],
+            'height' => ['sometimes', 'integer'],
+        ];
     }
 
     protected static function newFactory()
@@ -70,24 +60,17 @@ class Image extends AbstractContent
         return \EscolaLms\Courses\Database\Factories\TopicContent\ImageFactory::new();
     }
 
-    // TODO: this idea is crazy
-    public static function createResourceFromRequest($input, $topicId): array
+    public function getStoragePathFinalSegment(): string
     {
-        $tmpFile = $input['value']->getPathName();
-        $sizes = getimagesize($tmpFile);
-        if (!$sizes) {
-            throw new Error("File is not an Image");
-        }
-        $path = $input['value']->store("public/topic/$topicId/images");
-        return [
-            'value' => $path,
-            'width' => $sizes[0],
-            'height' => $sizes[1],
-        ];
+        return 'image';
     }
 
-    public function getUrlAttribute()
+    protected function processUploadedFiles(): void
     {
-        return  url(Storage::url($this->attributes['value']));
+        $sizes = getimagesize(Storage::path($this->value));
+        if ($sizes) {
+            $this->width = $sizes[0];
+            $this->height = $sizes[1];
+        }
     }
 }

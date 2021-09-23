@@ -49,23 +49,16 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function index(Request $request)
     {
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
-        $user = Auth::user();
 
-        if (isset($user) && $user->hasRole(['admin', 'tutor'])) {
-            if (isset($search['active'])) {
-                $search['active'] = $search['active'];
-            }
-        } else {
+        $user = $request->user();
+        if (!isset($user) || !$user->hasRole(['admin', 'tutor'])) {
             $search['active'] = true;
         }
 
         $orderDto = OrderDto::instantiateFromRequest($request);
 
-        $courses = $this->courseServiceContract->getCoursesListWithOrdering(
-            $orderDto,
-            PaginationDto::instantiateFromRequest($request),
-            $search
-        )->paginate($request->get('per_page') ?? 15);
+        $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)->paginate($request->get('per_page') ?? 15);
+
         return $this->sendResponseForResource(CourseSimpleResource::collection($courses), 'Courses retrieved successfully');
     }
 

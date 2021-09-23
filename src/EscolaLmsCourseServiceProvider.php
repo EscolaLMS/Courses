@@ -50,6 +50,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(AuthServiceProvider::class);
+
         TopicRepository::registerContentClass(Audio::class);
         TopicRepository::registerContentClass(Video::class);
         TopicRepository::registerContentClass(Image::class);

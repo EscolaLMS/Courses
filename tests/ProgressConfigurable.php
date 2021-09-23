@@ -1,8 +1,6 @@
 <?php
 
-
 namespace EscolaLms\Courses\Tests;
-
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\ProgressStatus;
@@ -36,5 +34,4 @@ trait ProgressConfigurable
             ->start()
             ->setProgress($this->getProgressUpdate($course, $status));
     }
-
 }

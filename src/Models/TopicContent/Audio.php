@@ -2,10 +2,7 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Models\AbstractContent;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -26,65 +23,43 @@ use Illuminate\Support\Facades\Storage;
  * )
  */
 
-class Audio extends AbstractContent
+class Audio extends AbstractTopicFileContent
 {
     use HasFactory;
 
     public $table = 'topic_audios';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-    public $fillable = [
+    protected $fillable = [
         'value',
         'length'
     ];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
-        'value' => 'string'
+        'value' => 'string',
+        'length' => 'integer',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'value' => 'required|file|mimes:mp3,ogg'
-    ];
-
-    protected $appends = ['url'];
-
-
-    public function topic()
+    public static function rules(): array
     {
-        return $this->morphOne(Topic::class, 'topicable');
+        return [
+            'value' => ['required', 'file', 'mimes:mp3,ogg'],
+            'length' => ['sometimes', 'integer'],
+        ];
     }
 
     protected static function newFactory()
     {
         return \EscolaLms\Courses\Database\Factories\TopicContent\AudioFactory::new();
     }
-    // TODO: this idea is crazy
-    public static function createResourceFromRequest($input, $topicId): array
+
+    protected function processUploadedFiles(): void
     {
-        $tmpFile = $input['value']->getPathName();
-        $path = $input['value']->store("public/topic/$topicId/audios");
-        // TODO: get length of the video
-        return [
-            'value' => $path,
-            'length' => 0,
-        ];
+        $this->length = 0;
     }
 
-    public function getUrlAttribute()
+    public function getStoragePathFinalSegment(): string
     {
-        return  url(Storage::url($this->attributes['value']));
+        return 'audio';
     }
 }

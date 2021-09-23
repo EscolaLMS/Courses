@@ -81,7 +81,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             ->leftJoin('categories', 'categories.id', '=', 'category_course.category_id');
     }
 
-    public function allQueryBuilder(array $search = [], ?int $skip = null, ?int $limit = null, array $criteria = []): Builder
+    public function allQueryBuilder(array $search = [], array $criteria = []): Builder
     {
         /** search main category and all subcategories */
         if (isset($search) && isset($search['category_id'])) {
@@ -92,7 +92,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             unset($search['category_id']);
         }
 
-        $query = $this->allQuery($search, $skip, $limit);
+        $query = $this->allQuery($search);
 
         if (isset($flat_ids)) {
             $query = $query->whereHas('categories', function (Builder $query) use ($flat_ids) {

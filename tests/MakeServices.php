@@ -28,5 +28,4 @@ trait MakeServices
     {
         return $this->configRepository = app(ConfigRepositoryContract::class);
     }
-
 }

@@ -2,8 +2,6 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Models\AbstractContent;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -25,42 +23,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  */
 
-class H5P extends AbstractContent
+class H5P extends AbstractTopicContent
 {
     use HasFactory;
 
     public $table = 'topic_h5ps';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-    public $fillable = [
-        'value'
-    ];
-
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'value' => 'string'
-    ];
-
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'value' => 'required|integer|exists:hh5p_contents,id'
-    ];
-
-
-    public function topic()
+    public static function rules(): array
     {
-        return $this->morphOne(Topic::class, 'topicable');
+        return [
+            'value' => ['required', 'integer', 'exists:hh5p_contents,id']
+        ];
     }
 
     protected static function newFactory()

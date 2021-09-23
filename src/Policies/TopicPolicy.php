@@ -13,21 +13,21 @@ class TopicPolicy
 
     public function view(User $user, Topic $topic)
     {
-        return $user->can('update', $topic->lesson->course);
+        return $user->can('update', $topic->lesson);
     }
 
     public function update(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson->course);
+        return $user->can('update', $topic->lesson);
     }
 
     public function delete(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson->course);
+        return $user->can('update', $topic->lesson);
     }
 
     public function attend(?User $user, Topic $topic)
     {
-        return Gate::check('attend', $topic->lesson->course);
+        return Gate::check('attend', $topic->lesson);
     }
 }

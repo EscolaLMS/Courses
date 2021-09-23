@@ -2,10 +2,7 @@
 
 namespace EscolaLms\Courses\Models\TopicContent;
 
-use EscolaLms\Courses\Models\AbstractContent;
-use EscolaLms\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -25,44 +22,17 @@ use Illuminate\Support\Facades\Storage;
  *      )
  * )
  */
-
-class PDF extends AbstractContent
+class PDF extends AbstractTopicFileContent
 {
     use HasFactory;
 
     public $table = 'topic_pdfs';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-    public $fillable = [
-        'value'
-    ];
-
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'value' => 'string'
-    ];
-
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        'value' => 'required|file|mimes:pdf'
-    ];
-
-    protected $appends = ['url'];
-
-    public function topic()
+    public static function rules(): array
     {
-        return $this->morphOne(Topic::class, 'topicable');
+        return [
+            'value' => ['required', 'file', 'mimes:pdf']
+        ];
     }
 
     protected static function newFactory()
@@ -70,18 +40,8 @@ class PDF extends AbstractContent
         return \EscolaLms\Courses\Database\Factories\TopicContent\PdfFactory::new();
     }
 
-    public static function createResourceFromRequest($input, $topicId): array
+    public function getStoragePathFinalSegment(): string
     {
-        $tmpFile = $input['value']->getPathName();
-        $path = $input['value']->store("public/topic/$topicId/pdfs");
-
-        return [
-            'value' => $path,
-        ];
-    }
-
-    public function getUrlAttribute()
-    {
-        return  url(Storage::url($this->attributes['value']));
+        return 'pdf';
     }
 }
