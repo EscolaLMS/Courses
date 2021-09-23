@@ -8,8 +8,8 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use EscolaLms\Courses\Models\TopicContent\RichText;
 use EscolaLms\Courses\Repositories\TopicRepository;
-use EscolaLms\Courses\Tests\Mocks\CreateTopicApiRequestMock;
-use EscolaLms\Courses\Tests\Mocks\UpdateTopicApiRequestMock;
+use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
+use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 

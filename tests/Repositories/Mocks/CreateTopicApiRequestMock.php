@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Mocks;
+namespace EscolaLms\Courses\Tests\Repositories\Mocks;
 
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 
