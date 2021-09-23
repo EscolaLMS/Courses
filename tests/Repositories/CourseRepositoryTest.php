@@ -1,22 +1,22 @@
-<?php namespace Tests\Repositories;
+<?php
+
+namespace EscolaLms\Courses\Tests\Repositories;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\CourseRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
-
-//use Tests\ApiTestTrait;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseRepositoryTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @var CourseRepository
      */
     protected $courseRepo;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $this->courseRepo = \App::make(CourseRepository::class);

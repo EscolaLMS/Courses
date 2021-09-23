@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Repositories;
+namespace EscolaLms\Courses\Tests\Repositories;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
