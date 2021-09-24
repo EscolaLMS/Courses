@@ -13,6 +13,7 @@ use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -20,7 +21,6 @@ use Illuminate\Support\Facades\Validator;
  * @package EscolaLms\Courses\Repositories
  * @version April 27, 2021, 11:21 am UTC
  */
-
 class TopicRepository extends BaseRepository implements TopicRepositoryContract
 {
 
@@ -220,19 +220,37 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     {
         assert($topicContent instanceof Model);
 
-        $validator = Validator::make($request->all(), $topicContent::rules());
+        $rules = $this->getRulesForTopicContentUpdate($request, $topicContent);
 
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             throw new TopicException(TopicException::CONTENT_VALIDATION, $validator->errors()->toArray());
         }
 
         $attributes = $validator->validated();
         if ($topicContent instanceof TopicFileContentContract) {
-            $attributes = array_filter($attributes, fn ($attribute_key) => !in_array($attribute_key, $topicContent->getFileKeyNames()), ARRAY_FILTER_USE_KEY);
+            Arr::forget($attributes, $topicContent->getFileKeyNames());
             $topicContent->storeUploadsFromRequest($request);
         }
+        // we only update validated attributes and we removed validations for fields that would cause problems :)
         $topicContent->fill($attributes);
         $topicContent->save();
         return $topicContent;
+    }
+
+    private function getRulesForTopicContentUpdate(FormRequest $request, TopicContentContract $topicContent)
+    {
+        // we want to do partial update, so we add 'sometimes' to all rules
+        $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes' . $field_rules, $topicContent::rules());
+
+        // don't try to validate file keys in request if they don't contain file during topic / topic content update
+        if ($topicContent instanceof TopicFileContentContract) {
+            foreach ($topicContent->getFileKeyNames() as $fileKeyName) {
+                if (!$request->hasFile($fileKeyName)) {
+                    unset($partialRules[$fileKeyName]);
+                }
+            }
+        }
+        return $partialRules;
     }
 }

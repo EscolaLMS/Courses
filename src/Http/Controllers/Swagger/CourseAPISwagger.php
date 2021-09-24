@@ -101,7 +101,13 @@ interface CourseAPISwagger
      *          in="query",
      *          @OA\Schema(type="array", @OA\Items(type="number")),
      *      ),
-     *
+     *      @OA\Parameter(
+     *          name="free",
+     *          description="Will show only free courses",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="boolean"),
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -211,7 +217,13 @@ interface CourseAPISwagger
      *              type="string",
      *          ),
      *      ),
-
+     *      @OA\Parameter(
+     *          name="free",
+     *          description="Will show only free courses",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="boolean"),
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",

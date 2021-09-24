@@ -45,9 +45,8 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
     public function storeUploadsFromRequest(FormRequest $request, ?string $path = null): self
     {
         foreach ($this->getFileKeyNames() as $file_key) {
-            $file = $request->file($file_key);
-            if ($file) {
-                $this->storeUpload($file, $file_key, $path);
+            if ($request->hasFile($file_key)) {
+                $this->storeUpload($request->file($file_key), $file_key, $path);
             }
         }
         $this->processUploadedFiles();

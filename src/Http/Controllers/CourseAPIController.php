@@ -5,7 +5,6 @@ namespace EscolaLms\Courses\Http\Controllers;
 use Error;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
@@ -22,7 +21,6 @@ use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
