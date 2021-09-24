@@ -106,6 +106,15 @@
                                 "type": "number"
                             }
                         }
+                    },
+                    {
+                        "name": "free",
+                        "in": "query",
+                        "description": "Will show only free courses",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
                     }
                 ],
                 "responses": {
@@ -207,6 +216,15 @@
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "free",
+                        "in": "query",
+                        "description": "Will show only free courses",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
                         }
                     }
                 ],
