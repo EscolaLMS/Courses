@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Core\Tests\CreatesUsers;
+use EscolaLms\Courses\Events\CourseCompleted;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Group;
@@ -14,6 +15,7 @@ use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
@@ -83,6 +85,7 @@ class CourseProgressApiTest extends TestCase
         Mail::fake();
         Notification::fake();
         Queue::fake();
+        Event::fake();
 
         $courses = Course::factory(5)->create();
         foreach ($courses as $course) {
@@ -106,6 +109,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
+        Event::assertDispatched(CourseCompleted::class);
     }
 
     public function test_ping_progress_course()
