@@ -28,13 +28,12 @@ class ProgressService implements ProgressServiceContract
     public function getByUser(User $user): Collection
     {
         $progresses = new Collection();
-        /** @var CoursesUser $user */
         if (!$user instanceof CoursesUser) {
             $user = CoursesUser::find($user->getKey());
         }
+        /** @var CoursesUser $user */
         foreach ($user->courses as $course) {
-            $course->progress = CourseProgressCollection::make($user, $course);
-            $progresses->push($course);
+            $progresses->push(CourseProgressCollection::make($user, $course));
         }
         foreach ($user->groups as $group) {
             /** @var Group $group */
@@ -43,67 +42,51 @@ class ProgressService implements ProgressServiceContract
             }
             foreach ($group->courses as $course) {
                 if (!$progresses->contains('id', $course->getKey())) {
-                    $course->progress = CourseProgressCollection::make($user, $course);
-                    $progresses->push($course);
+                    $progresses->push(CourseProgressCollection::make($user, $course));
                 }
             }
         }
         return $progresses;
     }
 
-    public function update(Course $course, Authenticatable $user, array $progress): CourseProgressCollection
+    public function update(Course $course, User $user, array $progress): CourseProgressCollection
     {
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
         $result = $courseProgressCollection->setProgress($progress);
-        if (
-            $courseProgressCollection->isFinished() &&
-            $user instanceof User &&
-            !$user->courses()->where('course_id', $course->getKey())->wherePivot('finished', true)->exists()
-        ) {
+
+        if (!$user instanceof CoursesUser) {
+            $user = CoursesUser::find($user->getKey());
+        }
+
+        assert($user instanceof CoursesUser);
+
+        $courseIsFinished = $courseProgressCollection->isFinished();
+        $userHasCourseMarkedAsFinished = $user->finishedCourse($course->getKey());
+
+        if ($courseIsFinished && !$userHasCourseMarkedAsFinished) {
             $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
             event(new CourseCompleted($courseProgressCollection->getCourse(), $user));
+        } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
+            $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
         }
 
         return $result;
     }
 
-    public function ping(Authenticatable $user, Topic $topic): void
+    public function ping(User $user, Topic $topic): void
     {
-        CourseProgressCollection::make($user, $topic->lesson->course)->ping($topic);
+        $course = $topic->lesson->course;
+
+        $courseProgressCollection = CourseProgressCollection::make($user, $course);
+        $courseProgressCollection->ping($topic);
+
+        if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey())) {
+            $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
+        }
     }
 
-    public function h5p(Authenticatable $user, Topic $topic, string $event, $json): H5PUserProgress
+    public function h5p(User $user, Topic $topic, string $event, $json): H5PUserProgress
     {
         return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
-    }
-
-    private function getMaxScore(array $data)
-    {
-        if (isset($data['score']) && is_array($data['score'])) {
-            if (isset($data['score']['max'])) {
-                return $data['score']['max'];
-            }
-        }
-
-        if (isset($data['max_score'])) {
-            return $data['max_score'];
-        }
-
-        return null;
-    }
-
-    private function getScore(array $data)
-    {
-        if (isset($data['score']) && is_array($data['score'])) {
-            if (isset($data['score']['raw'])) {
-                return $data['score']['raw'];
-            }
-        }
-
-        if (isset($data['score'])) {
-            return $data['score'];
-        }
-
-        return null;
     }
 }

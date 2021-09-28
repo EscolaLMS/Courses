@@ -13,4 +13,9 @@ trait HasCourses
         /* @var $this \EscolaLms\Core\Models\User */
         return $this->belongsToMany(Course::class)->using(CourseUserPivot::class);
     }
+
+    public function finishedCourse(int $id): bool
+    {
+        return $this->courses()->where('course_id', $id)->wherePivot('finished', true)->exists();
+    }
 }
