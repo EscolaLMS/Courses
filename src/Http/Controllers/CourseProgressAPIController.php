@@ -5,7 +5,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
-use EscolaLms\Courses\Http\Resources\ProgressesResource;
+use EscolaLms\Courses\Http\Resources\ProgressResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
@@ -32,7 +32,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     public function index(Request $request): JsonResponse
     {
         try {
-            return $this->sendResponseForResource(ProgressesResource::make($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
+            return $this->sendResponseForResource(ProgressResource::collection($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }

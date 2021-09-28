@@ -15,10 +15,6 @@ interface CourseProgressCollectionContract
 
     public function getCourse(): Course;
 
-    public function start(): self;
-
-    public function isStarted(): bool;
-
     public function isFinished(): bool;
 
     public function getProgress(): Collection;

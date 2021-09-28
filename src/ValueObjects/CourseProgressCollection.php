@@ -12,6 +12,7 @@ use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
 use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
@@ -19,12 +20,16 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 {
     public const FORGET_TRACKING_SESSION_AFTER_MINUTES = 60;
 
+    private CourseProgressRepositoryContract $courseProgressRepositoryContract;
+
     private Authenticatable $user;
     private Course $course;
-    private Collection $progress;
+
+    private Collection $topics;
+    private EloquentCollection $progress;
+
     private int $totalSpentTime;
     private ?Carbon $finishDate;
-    private CourseProgressRepositoryContract $courseProgressRepositoryContract;
 
     public function __construct(
         CourseProgressRepositoryContract $courseProgressRepositoryContract
@@ -38,60 +43,54 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->course = $course;
         $this->totalSpentTime = 0;
         $this->finishDate = null;
+        $this->topics = $this->getActiveTopicIdsFromCourses();
         $this->progress = $this->buildProgress();
 
         return $this;
     }
 
-    private function buildProgress(): Collection
+    private function getActiveTopicIdsFromCourses(): Collection
     {
-        $progress = new Collection();
-        $existingProgresses = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->course->topics->pluck('id'))->get();
+        return $this->course->topics->where('active', true)->pluck('id');
+    }
+
+    private function buildProgress(): EloquentCollection
+    {
+        $topicWithoutProgressId = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->pluck('topic_id')->toArray();
         $topicsWithoutProgress = $this->course
             ->topics()
             ->whereNotIn(
                 'topics.id',
-                $existingProgresses->pluck('topic_id')
-            )->get();
-
-        foreach ($existingProgresses as $record) {
-            $progress->push([
-                'topic_id' => $record->topic_id,
-                'status' => $record->status
-            ]);
-            $this->totalSpentTime += $record->seconds;
-
-            if (is_null($this->finishDate) || $this->finishDate <= $record->finished_at) {
-                $this->finishDate = $record->finished_at;
-            }
+                $topicWithoutProgressId
+            )->where('topics.active', true)
+            ->get(['topics.id']);
+        foreach ($topicsWithoutProgress as $topic) {
+            $this->courseProgressRepositoryContract->updateInTopic($topic, $this->user, ProgressStatus::INCOMPLETE);
         }
 
-        foreach ($topicsWithoutProgress as $record) {
-            $progress->push([
-                'topic_id' => $record->getKey(),
-                'status' => ProgressStatus::INCOMPLETE
-            ]);
-        }
+        /** @var EloquentCollection $courseProgresses */
+        $courseProgresses = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->get(['topic_id', 'status', 'seconds', 'finished_at']);
 
-        return $progress->sortBy('topic_id')->values();
+        $this->totalSpentTime = $courseProgresses->sum('seconds');
+        $this->finishDate = $courseProgresses->max('finished_at');
+
+        return $courseProgresses->sortBy('topic_id')->values();
     }
 
     public function ping(Topic $topic): self
     {
+        $secondsPassed = 0;
+
         $progress = $this->courseProgressRepositoryContract->findProgress($topic, $this->user);
-
-        if (($progress->status ?? ProgressStatus::INCOMPLETE) == ProgressStatus::COMPLETE) {
-            throw new RuntimeException("Lesson is already finished.");
+        if ($progress->status === ProgressStatus::COMPLETE) {
+            throw new RuntimeException("Topic is already finished.");
         }
-
-        $secondsPassed = $progress->seconds ?? 0;
+        $secondsPassed = (int) $progress->seconds;
 
         $lastTrack = $this->courseProgressRepositoryContract->getUserLastTimeInTopic($this->user, $topic);
 
-        $now = Carbon::now();
-
         if ($this->hasActiveProgressSession($lastTrack)) {
-            $secondsDiff = $lastTrack->diffInSeconds($now);
+            $secondsDiff = $lastTrack->diffInSeconds(Carbon::now());
             $secondsPassed += $secondsDiff;
             $this->courseProgressRepositoryContract->updateInTopic($topic, $this->user, ProgressStatus::IN_PROGRESS, $secondsPassed);
         }
@@ -101,16 +100,10 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         return $this;
     }
 
-    /**
-     * @param Carbon|null $lastTrack
-     * @return bool
-     */
     private function hasActiveProgressSession(?Carbon $lastTrack): bool
     {
         return !(is_null($lastTrack) || $lastTrack->lte(Carbon::now()->subMinutes(self::FORGET_TRACKING_SESSION_AFTER_MINUTES)));
     }
-
-
 
     public function getUser(): Authenticatable
     {
@@ -122,27 +115,12 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         return $this->course;
     }
 
-    public function start(): CourseProgressCollectionContract
-    {
-        if (!$this->isStarted()) {
-            $this->user->courses()->attach($this->course->getKey());
-            event(new CourseAssigned($this->user, $this->course));
-        }
-
-        return $this;
-    }
-
-    public function isStarted(): bool
-    {
-        return $this->user->courses()->where('course_id', $this->course->getKey())->exists();
-    }
-
     public function isFinished(): bool
     {
         return $this->progress->whereNotIn('status', [ProgressStatus::COMPLETE])->count() == 0;
     }
 
-    public function getProgress(): Collection
+    public function getProgress(): EloquentCollection
     {
         return $this->progress;
     }
@@ -151,6 +129,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     {
         foreach ($progress as $topicProgress) {
             $topic = Topic::findOrFail($topicProgress['topic_id']);
+
             $this->courseProgressRepositoryContract->updateInTopic(
                 $topic,
                 $this->user,
@@ -165,7 +144,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function getTotalSpentTime(): int
     {
-        // TODO: Implement getTotalSpentTime() method.
+        return $this->totalSpentTime;
     }
 
     public function getFinishDate(): ?Carbon

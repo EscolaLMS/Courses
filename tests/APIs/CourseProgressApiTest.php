@@ -29,7 +29,7 @@ class CourseProgressApiTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
-        $topics = Topic::factory(2)->create(['lesson_id' => $lesson->getKey()]);
+        $topics = Topic::factory(2)->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         foreach ($topics as $topic) {
             CourseProgress::create([
                 'user_id' => $user->getKey(),
@@ -48,7 +48,9 @@ class CourseProgressApiTest extends TestCase
             'data' => [
                 [
                     'course',
-                    'progress'
+                    'progress',
+                    'categories',
+                    'finish_date',
                 ]
             ]
         ]);
@@ -58,8 +60,8 @@ class CourseProgressApiTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->create();
-        $lesson = Lesson::factory(['course_id' => $course->getKey()])->create();
-        $topic = Topic::factory(['lesson_id' => $lesson->getKey()])->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         $group = Group::factory()->create();
         $group->users()->attach($user);
         $group->courses()->attach($course->getKey());
@@ -93,13 +95,18 @@ class CourseProgressApiTest extends TestCase
                 'course_id' => $course->getKey()
             ])->create();
             $topics = Topic::factory(2)->create([
-                'lesson_id' => $lesson->getKey()
+                'lesson_id' => $lesson->getKey(),
+                'active' => true,
             ]);
         }
+        $course = $courses->get(0);
 
         $student = User::factory([
             'points' => 0,
         ])->create();
+
+        $courseProgress = CourseProgressCollection::make($student, $course);
+        $this->assertFalse($courseProgress->isFinished());
 
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
@@ -116,7 +123,9 @@ class CourseProgressApiTest extends TestCase
     {
         $user = User::factory()->create();
         $courses = Course::factory(5)->create();
-        $topics = Topic::factory(2)->create();
+        $topics = Topic::factory(2)->create([
+            'active' => true,
+        ]);
         $oneTopic = null;
         foreach ($courses as $course) {
             foreach ($topics as $topic) {
@@ -140,5 +149,52 @@ class CourseProgressApiTest extends TestCase
             ]
         ]);
         $this->assertTrue($this->response->getData()->data->status);
+    }
+
+    public function test_adding_new_topic_will_reset_finished_status(): void
+    {
+        Mail::fake();
+        Notification::fake();
+        Queue::fake();
+        Event::fake();
+
+        $courses = Course::factory(5)->create();
+        foreach ($courses as $course) {
+            $lesson = Lesson::factory([
+                'course_id' => $course->getKey()
+            ])->create();
+            $topics = Topic::factory(2)->create([
+                'lesson_id' => $lesson->getKey(),
+                'active' => true,
+            ]);
+        }
+        $course = $courses->get(0);
+
+        $student = User::factory([
+            'points' => 0,
+        ])->create();
+
+        $courseProgress = CourseProgressCollection::make($student, $course);
+        $this->assertFalse($courseProgress->isFinished());
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course)]
+        );
+        $courseProgress = CourseProgressCollection::make($student, $course);
+        $this->response->assertOk();
+        $this->assertTrue($courseProgress->isFinished());
+        Event::assertDispatched(CourseCompleted::class);
+
+        $lesson = $course->lessons->get(0);
+        $topics = Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+        $course->refresh();
+
+        $courseProgress = CourseProgressCollection::make($student, $course);
+        $this->assertFalse($courseProgress->isFinished());
     }
 }
