@@ -9,6 +9,7 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Services\ProgressService;
+use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 
@@ -40,11 +41,13 @@ class ProgressSeeder extends Seeder
         $progressService = app(ProgressService::class);
         /** @var CourseProgressRepository $progressRepository */
         $progressRepository = app(CourseProgressRepository::class);
+
+        /** @var User $student */
         foreach ($students as $student) {
-            /** @var User $student */
-            $progressedCourses = $progressService->getByUser($student);
-            foreach ($progressedCourses as $course) {
-                /** @var Course $course */
+            $progresses = $progressService->getByUser($student);
+            /** @var CourseProgressCollection $courseProgress */
+            foreach ($progresses as $courseProgress) {
+                $course = $courseProgress->getCourse();
                 foreach ($course->topics as $topic) {
                     /** @var Topic $topic */
                     $status = ProgressStatus::getRandomValue();
