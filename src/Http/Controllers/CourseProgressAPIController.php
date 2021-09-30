@@ -45,6 +45,11 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         try {
             $course = $this->courseRepositoryContract->getById($course_id);
+
+            if (!$course->active) {
+                return $this->sendError(__('Course is not active'), 403);
+            }
+
             return $this->sendResponse(CourseProgressCollection::make($request->user(), $course)->getProgress(), __('Progress'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
@@ -58,6 +63,11 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         try {
             $course = $this->courseRepositoryContract->getById($course_id);
+
+            if (!$course->active) {
+                return $this->sendError(__('Course is not active'), 403);
+            }
+
             $progress = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
             return $this->sendResponse($progress->getProgress(), __('Saved progress'));
         } catch (\Exception $e) {
@@ -69,6 +79,11 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         try {
             $topic = $this->topicRepositoryContract->getById($topic_id);
+
+            if (!$topic->active) {
+                return $this->sendError(__('Topic is not active'), 403);
+            }
+
             $this->progressServiceContract->ping($request->user(), $topic);
             return $this->sendResponseForResource(new Status(true), 'Status');
         } catch (\Exception $e) {
@@ -83,6 +98,11 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         try {
             $topic = $this->topicRepositoryContract->getById($topic_id);
+
+            if (!$topic->active) {
+                return $this->sendError(__('Topic is not active'), 403);
+            }
+
             $this->progressServiceContract->h5p(
                 $request->user(),
                 $topic,

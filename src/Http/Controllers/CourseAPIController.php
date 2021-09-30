@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 use Error;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Core\Dtos\OrderDto;
+use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
@@ -49,7 +50,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
 
         $user = $request->user();
-        if (!isset($user) || !$user->hasRole(['admin', 'tutor'])) {
+        if (!isset($user) || !$user->hasRole([UserRole::ADMIN, UserRole::TUTOR])) {
             $search['active'] = true;
         }
 
