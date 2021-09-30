@@ -30,7 +30,7 @@ class CourseWithProgramResource extends JsonResource
 
         $course = $this->getResource();
 
-        $lessons = $course->lessons->filter(fn (Lesson $lesson) => $lesson->active);
+        $lessons = $course->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order');
 
         return [
             'id' => $course->getKey(),

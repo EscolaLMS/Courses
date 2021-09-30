@@ -65,7 +65,7 @@ class CourseService implements CourseServiceContract
         return $criteria;
     }
 
-    public function sort($class, $orders)
+    public function sort($class, $orders): void
     {
         if ($class === 'Lesson') {
             foreach ($orders as $order) {
