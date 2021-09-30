@@ -34,7 +34,8 @@ class LessonWithTopicsAdminResource extends JsonResource
             'duration' => $this->duration,
             'active' => $this->active,
             'author_id' => $this->author_id,
-            'topics' => TopicResource::collection($lesson->topics)
+            'topics' => TopicResource::collection($lesson->topics->sortBy('order')),
+            'order' => $this->order,
         ];
     }
 }

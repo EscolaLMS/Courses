@@ -51,6 +51,8 @@ class SortAPIRequest extends FormRequest
             'class' => ['required', 'in:Lesson,Topic'],
             'orders' => ['required', 'array'],
             'orders.*' => ['required', 'array'],
+            'orders.*.0' => ['integer'],
+            'orders.*.1' => ['integer'],
         ];
     }
 }
