@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
@@ -238,14 +239,12 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     private function tutors()
     {
-        return DB::table('users')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('courses')
-                    ->where('active', 1)
-                    ->whereColumn('courses.author_id', 'users.id');
-            })
-            ->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
+        return User::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('courses')
+                ->where('active', 1)
+                ->whereColumn('courses.author_id', 'users.id');
+        })->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
     }
 
     public function findTutors(): Collection
@@ -253,7 +252,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $this->tutors()->get();
     }
 
-    public function findTutor($id)
+    public function findTutor($id): ?User
     {
         return $this->tutors()->where('id', $id)->first();
     }

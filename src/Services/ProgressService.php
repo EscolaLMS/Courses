@@ -32,7 +32,7 @@ class ProgressService implements ProgressServiceContract
             $user = CoursesUser::find($user->getKey());
         }
         /** @var CoursesUser $user */
-        foreach ($user->courses as $course) {
+        foreach ($user->courses->where('active', true) as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
         foreach ($user->groups as $group) {
@@ -40,7 +40,7 @@ class ProgressService implements ProgressServiceContract
             if (!$group instanceof Group) {
                 $group = Group::find($group->getKey());
             }
-            foreach ($group->courses as $course) {
+            foreach ($group->courses->where('active', true) as $course) {
                 if (!$progresses->contains('id', $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }

@@ -27,7 +27,7 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_course()
     {
         $user = User::factory()->create();
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['active' => true]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topics = Topic::factory(2)->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         foreach ($topics as $topic) {
@@ -59,7 +59,7 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_course_from_group()
     {
         $user = User::factory()->create();
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['active' => true]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         $group = Group::factory()->create();
@@ -89,7 +89,7 @@ class CourseProgressApiTest extends TestCase
         Queue::fake();
         Event::fake();
 
-        $courses = Course::factory(5)->create();
+        $courses = Course::factory(5)->create(['active' => true]);
         foreach ($courses as $course) {
             $lesson = Lesson::factory([
                 'course_id' => $course->getKey()
@@ -122,7 +122,7 @@ class CourseProgressApiTest extends TestCase
     public function test_ping_progress_course()
     {
         $user = User::factory()->create();
-        $courses = Course::factory(5)->create();
+        $courses = Course::factory(5)->create(['active' => true]);
         $topics = Topic::factory(2)->create([
             'active' => true,
         ]);
@@ -158,7 +158,7 @@ class CourseProgressApiTest extends TestCase
         Queue::fake();
         Event::fake();
 
-        $courses = Course::factory(5)->create();
+        $courses = Course::factory(5)->create(['active' => true]);
         foreach ($courses as $course) {
             $lesson = Lesson::factory([
                 'course_id' => $course->getKey()

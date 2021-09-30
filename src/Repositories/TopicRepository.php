@@ -177,6 +177,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         }
 
         $topic->fill($request->validated());
+        $topic->save();
         return $topic;
     }
 
