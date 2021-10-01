@@ -41,7 +41,7 @@ class ProgressService implements ProgressServiceContract
                 $group = Group::find($group->getKey());
             }
             foreach ($group->courses->where('active', true) as $course) {
-                if (!$progresses->contains('id', $course->getKey())) {
+                if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }
             }
