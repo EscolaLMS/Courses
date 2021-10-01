@@ -111,4 +111,13 @@ class Lesson extends Model
     {
         return $query->where('lessons.active', '=', true);
     }
+
+    protected static function booted()
+    {
+        static::creating(function (Lesson $lesson) {
+            if ($lesson->course_id && !$lesson->order) {
+                $lesson->order = 1 + (int) Lesson::where('course_id', $lesson->course_id)->max('order');
+            }
+        });
+    }
 }
