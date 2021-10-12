@@ -25,9 +25,7 @@ class UpdateTopicAPIRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = Topic::rules();
-        unset($rules['json']);
-        return $rules;
+        return Topic::rules();
     }
 
     public function getTopic(): ?Topic
