@@ -27,7 +27,10 @@ class TopicTutorUpdateApiTest extends TestCase
             'author_id' => $this->user->id
         ]);
         $this->lesson = Lesson::factory(['course_id' => $this->course->id])->create();
-        $this->topic = Topic::factory()->create(['lesson_id' => $this->lesson->id]);
+        $this->topic = Topic::factory()->create([
+            'lesson_id' => $this->lesson->id,
+            'json' => ['foo' => 'bar', 'bar' => 'foo']
+        ]);
     }
 
     /**
@@ -54,7 +57,6 @@ class TopicTutorUpdateApiTest extends TestCase
         );
 
         $this->response->assertStatus(200);
-
 
         $data = json_decode($this->response->getContent());
 
@@ -299,5 +301,35 @@ class TopicTutorUpdateApiTest extends TestCase
         );
 
         $this->response->assertStatus(422);
+    }
+
+    public function test_update_topic_with_json()
+    {
+        $this->response = $this->withHeaders([
+            'Content' => 'application/x-www-form-urlencoded',
+            'Accept' => 'application/json',
+        ])->actingAs($this->user, 'api')->post(
+            '/api/admin/topics/' . $this->topic->id,
+            [
+                'title' => 'Hello World',
+                'lesson_id' => $this->topic->lesson_id,
+                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
+                'value' => 'lorem ipsum',
+                'json' => json_encode(['foo' => 'foobar'])
+            ]
+        );
+
+        $this->response->assertStatus(200);
+
+        $data = $this->response->json();
+
+        $this->topicId = $data['data']['id'];
+        $path = $data['data']['topicable']['value'];
+
+        $this->assertDatabaseHas('topic_richtexts', [
+            'value' => $path
+        ]);
+        $this->assertEquals(['foo' => 'foobar'], $data['data']['json']);
+        $this->assertEquals('foobar', $data['data']['json']['foo']);
     }
 }

@@ -140,6 +140,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'preview' => $validated['preview'] ?? false,
             'summary' => $validated['summary'] ?? null,
             'can_skip' => $validated['can_skip'] ?? false,
+            'json' => empty($validated['json']) ? null : json_decode($validated['json']),
         ]);
         $topic->save();
 
@@ -176,7 +177,11 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             $topic->topicable()->associate($topicContent);
         }
 
-        $topic->fill($request->validated());
+        $validated = $request->validated();
+        if (!empty($validated['json'])) {
+            $validated['json'] = json_decode($validated['json'], true);
+        }
+        $topic->fill($validated);
         $topic->save();
         return $topic;
     }
