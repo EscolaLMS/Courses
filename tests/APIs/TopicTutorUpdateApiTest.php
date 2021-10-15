@@ -315,6 +315,8 @@ class TopicTutorUpdateApiTest extends TestCase
                 'lesson_id' => $this->topic->lesson_id,
                 'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
                 'value' => 'lorem ipsum',
+                'introduction' => 'asdf1',
+                'summary' => 'asdf2',
                 'json' => json_encode(['foo' => 'foobar'])
             ]
         );
@@ -331,5 +333,19 @@ class TopicTutorUpdateApiTest extends TestCase
         ]);
         $this->assertEquals(['foo' => 'foobar'], $data['data']['json']);
         $this->assertEquals('foobar', $data['data']['json']['foo']);
+        $this->assertEquals('asdf1', $data['data']['introduction']);
+        $this->assertEquals('asdf2', $data['data']['summary']);
+
+        $this->response = $this->withHeaders([
+            'Content' => 'application/x-www-form-urlencoded',
+            'Accept' => 'application/json',
+        ])->actingAs($this->user, 'api')->get(
+            '/api/courses/' . $this->topic->lesson->course_id . '/program'
+        );
+
+        $this->response->assertOk();
+        $data = $this->response->json();
+
+        $this->assertEquals(['foo' => 'foobar'], $data['data']['lessons'][0]['topics'][0]['json']);
     }
 }
