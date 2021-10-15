@@ -69,6 +69,11 @@ use Illuminate\Validation\Rule;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="introduction",
+ *          description="introduction",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="order",
  *          description="order",
  *          type="integer",
@@ -98,6 +103,7 @@ class Topic extends Model
         'active',
         'preview',
         'summary',
+        'introduction',
         'json',
         'can_skip',
     ];
@@ -117,6 +123,7 @@ class Topic extends Model
         'active' => 'boolean',
         'preview' => 'boolean',
         'summary' => 'string',
+        'introduction' => 'string',
         'json' => 'array',
         'can_skip' => 'boolean',
     ];
@@ -126,6 +133,7 @@ class Topic extends Model
         return [
             'title' => ['string', 'max:255'],
             'summary' => ['string'],
+            'introduction' => ['string'],
             'lesson_id' => ['integer', 'exists:lessons,id'],
             'topicable_id' => ['integer'],
             'topicable_type' => ['required_with:topicable_id', 'string', Rule::in(TopicRepository::availableContentClasses())],

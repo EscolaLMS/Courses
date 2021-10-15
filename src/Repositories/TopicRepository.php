@@ -97,6 +97,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'active' => true,
             'preview' => false,
             'summary' => isset($input['summary']) ? $input['summary'] : null,
+            'introduction' => isset($input['introduction']) ? $input['introduction'] : null,
             'can_skip' => (bool) ($input['can_skip'] ?? false),
         ];
 
@@ -139,6 +140,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'active' => $validated['active'] ?? true,
             'preview' => $validated['preview'] ?? false,
             'summary' => $validated['summary'] ?? null,
+            'introduction' => $validated['introduction'] ?? null,
             'can_skip' => $validated['can_skip'] ?? false,
             'json' => empty($validated['json']) ? null : json_decode($validated['json']),
         ]);
