@@ -317,6 +317,7 @@ class TopicTutorUpdateApiTest extends TestCase
                 'value' => 'lorem ipsum',
                 'introduction' => 'asdf1',
                 'summary' => 'asdf2',
+                'description' => 'asdf3',
                 'json' => json_encode(['foo' => 'foobar'])
             ]
         );
@@ -335,6 +336,7 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->assertEquals('foobar', $data['data']['json']['foo']);
         $this->assertEquals('asdf1', $data['data']['introduction']);
         $this->assertEquals('asdf2', $data['data']['summary']);
+        $this->assertEquals('asdf3', $data['data']['description']);
 
         $this->response = $this->withHeaders([
             'Content' => 'application/x-www-form-urlencoded',
