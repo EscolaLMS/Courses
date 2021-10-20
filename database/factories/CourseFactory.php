@@ -2,10 +2,10 @@
 
 namespace EscolaLms\Courses\Database\Factories;
 
+use EscolaLms\Auth\Models\User;
+use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use EscolaLms\Auth\Models\User;
-use Spatie\Permission\Models\Role;
 
 class CourseFactory extends Factory
 {
@@ -23,12 +23,9 @@ class CourseFactory extends Factory
      */
     public function definition()
     {
-        $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
+        $this->faker->addProvider(new FakerProvider($this->faker));
 
-
-        $author_id = null;
         $tutor =  User::role('tutor')->inRandomOrder()->first();
-
 
         return [
             'title' => $this->faker->sentence,
