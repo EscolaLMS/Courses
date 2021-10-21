@@ -2,9 +2,9 @@
 
 namespace EscolaLms\Courses\Database\Seeders;
 
-use DavidBadura\FakerMarkdownGenerator\FakerProvider;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
