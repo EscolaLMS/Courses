@@ -36,10 +36,6 @@ class Video extends AbstractTopicFileContent
 
     public $table = 'topic_videos';
 
-    protected $dispatchesEvents = [
-        'saved' => VideoUpdated::class,
-    ];
-
     public $fillable = [
         'value',
         'poster',
@@ -81,5 +77,14 @@ class Video extends AbstractTopicFileContent
             return url(Storage::url($this->poster));
         }
         return null;
+    }
+
+    protected static function booted()
+    {
+        static::saved(function (Video $video) {
+            if ($video->wasRecentlyCreated || $video->wasChanged('value')) {
+                event(new VideoUpdated($video));
+            }
+        });
     }
 }
