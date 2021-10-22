@@ -82,7 +82,7 @@ class Video extends AbstractTopicFileContent
     protected static function booted()
     {
         static::saved(function (Video $video) {
-            if ($video->wasChanged('value')) {
+            if ($video->wasRecentlyCreated || $video->wasChanged('value')) {
                 event(new VideoUpdated($video));
             }
         });

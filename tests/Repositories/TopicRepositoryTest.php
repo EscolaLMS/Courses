@@ -7,6 +7,7 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicContent\OEmbed;
 use EscolaLms\Courses\Models\TopicContent\RichText;
+use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
@@ -176,5 +177,12 @@ class TopicRepositoryTest extends TestCase
 
         $this->assertTrue($resp);
         $this->assertNull(Topic::find($topic->id), 'Topic should not exist in DB');
+    }
+
+    public function test_unregister_content_class()
+    {
+        $this->assertTrue(in_array(Video::class, $this->topicRepo::availableContentClasses()));
+        $this->topicRepo::unregisterContentClass(Video::class);
+        $this->assertTrue(!in_array(Video::class, $this->topicRepo::availableContentClasses()));
     }
 }
