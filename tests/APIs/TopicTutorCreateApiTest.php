@@ -3,6 +3,7 @@
 namespace Tests\APIs;
 
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Events\VideoUpdated;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\TopicContent\Audio;
@@ -12,6 +13,7 @@ use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
 class TopicTutorCreateApiTest extends TestCase
@@ -134,6 +136,7 @@ class TopicTutorCreateApiTest extends TestCase
     public function test_create_topic_video()
     {
         Storage::fake('local');
+        Event::fake([VideoUpdated::class]);
 
         $file = UploadedFile::fake()->image('avatar.mp4');
 
@@ -161,6 +164,8 @@ class TopicTutorCreateApiTest extends TestCase
         $this->assertDatabaseHas('topic_videos', [
             'value' => $path
         ]);
+
+        Event::assertDispatched(VideoUpdated::class);
     }
 
     public function test_create_topic_richtext()

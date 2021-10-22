@@ -197,7 +197,7 @@ class TopicTutorUpdateApiTest extends TestCase
     public function test_update_topic_video()
     {
         Storage::fake('local');
-        Event::fake();
+        Event::fake([VideoUpdated::class]);
 
         $file = UploadedFile::fake()->create('avatar.mp4');
 
