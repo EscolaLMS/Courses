@@ -14,4 +14,7 @@ interface TopicRepositoryContract extends BaseRepositoryContract
     public function createFromRequest(CreateTopicAPIRequest $request): Topic;
 
     public function updateFromRequest(UpdateTopicAPIRequest $request): Topic;
+
+    public static function registerContentClass(string $class): array;
+    public static function unregisterContentClass(string $class): array;
 }

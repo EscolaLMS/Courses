@@ -73,6 +73,15 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         return self::$contentClasses;
     }
 
+    public static function unregisterContentClass(string $class): array
+    {
+
+        if (($key = array_search($class, self::$contentClasses)) !== false) {
+            unset(self::$contentClasses[$key]);
+        }
+        return self::$contentClasses;
+    }
+
     public static function availableContentClasses(): array
     {
         return self::$contentClasses;
