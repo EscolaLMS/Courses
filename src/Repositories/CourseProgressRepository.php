@@ -47,7 +47,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             $update['seconds'] = $seconds;
         }
 
-        if ($status == ProgressStatus::COMPLETE) {
+        if ($status === ProgressStatus::COMPLETE) {
             $update['finished_at'] = Carbon::now();
         }
 

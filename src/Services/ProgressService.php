@@ -52,7 +52,9 @@ class ProgressService implements ProgressServiceContract
     public function update(Course $course, User $user, array $progress): CourseProgressCollection
     {
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
-        $result = $courseProgressCollection->setProgress($progress);
+        if (!empty($progress)) {
+            $courseProgressCollection->setProgress($progress);
+        }
 
         if (!$user instanceof CoursesUser) {
             $user = CoursesUser::find($user->getKey());
@@ -70,7 +72,7 @@ class ProgressService implements ProgressServiceContract
             $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
         }
 
-        return $result;
+        return $courseProgressCollection;
     }
 
     public function ping(User $user, Topic $topic): void
