@@ -56,12 +56,12 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     private function buildProgress(): EloquentCollection
     {
-        $topicWithoutProgressId = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->pluck('topic_id')->toArray();
+        $topicWithProgressId = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->pluck('topic_id')->toArray();
         $topicsWithoutProgress = $this->course
             ->topics()
             ->whereNotIn(
                 'topics.id',
-                $topicWithoutProgressId
+                $topicWithProgressId
             )->where('topics.active', true)
             ->get(['topics.id']);
         foreach ($topicsWithoutProgress as $topic) {
@@ -117,7 +117,18 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function isFinished(): bool
     {
-        return $this->progress->whereNotIn('status', [ProgressStatus::COMPLETE])->count() == 0;
+        return $this->countNotFinishedTopics() === 0
+            && $this->countFinishedTopics() >= $this->course->topics()->where('topics.active', true)->count();
+    }
+
+    public function countFinishedTopics(): int
+    {
+        return $this->progress->where('status', ProgressStatus::COMPLETE)->count();
+    }
+
+    public function countNotFinishedTopics(): int
+    {
+        return $this->progress->whereNotInStrict('status', [ProgressStatus::COMPLETE])->count();
     }
 
     public function getProgress(): EloquentCollection
