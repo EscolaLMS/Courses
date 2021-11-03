@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Database\Factories;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,7 +26,7 @@ class CourseFactory extends Factory
     {
         $this->faker->addProvider(new FakerProvider($this->faker));
 
-        $tutor =  User::role('tutor')->inRandomOrder()->first();
+        $tutor = User::role(UserRole::TUTOR)->inRandomOrder()->first();
 
         return [
             'title' => $this->faker->sentence,
@@ -34,7 +35,7 @@ class CourseFactory extends Factory
             'video_path' => "1.mp4",
             'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10) . " hours",
-            'author_id' =>  empty($tutor) ? null : $tutor->id,
+            'author_id' => empty($tutor) ? null : $tutor->id,
             'active' => $this->faker->boolean,
             'subtitle' => $this->faker->sentence,
             'language' => $this->faker->randomElement(['en', 'pl']),

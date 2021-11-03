@@ -18,12 +18,8 @@ class LessonResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'summary' => $this->summary,
-            'image_path' => $this->image_path,
-            'video_path' => $this->video_path,
-            'base_price' => $this->base_price,
             'duration' => $this->duration,
             'active' => $this->active,
-            'author_id' => $this->author_id,
             'order' => $this->order,
             'course_id' => $this->course_id,
         ];

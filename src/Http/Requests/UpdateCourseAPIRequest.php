@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Rules\ValidAuthor;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCourseAPIRequest extends FormRequest
@@ -27,7 +28,7 @@ class UpdateCourseAPIRequest extends FormRequest
     public function rules()
     {
         $rules = Course::$rules;
-        
+        $rules['author_id'][] = new ValidAuthor();
         return $rules;
     }
 }

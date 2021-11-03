@@ -191,7 +191,7 @@ class Course extends Model
         'video_path' => 'nullable|string|max:255',
         'base_price' => 'nullable|integer|min:0',
         'duration' => 'nullable|string|max:255',
-        'author_id' => 'nullable|exists:users,id',
+        'author_id' => ['nullable', 'exists:users,id'],
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
         'active' => 'boolean',

@@ -7,10 +7,12 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\TestResponse;
 
 class CourseAdminApiTest extends TestCase
 {
@@ -19,7 +21,6 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -76,6 +77,27 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_course_with_wrong_author()
+    {
+        $course = Course::factory()->create();
+        $editedCourse = Course::factory()->make()->toArray();
+
+        $student = User::factory()->create();
+        $editedCourse['author_id'] = $student->getKey();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            $editedCourse
+        );
+
+        $this->response->assertStatus(422);
+        $this->response->assertInvalid('author_id');
     }
 
     /**
