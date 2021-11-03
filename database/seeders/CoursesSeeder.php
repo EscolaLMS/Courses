@@ -55,7 +55,6 @@ class CoursesSeeder extends Seeder
 
         $tutors = User::role('tutor')->get();
 
-
         foreach ($tutors as $tutor) {
             $tutor->update([
                 'path_avatar' => "tutor_avatar.jpg",

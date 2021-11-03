@@ -173,21 +173,12 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
                 throw new Error("Type '$class' is not allowed");
             }
 
-            $topicContent = null;
-
-            if ($request->has('topicable_id')) {
-                $topicContent = $class::find($request->input('topicable_id'));
-            } elseif ($class === $topic->topicable_type) {
-                $topicContent = $topic->topicable;
-            }
-
-            if (empty($topicContent)) {
+            if ($class === $topic->topicable_type && $request->hasAny(array_keys($class::rules()))) {
+                $this->updateTopicContentModelFromRequest($request, $topic->topicable);
+            } else {
                 $topicContent = $this->createTopicContentModelFromRequest($request, $topic);
-            } elseif ($request->hasAny(array_keys($class::rules()))) {
-                $topicContent = $this->updateTopicContentModelFromRequest($request, $topicContent);
+                $topic->topicable()->associate($topicContent);
             }
-
-            $topic->topicable()->associate($topicContent);
         }
 
         $validated = $request->validated();

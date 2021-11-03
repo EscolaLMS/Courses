@@ -1,8 +1,6 @@
 <?php
 
-
 namespace EscolaLms\Courses\Rules;
-
 
 use Illuminate\Contracts\Validation\Rule;
 

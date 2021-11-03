@@ -4,7 +4,6 @@ namespace EscolaLms\Courses\Services;
 
 use Error;
 use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;

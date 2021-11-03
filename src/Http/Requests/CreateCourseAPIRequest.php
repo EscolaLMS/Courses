@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Rules\ValidAuthor;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateCourseAPIRequest extends FormRequest
@@ -25,6 +26,10 @@ class CreateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
-        return array_merge(Course::$rules, ['title' => ['required', 'string', "min:3"]]);
+        $rules = array_merge(Course::$rules, [
+            'title' => ['required', 'string', "min:3"],
+        ]);
+        $rules['author_id'][] = new ValidAuthor();
+        return $rules;
     }
 }
