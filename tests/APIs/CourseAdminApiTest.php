@@ -2,7 +2,9 @@
 
 namespace Tests\APIs;
 
+use EscolaLms\Auth\Models\User as AuthUser;
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
@@ -77,6 +79,30 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_course_with_correct_author()
+    {
+        $course = Course::factory()->create();
+        $editedCourse = Course::factory()->make()->toArray();
+
+        /** @var AuthUser $tutor */
+        $tutor = AuthUser::factory()->create();
+        $tutor->assignRole(UserRole::TUTOR);
+
+        $editedCourse['author_id'] = $tutor->getKey();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            $editedCourse
+        );
+
+        $this->response->assertStatus(200);
+        $this->response->assertValid('author_id');
     }
 
     /**

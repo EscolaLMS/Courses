@@ -3,7 +3,7 @@
 namespace EscolaLms\Courses\Rules;
 
 use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Models\User;
+use EscolaLms\Auth\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 
 class ValidAuthor implements Rule
@@ -20,7 +20,7 @@ class ValidAuthor implements Rule
         if (!is_null($value)) {
             /** @var User $user */
             $user = User::find($value);
-            if (is_null($user) || !($user->hasRole(UserRole::TUTOR) || $user->hasRole(UserRole::ADMIN))) {
+            if (is_null($user) || !$user->hasRole([UserRole::TUTOR, UserRole::ADMIN])) {
                 return false;
             }
         }
@@ -34,6 +34,6 @@ class ValidAuthor implements Rule
      */
     public function message()
     {
-        return 'Author must be a Tutor';
+        return __('Author must be a Tutor or Admin');
     }
 }

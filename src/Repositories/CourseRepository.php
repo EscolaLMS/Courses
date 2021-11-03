@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
@@ -145,7 +146,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
      */
     public function create(array $input): Model
     {
-        $input['author_id'] = Auth::id();
+        if (!isset($input['author_id']) || !(Auth::user() && Auth::user()->hasRole(UserRole::ADMIN))) {
+            $input['author_id'] = Auth::id();
+        }
+
         $model = $this->model->newInstance($input);
 
         $model->save();
@@ -182,6 +186,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $query = $this->model->newQuery();
 
         $model = $query->findOrFail($id);
+
+        if (isset($input['author_id']) && Auth::user() && !Auth::user()->hasRole(UserRole::ADMIN)) {
+            $input['author_id'] = Auth::id();
+        }
 
         if (isset($input['video'])) {
             $input['video_path'] = $input['video']->store("public/course/$id/videos");
