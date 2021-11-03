@@ -20,7 +20,7 @@ class ValidAuthor implements Rule
         if (!is_null($value)) {
             /** @var User $user */
             $user = User::find($value);
-            if (is_null($user) || !$user->hasRole(UserRole::TUTOR) || !$user->haRole(UserRole::ADMIN)) {
+            if (is_null($user) || !($user->hasRole(UserRole::TUTOR) || $user->hasRole(UserRole::ADMIN))) {
                 return false;
             }
         }
