@@ -7,11 +7,16 @@ use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class CourseRepository
@@ -21,6 +26,8 @@ use Illuminate\Support\Facades\DB;
 
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
+    private LessonRepositoryContract $lessonRepository;
+
     /**
      * @var array
      */
@@ -36,6 +43,30 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'scorm_id',
         'poster_path',
     ];
+
+    /**
+     * Return searchable fields
+     *
+     * @return array
+     */
+    public function getFieldsSearchable()
+    {
+        return $this->fieldSearchable;
+    }
+
+    /**
+     * Configure the Model
+     **/
+    public function model()
+    {
+        return Course::class;
+    }
+
+    public function __construct(Application $app)
+    {
+        parent::__construct($app);
+        $this->lessonRepository = $app->make(LessonRepositoryContract::class);
+    }
 
     /**
      * Recursive flatten object by given $key
@@ -55,24 +86,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             }
         }
         return $output;
-    }
-
-    /**
-     * Return searchable fields
-     *
-     * @return array
-     */
-    public function getFieldsSearchable()
-    {
-        return $this->fieldSearchable;
-    }
-
-    /**
-     * Configure the Model
-     **/
-    public function model()
-    {
-        return Course::class;
     }
 
     public function queryAll(): Builder
@@ -124,22 +137,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     }
 
     /**
-     * Find model record for given id with relations
-     *
-     * @param int $id
-     * @param array $columns
-     * @param array $with relations
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
-     */
-    public function findWith(int $id, array $columns = ['*'], array $with = [], array $withCount = []): ?Course
-    {
-        $query = $this->model->newQuery()->with($with)->withCount($withCount);
-
-        return $query->find($id, $columns);
-    }
-
-    /**
      * Create model record
      * 
      * @return Course
@@ -158,15 +155,21 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $courseId = $model->id;
 
         if (isset($input['video'])) {
-            $update['video_path'] = $input['video']->store("public/course/$courseId/videos");
+            /** @var UploadedFile $video */
+            $video = $input['video'];
+            $update['video_path'] = $video->storePublicly("course/$courseId/videos");
         }
 
         if (isset($input['image'])) {
-            $update['image_path'] = $input['image']->store("public/course/$courseId/images");
+            /** @var UploadedFile $image */
+            $image = $input['image'];
+            $update['image_path'] = $image->storePublicly("course/$courseId/images");
         }
 
         if (isset($input['poster'])) {
-            $update['poster_path'] = $input['poster']->store("public/course/$courseId/posters");
+            /** @var UploadedFile $poster */
+            $poster = $input['poster'];
+            $update['poster_path'] = $poster->storePublicly("course/$courseId/posters");
         }
 
         if (count($update)) {
@@ -192,15 +195,21 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         if (isset($input['video'])) {
-            $input['video_path'] = $input['video']->store("public/course/$id/videos");
+            /** @var UploadedFile $video */
+            $video = $input['video'];
+            $input['video_path'] = $video->storePublicly("course/$id/videos");
         }
 
         if (isset($input['image'])) {
-            $input['image_path'] = $input['image']->store("public/course/$id/images");
+            /** @var UploadedFile $image */
+            $image = $input['image'];
+            $input['image_path'] = $image->storePublicly("course/$id/images");
         }
 
         if (isset($input['poster'])) {
-            $input['poster_path'] = $input['poster']->store("public/course/$id/posters");
+            /** @var UploadedFile $poster */
+            $poster = $input['poster'];
+            $input['poster_path'] = $poster->storePublicly("course/$id/posters");
         }
 
         if (isset($input['categories']) && is_array($input['categories'])) {
@@ -235,13 +244,29 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     {
         $course = $this->findWith($id, ['*'], ['lessons.topics']);
         foreach ($course->lessons as $lesson) {
-            foreach ($lesson->topics as $topic) {
-                $topic->topicable()->delete();
-                $topic->delete();
+            $this->lessonRepository->delete($lesson->getKey());
+        }
+        return $this->deleteAndClearStorage($course);
+    }
+
+    public function deleteModel(Course $course): ?bool
+    {
+        foreach ($course->lessons as $lesson) {
+            $this->lessonRepository->deleteModel($lesson);
+        }
+        return $this->deleteAndClearStorage($course);
+    }
+
+    private function deleteAndClearStorage(Course $course): ?bool
+    {
+        if ($course->delete()) {
+            $path = Storage::path('course/' . $course->getKey());
+            try {
+                File::cleanDirectory($path);
+                Storage::deleteDirectory($path);
+            } catch (\Throwable $th) {
             }
         }
-        $course->lessons()->delete();
-        $course->delete();
         return true;
     }
 

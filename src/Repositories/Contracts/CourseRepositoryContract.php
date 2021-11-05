@@ -18,4 +18,6 @@ interface CourseRepositoryContract extends BaseRepositoryContract
     public function findTutor($id): ?User;
 
     public function getById(int $id): Course;
+
+    public function deleteModel(Course $course): ?bool;
 }

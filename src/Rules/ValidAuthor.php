@@ -2,9 +2,9 @@
 
 namespace EscolaLms\Courses\Rules;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Auth\Models\User;
+use EscolaLms\Courses\Models\Course;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class ValidAuthor implements Rule
 {
@@ -18,9 +18,8 @@ class ValidAuthor implements Rule
     public function passes($attribute, $value)
     {
         if (!is_null($value)) {
-            /** @var User $user */
-            $user = User::find($value);
-            if (is_null($user) || !$user->hasRole([UserRole::TUTOR, UserRole::ADMIN])) {
+            $user = Auth::user()->find($value);
+            if (is_null($user) || !$user->can('create', Course::class)) {
                 return false;
             }
         }

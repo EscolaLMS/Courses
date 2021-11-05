@@ -17,4 +17,6 @@ interface TopicRepositoryContract extends BaseRepositoryContract
 
     public static function registerContentClass(string $class): array;
     public static function unregisterContentClass(string $class): array;
+
+    public function deleteModel(Topic $topic): ?bool;
 }
