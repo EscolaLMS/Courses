@@ -20,7 +20,7 @@ class DeleteLessonAPIRequest extends FormRequest
         return is_null($lesson) || (isset($user) && $user->can('delete', $lesson));
     }
 
-    public function getLesson(): ?null
+    public function getLesson(): ?Lesson
     {
         return Lesson::find($this->route('lesson'));
     }

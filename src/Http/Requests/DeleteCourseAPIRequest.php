@@ -19,7 +19,7 @@ class DeleteCourseAPIRequest extends FormRequest
         return is_null($course) || (isset($user) ? $user->can('delete', $course) : false);
     }
 
-    public function getCourse(): ?null
+    public function getCourse(): ?Course
     {
         return Course::find($this->route('course'));
     }

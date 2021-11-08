@@ -20,7 +20,7 @@ class DeleteTopicAPIRequest extends FormRequest
         return is_null($topic) || (isset($user) && $user->can('delete', $topic));
     }
 
-    public function getTopic(): ?null
+    public function getTopic(): ?Topic
     {
         return Topic::find($this->route('topic'));
     }
