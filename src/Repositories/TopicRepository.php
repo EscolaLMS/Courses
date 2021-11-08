@@ -270,7 +270,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     public function delete(int $id): ?bool
     {
         $topic = $this->findWith($id, ['*'], ['topicable']);
-        return $this->deleteModel($topic);
+        return !is_null($topic) && $this->deleteModel($topic);
     }
 
     public function deleteModel(Topic $topic): ?bool

@@ -15,8 +15,13 @@ class DeleteCourseAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $course = Course::find($this->route('course'));
-        return isset($user) ? $user->can('delete', $course) : false;
+        $course = $this->getCourse();
+        return is_null($course) || (isset($user) ? $user->can('delete', $course) : false);
+    }
+
+    public function getCourse(): ?null
+    {
+        return Course::find($this->route('course'));
     }
 
     /**

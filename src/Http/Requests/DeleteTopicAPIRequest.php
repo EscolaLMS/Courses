@@ -16,11 +16,13 @@ class DeleteTopicAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $topic = Topic::find($this->route('topic'));
-        if (!isset($topic)) {
-            return true; // controller will fire 404 error
-        }
-        return isset($user) && $user->can('delete', $topic);
+        $topic = $this->getTopic();
+        return is_null($topic) || (isset($user) && $user->can('delete', $topic));
+    }
+
+    public function getTopic(): ?null
+    {
+        return Topic::find($this->route('topic'));
     }
 
     /**

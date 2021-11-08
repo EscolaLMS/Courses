@@ -54,11 +54,7 @@ class LessonRepository extends BaseRepository implements LessonRepositoryContrac
     public function delete(int $id): ?bool
     {
         $lesson = $this->findWith($id, ['*'], ['topics']);
-        foreach ($lesson->topics as $topic) {
-            $this->topicRepository->delete($topic->getKey());
-        }
-        $lesson->delete();
-        return true;
+        return !is_null($lesson) && $this->deleteModel($lesson);
     }
 
     public function deleteModel(Lesson $lesson): ?bool
