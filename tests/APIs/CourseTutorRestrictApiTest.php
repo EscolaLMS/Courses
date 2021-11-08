@@ -68,7 +68,7 @@ class CourseTutorRestrictApiTest extends TestCase
     {
         $otherAuthor = config('auth.providers.users.model')::factory()->create();
         $course = Course::factory()->create([
-            'author_id' => $otherAuthor
+            'author_id' => $otherAuthor->getKey()
         ]);
         $editedCourse = Course::factory()->make()->toArray();
 
@@ -88,7 +88,7 @@ class CourseTutorRestrictApiTest extends TestCase
     {
         $otherAuthor = config('auth.providers.users.model')::factory()->create();
         $course = Course::factory()->create([
-            'author_id' => $otherAuthor
+            'author_id' => $otherAuthor->getKey()
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
