@@ -94,7 +94,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         }
 
         try {
-            $this->courseRepository->delete($id);
+            $this->topicRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {

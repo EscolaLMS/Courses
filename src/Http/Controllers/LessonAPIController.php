@@ -102,7 +102,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         }
 
         try {
-            $this->courseRepository->delete($id);
+            $this->lessonRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {
