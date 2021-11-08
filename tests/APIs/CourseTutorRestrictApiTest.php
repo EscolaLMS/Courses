@@ -5,6 +5,7 @@ namespace Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -65,7 +66,10 @@ class CourseTutorRestrictApiTest extends TestCase
      */
     public function test_update_course()
     {
-        $course = Course::factory()->create();
+        $otherAuthor = config('auth.providers.users.model')::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => $otherAuthor->getKey()
+        ]);
         $editedCourse = Course::factory()->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -82,7 +86,10 @@ class CourseTutorRestrictApiTest extends TestCase
      */
     public function test_delete_course()
     {
-        $course = Course::factory()->create();
+        $otherAuthor = config('auth.providers.users.model')::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => $otherAuthor->getKey()
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
