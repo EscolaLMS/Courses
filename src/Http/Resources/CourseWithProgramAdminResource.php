@@ -2,11 +2,14 @@
 
 namespace EscolaLms\Courses\Http\Resources;
 
+use EscolaLms\Auth\Traits\ResourceExtandable;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseWithProgramAdminResource extends JsonResource
 {
+    use ResourceExtandable;
+
     public function __construct(Course $resource)
     {
         parent::__construct($resource);
@@ -28,7 +31,7 @@ class CourseWithProgramAdminResource extends JsonResource
 
         $course = $this->getResource();
 
-        return [
+        $fields = [
             'id' => $course->getKey(),
             'title' => $course->title,
             'summary' => $course->summary,
@@ -50,5 +53,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'poster_path' =>  $course->poster_path,
             'poster_url' =>  $course->poster_url,
         ];
+
+        return self::apply($fields, $this);
     }
 }

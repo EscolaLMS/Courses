@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Database\Seeders;
 
+use EscolaLms\Core\Enums\UserRole;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -12,8 +13,8 @@ class CoursesPermissionSeeder extends Seeder
     public function run()
     {
         // create permissions
-        $admin = Role::findOrCreate('admin', 'api');
-        $tutor = Role::findOrCreate('tutor', 'api');
+        $admin = Role::findOrCreate(UserRole::ADMIN, 'api');
+        $tutor = Role::findOrCreate(UserRole::TUTOR, 'api');
 
         Permission::findOrCreate('update course', 'api');
         Permission::findOrCreate('delete course', 'api');

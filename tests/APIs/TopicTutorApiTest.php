@@ -80,6 +80,32 @@ class TopicTutorApiTest extends TestCase
         $this->response->assertStatus(404);
     }
 
+    public function test_delete_topic_by_deleting_whole_course()
+    {
+        $course = Course::factory()->create([
+            'author_id' => $this->user->id
+        ]);
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->id
+        ]);
+        $topic = Topic::factory()->create([
+            'lesson_id' => $lesson->id
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'DELETE',
+            '/api/admin/courses/' . $course->id
+        );
+
+        $this->assertApiSuccess();
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/topics/' . $topic->id
+        );
+
+        $this->response->assertStatus(404);
+    }
+
     public function test_delete_restrict_topic()
     {
         $topic = Topic::factory()->create();

@@ -87,15 +87,14 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
 
     public function destroy($id, DeleteTopicAPIRequest $request)
     {
-        /** @var Topic $topic */
-        $topic = $this->topicRepository->find($id);
+        $topic = $request->getTopic();
 
         if (empty($topic)) {
             return $this->sendError('Topic not found');
         }
 
         try {
-            $topic->delete();
+            $this->topicRepository->delete($id);
         } catch (AccessDeniedHttpException $error) {
             return $this->sendError($error->getMessage(), 403);
         } catch (TopicException $error) {

@@ -2,14 +2,13 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Auth\Models\User as AuthUser;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Enums\UserRole;
+use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -18,6 +17,7 @@ use Illuminate\Testing\TestResponse;
 
 class CourseAdminApiTest extends TestCase
 {
+    use CreatesUsers;
     use DatabaseTransactions;
 
     /**
@@ -89,10 +89,7 @@ class CourseAdminApiTest extends TestCase
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
 
-        /** @var AuthUser $tutor */
-        $tutor = AuthUser::factory()->create();
-        $tutor->assignRole(UserRole::TUTOR);
-
+        $tutor = $this->makeInstructor();
         $editedCourse['author_id'] = $tutor->getKey();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -113,7 +110,7 @@ class CourseAdminApiTest extends TestCase
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
 
-        $student = User::factory()->create();
+        $student = $this->makeStudent();
         $editedCourse['author_id'] = $student->getKey();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -416,6 +413,39 @@ class CourseAdminApiTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'poster_path' => $path
         ]);
+    }
+
+    public function test_delete_admin_course_poster()
+    {
+        Storage::fake('local');
+        $poster = UploadedFile::fake()->image('poster.jpg');
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses',
+            [
+                'title' => "Test create course poster",
+                'poster' => $poster
+            ]
+        );
+
+        $this->response->assertStatus(201);
+
+        $data = $this->response->json();
+
+        $course_id = $data['data']['id'];
+        $path = $data['data']['poster_path'];
+
+        Storage::disk('local')->assertExists('/' . $path);
+        $this->assertDatabaseHas('courses', [
+            'poster_path' => $path
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'DELETE',
+            '/api/admin/courses/' . $course_id
+        );
+
+        Storage::disk('local')->assertMissing('/' . $path);
     }
 
     /**

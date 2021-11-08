@@ -95,8 +95,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
 
     public function destroy($id, DeleteLessonAPIRequest $request)
     {
-        /** @var Lesson $lesson */
-        $lesson = $this->lessonRepository->find($id);
+        $lesson = $request->getLesson();
 
         if (empty($lesson)) {
             return $this->sendError('Lesson not found');

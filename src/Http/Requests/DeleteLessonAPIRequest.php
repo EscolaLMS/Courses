@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Lesson;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DeleteLessonAPIRequest extends FormRequest
 {
@@ -15,8 +16,13 @@ class DeleteLessonAPIRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        $lesson = Lesson::find($this->route('lesson'));
-        return isset($user) && $user->can('delete', $lesson);
+        $lesson = $this->getLesson();
+        return is_null($lesson) || (isset($user) && $user->can('delete', $lesson));
+    }
+
+    public function getLesson(): ?Lesson
+    {
+        return Lesson::find($this->route('lesson'));
     }
 
     /**

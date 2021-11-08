@@ -9,11 +9,14 @@ use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Models\Contracts\TopicContentContract;
 use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
 use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -262,5 +265,28 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             }
         }
         return $partialRules;
+    }
+
+    public function delete(int $id): ?bool
+    {
+        $topic = $this->findWith($id, ['*'], ['topicable']);
+        return !is_null($topic) && $this->deleteModel($topic);
+    }
+
+    public function deleteModel(Topic $topic): ?bool
+    {
+        if ($topic->delete()) {
+            $topicable = $topic->topicable;
+            if (is_a($topicable, AbstractTopicFileContent::class)) {
+                /** @var AbstractTopicFileContent $topicable */
+                $path = Storage::path($topicable->generateStoragePath());
+                try {
+                    File::cleanDirectory($path);
+                    Storage::deleteDirectory($path);
+                } catch (\Throwable $th) {
+                }
+            }
+        }
+        return true;
     }
 }

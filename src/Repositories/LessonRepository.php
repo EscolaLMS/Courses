@@ -4,15 +4,19 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\BaseRepository;
+use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
+use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Illuminate\Foundation\Application;
 
 /**
  * Class LessonRepository
  * @package EscolaLms\Courses\Repositories
  * @version April 27, 2021, 11:20 am UTC
-*/
-
-class LessonRepository extends BaseRepository
+ */
+class LessonRepository extends BaseRepository implements LessonRepositoryContract
 {
+    private TopicRepositoryContract $topicRepository;
+
     /**
      * @var array
      */
@@ -41,16 +45,23 @@ class LessonRepository extends BaseRepository
         return Lesson::class;
     }
 
+    public function __construct(Application $app)
+    {
+        parent::__construct($app);
+        $this->topicRepository = $app->make(TopicRepositoryContract::class);
+    }
+
     public function delete(int $id): ?bool
     {
-        $query = $this->model->newQuery()->with(['topics']);
-        $lesson = $query->find($id);
+        $lesson = $this->findWith($id, ['*'], ['topics']);
+        return !is_null($lesson) && $this->deleteModel($lesson);
+    }
 
+    public function deleteModel(Lesson $lesson): ?bool
+    {
         foreach ($lesson->topics as $topic) {
-            $topic->topicable()->delete();
-            $topic->delete();
+            $this->topicRepository->deleteModel($topic);
         }
-        $lesson->topics()->delete();
         $lesson->delete();
         return true;
     }

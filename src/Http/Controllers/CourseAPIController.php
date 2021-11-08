@@ -149,8 +149,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function destroy($id, DeleteCourseAPIRequest $request)
     {
-        /** @var Course $course */
-        $course = $this->courseRepository->find($id);
+        $course = $request->getCourse();
 
         if (empty($course)) {
             return $this->sendError('Course not found');

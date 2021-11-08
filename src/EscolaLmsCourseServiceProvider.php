@@ -16,11 +16,13 @@ use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseH5PProgressRepository;
 use EscolaLms\Courses\Repositories\CourseProgressRepository;
 use EscolaLms\Courses\Repositories\CourseRepository;
+use EscolaLms\Courses\Repositories\LessonRepository;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Repositories\TopicResourceRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
@@ -39,6 +41,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProgressServiceContract::class => ProgressService::class,
         TopicRepositoryContract::class => TopicRepository::class,
         TopicResourceRepositoryContract::class => TopicResourceRepository::class,
+        LessonRepositoryContract::class => LessonRepository::class,
     ];
 
     public function boot()
