@@ -30,7 +30,7 @@ class LessonWithTopicsAdminResource extends JsonResource
             'summary' => $this->summary,
             'duration' => $this->duration,
             'active' => $this->active,
-            'topics' => TopicResource::collection($lesson->topics->sortBy('order')),
+            'topics' => TopicAdminResource::collection($lesson->topics->sortBy('order')),
             'order' => $this->order,
         ];
     }

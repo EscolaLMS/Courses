@@ -6,7 +6,7 @@ use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceCont
 use EscolaLms\TopicTypes\Models\Contracts\TopicContentContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TopicResource extends JsonResource
+class TopicAdminResource extends JsonResource
 {
     /**
      * @var array

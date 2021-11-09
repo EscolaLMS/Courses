@@ -1,56 +1,56 @@
 {
-  "name": "escolalms/courses",
-  "description": "Escola Headless LMS Courses",
-  "type": "package",
-  "require": {
-    "php": ">=7.4",
-    "davidbadura/faker-markdown-generator": "^1.1",
-    "devianl2/laravel-scorm": "^2.0",
-    "escolalms/auth": "^0",
-    "escolalms/categories": "^0",
-    "escolalms/core": "^1",
-    "escolalms/scorm": "^0",
-    "escolalms/tags": "^0",
-    "laravel/framework": ">=8.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.0",
-    "orchestra/testbench": ">=5.0"
-  },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Marcin Lenkowski",
-      "email": "marcin.lenkowski@escola.pl"
+    "name": "escolalms/courses",
+    "description": "Escola Headless LMS Courses",
+    "type": "package",
+    "require": {
+        "php": ">=7.4",
+        "davidbadura/faker-markdown-generator": "^1.1",
+        "devianl2/laravel-scorm": "^2.0",
+        "escolalms/auth": "^0",
+        "escolalms/categories": "^0",
+        "escolalms/core": "^1",
+        "escolalms/scorm": "^0",
+        "escolalms/tags": "^0",
+        "escolalms/topic-types": "^0",
+        "laravel/framework": ">=8.0"
     },
-    {
-      "name": "Mateusz Wojczal",
-      "email": "mateusz.wojczal@escola.pl"
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": ">=5.0"
     },
-    {
-      "name": "Paweł Chołaj",
-      "email": "pawel.cholaj@escola.pl"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "EscolaLms\\Courses\\": "src",
-      "EscolaLms\\Courses\\Tests\\": "tests",
-      "EscolaLms\\Courses\\Database\\Factories\\": "database/factories",
-      "EscolaLms\\Courses\\Database\\Seeders\\": "database/seeders"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
-      ]
-    }
-  },
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "license": "MIT",
+    "authors": [{
+            "name": "Marcin Lenkowski",
+            "email": "marcin.lenkowski@escola.pl"
+        },
+        {
+            "name": "Mateusz Wojczal",
+            "email": "mateusz.wojczal@escola.pl"
+        },
+        {
+            "name": "Paweł Chołaj",
+            "email": "pawel.cholaj@escola.pl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "EscolaLms\\Courses\\": "src",
+            "EscolaLms\\Courses\\Tests\\": "tests",
+            "EscolaLms\\Courses\\Database\\Factories\\": "database/factories",
+            "EscolaLms\\Courses\\Database\\Seeders\\": "database/seeders"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EscolaLms\\Courses\\EscolaLmsCourseServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

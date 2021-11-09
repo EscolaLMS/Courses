@@ -5,13 +5,13 @@ namespace EscolaLms\Courses\Tests\Repositories;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicContent\OEmbed;
-use EscolaLms\Courses\Models\TopicContent\RichText;
-use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\Courses\TopicTypes\TopicContent\OEmbed;
+use EscolaLms\Courses\TopicTypes\TopicContent\RichText;
+use EscolaLms\Courses\TopicTypes\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TopicRepositoryTest extends TestCase
@@ -32,7 +32,7 @@ class TopicRepositoryTest extends TestCase
     /**
      * @test create
      */
-    public function test_create_topic()
+    public function testCreateTopic()
     {
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
@@ -46,14 +46,14 @@ class TopicRepositoryTest extends TestCase
         $this->assertNotNull(Topic::find($createdTopic['id']), 'Topic with given id must be in DB');
     }
 
-    public function test_create_topic_from_request()
+    public function testCreateTopicFromRequest()
     {
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
 
         $topic['topicable_type'] = RichText::class;
-        $topic['value'] = "lorem ipsum";
+        $topic['value'] = 'lorem ipsum';
 
         /** @var CreateTopicApiRequestMock $request */
         $request = new CreateTopicApiRequestMock();
@@ -66,13 +66,13 @@ class TopicRepositoryTest extends TestCase
         $this->assertNotNull(Topic::find($createdTopic->getKey()), 'Topic with given id must be in DB');
         $this->assertEquals($topic['topicable_type'], $createdTopic->topicable_type);
         $this->assertNotNull($createdTopic->topicable->getKey());
-        $this->assertEquals("lorem ipsum", $createdTopic->topicable->value);
+        $this->assertEquals('lorem ipsum', $createdTopic->topicable->value);
     }
 
     /**
      * @test read
      */
-    public function test_read_topic()
+    public function testReadTopic()
     {
         $topic = Topic::factory()->create();
 
@@ -85,7 +85,7 @@ class TopicRepositoryTest extends TestCase
     /**
      * @test update
      */
-    public function test_update_topic()
+    public function testUpdateTopic()
     {
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
@@ -99,14 +99,14 @@ class TopicRepositoryTest extends TestCase
         $this->assertModelData($fakeTopic, $dbTopic->toArray());
     }
 
-    public function test_update_topic_from_request()
+    public function testUpdateTopicFromRequest()
     {
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
 
         $topic['topicable_type'] = RichText::class;
-        $topic['value'] = "lorem ipsum";
+        $topic['value'] = 'lorem ipsum';
 
         /** @var CreateTopicApiRequestMock $request */
         $request = new CreateTopicApiRequestMock();
@@ -119,7 +119,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertNotNull(Topic::find($createdTopic->getKey()), 'Topic with given id must be in DB');
         $this->assertEquals($topic['topicable_type'], $createdTopic->topicable_type);
         $this->assertNotNull($createdTopic->topicable->getKey());
-        $this->assertEquals("lorem ipsum", $createdTopic->topicable->value);
+        $this->assertEquals('lorem ipsum', $createdTopic->topicable->value);
 
         // ***
         // Update with same topicable_type, but different value
@@ -129,7 +129,7 @@ class TopicRepositoryTest extends TestCase
 
         $fakeTopic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
         $fakeTopic['topicable_type'] = RichText::class;
-        $fakeTopic['value'] = "ipsum lorem";
+        $fakeTopic['value'] = 'ipsum lorem';
         $fakeTopic['topic'] = $createdTopic->getKey();
 
         /** @var UpdateTopicApiRequestMock $request2 */
@@ -141,7 +141,7 @@ class TopicRepositoryTest extends TestCase
 
         $this->assertEquals($fakeTopic['topicable_type'], $updatedTopic->topicable_type);
         $this->assertEquals($topicableKey, $updatedTopic->topicable->getKey());
-        $this->assertEquals("ipsum lorem", $updatedTopic->topicable->value);
+        $this->assertEquals('ipsum lorem', $updatedTopic->topicable->value);
 
         // ***
         // Update with different topicable type
@@ -151,7 +151,7 @@ class TopicRepositoryTest extends TestCase
 
         $fakeTopic2 = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
         $fakeTopic2['topicable_type'] = OEmbed::class;
-        $fakeTopic2['value'] = "https://embed.test/embed";
+        $fakeTopic2['value'] = 'https://embed.test/embed';
         $fakeTopic2['topic'] = $createdTopic->getKey();
 
         /** @var UpdateTopicApiRequestMock $request3 */
@@ -163,13 +163,13 @@ class TopicRepositoryTest extends TestCase
 
         $this->assertEquals($fakeTopic2['topicable_type'], $updatedTopic2->topicable_type);
         $this->assertNotEquals($topicableKey, $updatedTopic2->topicable->getKey());
-        $this->assertEquals("https://embed.test/embed", $updatedTopic2->topicable->value);
+        $this->assertEquals('https://embed.test/embed', $updatedTopic2->topicable->value);
     }
 
     /**
      * @test delete
      */
-    public function test_delete_topic()
+    public function testDeleteTopic()
     {
         $topic = Topic::factory()->create();
 
@@ -179,7 +179,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertNull(Topic::find($topic->id), 'Topic should not exist in DB');
     }
 
-    public function test_unregister_content_class()
+    public function testUnregisterContentClass()
     {
         $this->assertTrue(in_array(Video::class, $this->topicRepo::availableContentClasses()));
         $this->topicRepo::unregisterContentClass(Video::class);

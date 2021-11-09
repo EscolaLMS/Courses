@@ -25,12 +25,11 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Class CourseController
- * @package App\Http\Controllers
+ * Class CourseController.
  */
 class CourseAPIController extends AppBaseController implements CourseAPISwagger
 {
-    /** @var  CourseRepository */
+    /** @var CourseRepository */
     private CourseRepositoryContract $courseRepository;
     private CourseServiceContract $courseServiceContract;
     private CategoriesRepositoryContract $categoriesRepositoryContract;
@@ -91,7 +90,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function program($id, GetCourseCurriculumAPIRequest $request)
     {
-        /** @var Course $course */
+        /* @var Course $course */
         try {
             $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
         } catch (AccessDeniedHttpException $error) {
@@ -107,12 +106,12 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         }
 
         $resource = ($request->user() && $request->user()->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
+
         return $this->sendResponseForResource($resource, 'Course retrieved successfully');
     }
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
     {
-
         try {
             $player = $this->courseServiceContract->getScormPlayer($id);
         } catch (Error $error) {
@@ -179,6 +178,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         } catch (Error $error) {
             return $this->sendError($error->getMessage(), 422);
         }
-        return $this->sendResponse([], $request->get('class') . ' sorted successfully');
+
+        return $this->sendResponse([], $request->get('class').' sorted successfully');
     }
 }
