@@ -27,7 +27,6 @@ class CreateTopicApiRequestMock extends CreateTopicAPIRequest
         $instance = $this->getValidatorInstance();
 
         if ($instance->fails()) {
-            dd($instance);
             $this->failedValidation($instance);
         }
 

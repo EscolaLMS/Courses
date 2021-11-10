@@ -9,9 +9,9 @@ use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\Courses\TopicTypes\TopicContent\OEmbed;
-use EscolaLms\Courses\TopicTypes\TopicContent\RichText;
-use EscolaLms\Courses\TopicTypes\TopicContent\Video;
+use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
+use EscolaLms\TopicTypes\Models\TopicContent\RichText;
+use EscolaLms\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Routing\Redirector;
 
@@ -182,6 +182,7 @@ class TopicRepositoryTest extends TestCase
 
     public function testUnregisterContentClass()
     {
+        $this->topicRepo::registerContentClass(Video::class);
         $this->assertTrue(in_array(Video::class, $this->topicRepo::availableContentClasses()));
         $this->topicRepo::unregisterContentClass(Video::class);
         $this->assertTrue(!in_array(Video::class, $this->topicRepo::availableContentClasses()));
