@@ -2,11 +2,9 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
-use Error;
 use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
@@ -22,7 +20,6 @@ use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Class CourseController.
@@ -64,15 +61,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     {
         $input = $request->all();
 
-        try {
-            $course = $this->courseRepository->create($input);
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $course = $this->courseRepository->create($input);
 
         return $this->sendResponseForResource(CourseSimpleResource::make($course), 'Course saved successfully');
     }
@@ -90,16 +79,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function program($id, GetCourseCurriculumAPIRequest $request)
     {
-        /* @var Course $course */
-        try {
-            $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
 
         if (empty($course)) {
             return $this->sendError('Course not found');
@@ -112,11 +92,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
     {
-        try {
-            $player = $this->courseServiceContract->getScormPlayer($id);
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $player = $this->courseServiceContract->getScormPlayer($id);
 
         return $player;
     }
@@ -132,16 +108,8 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError('Course not found');
         }
 
-        try {
-            $course = $this->courseRepository->update($input, $id);
-            $course->load(['lessons.topics.topicable', 'categories', 'tags']);
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $course = $this->courseRepository->update($input, $id);
+        $course->load(['lessons.topics.topicable', 'categories', 'tags']);
 
         return $this->sendResponseForResource(CourseSimpleResource::make($course), 'Course updated successfully');
     }
@@ -154,30 +122,14 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError('Course not found');
         }
 
-        try {
-            $this->courseRepository->delete($id);
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $this->courseRepository->delete($id);
 
         return $this->sendSuccess('Course deleted successfully');
     }
 
     public function sort(SortAPIRequest $request)
     {
-        try {
-            $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
-        } catch (AccessDeniedHttpException $error) {
-            return $this->sendError($error->getMessage(), 403);
-        } catch (TopicException $error) {
-            return $this->sendDataError($error->getMessage(), $error->getData());
-        } catch (Error $error) {
-            return $this->sendError($error->getMessage(), 422);
-        }
+        $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
 
         return $this->sendResponse([], $request->get('class').' sorted successfully');
     }

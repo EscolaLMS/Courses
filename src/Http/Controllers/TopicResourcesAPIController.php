@@ -10,8 +10,6 @@ use EscolaLms\Courses\Http\Requests\UploadTopicResourceAPIRequest;
 use EscolaLms\Courses\Http\Resources\TopicResourceResource;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class TopicResourcesAPIController extends AppBaseController implements TopicResourcesAPISwagger
@@ -32,27 +30,19 @@ class TopicResourcesAPIController extends AppBaseController implements TopicReso
 
     public function upload(UploadTopicResourceAPIRequest $request): JsonResponse
     {
-        try {
-            $topicResource = $this->resourceRepository->storeUploadedResourceForTopic($request->getTopic(), $request->getUploadedResource());
-            return $this->sendResponseForResource(TopicResourceResource::make($topicResource), 'Topic resource uploaded successfully');
-        } catch (Exception $exception) {
-            return $this->sendError($exception->getMessage(), 422);
-        }
+        $topicResource = $this->resourceRepository->storeUploadedResourceForTopic($request->getTopic(), $request->getUploadedResource());
+
+        return $this->sendResponseForResource(TopicResourceResource::make($topicResource), 'Topic resource uploaded successfully');
     }
 
     public function delete(DeleteTopicResourceAPIRequest $request): JsonResponse
     {
-        try {
-            $deleted = $this->resourceRepository->delete($request->getTopicResourceId());
-            if ($deleted) {
-                return $this->sendSuccess(__('Deleted topic resource'));
-            }
-            return $this->sendError(__('Failed to delete topic resource'));
-        } catch (ModelNotFoundException $exception) {
-            return $this->sendError($exception->getMessage());
-        } catch (Exception $exception) {
-            return $this->sendError($exception->getMessage(), 422);
+        $deleted = $this->resourceRepository->delete($request->getTopicResourceId());
+        if ($deleted) {
+            return $this->sendSuccess(__('Deleted topic resource'));
         }
+
+        return $this->sendError(__('Failed to delete topic resource'));
     }
 
     public function rename(RenameTopicResourceAPIRequest $request): JsonResponse
@@ -61,14 +51,8 @@ class TopicResourcesAPIController extends AppBaseController implements TopicReso
         if (empty($topicResource)) {
             return $this->sendError(__('Topic resource not found'));
         }
-        try {
-            if ($this->resourceRepository->renameModel($topicResource, $request->getName())) {
-                return $this->sendResponseForResource(TopicResourceResource::make($topicResource->refresh()), 'Topic resource renamed successfully');
-            }
-        } catch (ModelNotFoundException $exception) {
-            return $this->sendError($exception->getMessage());
-        } catch (Exception $exception) {
-            return $this->sendError($exception->getMessage(), 422);
+        if ($this->resourceRepository->renameModel($topicResource, $request->getName())) {
+            return $this->sendResponseForResource(TopicResourceResource::make($topicResource->refresh()), 'Topic resource renamed successfully');
         }
     }
 }
