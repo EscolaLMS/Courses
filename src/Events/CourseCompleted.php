@@ -3,7 +3,6 @@
 
 namespace EscolaLms\Courses\Events;
 
-
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Events\Dispatchable;

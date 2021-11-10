@@ -22,7 +22,7 @@ jobs:
         run: php -r "file_put_contents('src/Http/Controllers/AppBaseController.php', str_replace('SWAGGER_VERSION', '@OA\Info(title=\"EscolaLMS\", version=\"0.0.1\")', file_get_contents('src/Http/Controllers/AppBaseController.php')));"
 
       - name: Update composer
-        run: composer update
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
       - name: Require composer swagger package
         run: composer require darkaonline/l5-swagger

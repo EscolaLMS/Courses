@@ -6,12 +6,11 @@ use Error;
 use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
-use EscolaLms\Courses\Models\Contracts\TopicContentContract;
-use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
-use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use EscolaLms\TopicTypes\Models\Contracts\TopicContentContract;
+use EscolaLms\TopicTypes\Models\Contracts\TopicFileContentContract;
+use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
@@ -20,16 +19,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * Class TopicRepository
- * @package EscolaLms\Courses\Repositories
+ * Class TopicRepository.
+ *
  * @version April 27, 2021, 11:21 am UTC
  */
 class TopicRepository extends BaseRepository implements TopicRepositoryContract
 {
-
     /**
      * @var array
-     * All possible classes that can store content
+     *            All possible classes that can store content
      */
     private static array $contentClasses = [];
 
@@ -43,11 +41,11 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         'topicable_type',
         'order',
         'active',
-        'boolean'
+        'boolean',
     ];
 
     /**
-     * Return searchable fields
+     * Return searchable fields.
      *
      * @return array
      */
@@ -57,7 +55,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     }
 
     /**
-     * Configure the Model
+     * Configure the Model.
      **/
     public function model()
     {
@@ -66,6 +64,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
     /**
      * @param string $class fullname of a class that can be content
+     *
      * @return array list of unique classes
      */
     public static function registerContentClass(string $class): array
@@ -73,15 +72,16 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         if (!in_array($class, self::$contentClasses) && class_exists($class) && (is_a($class, TopicContentContract::class, true))) {
             self::$contentClasses[] = $class;
         }
+
         return self::$contentClasses;
     }
 
     public static function unregisterContentClass(string $class): array
     {
-
         if (($key = array_search($class, self::$contentClasses)) !== false) {
             unset(self::$contentClasses[$key]);
         }
+
         return self::$contentClasses;
     }
 
@@ -96,9 +96,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     }
 
     /**
-     * Create model record
-     *
-     * @return Topic
+     * Create model record.
      */
     public function create(array $input): Topic
     {
@@ -121,10 +119,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     }
 
     /**
-     * Update model record for given id
-     *
-     * @param array $input
-     * @param int $id
+     * Update model record for given id.
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
      */
@@ -190,11 +185,13 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         }
         $topic->fill($validated);
         $topic->save();
+
         return $topic;
     }
 
     /**
      * @return TopicContentContract|TopicFileContentContract|Model
+     *
      * @throws TopicException
      */
     private function createTopicContentModelFromRequest(FormRequest $request, Topic $topic): Model
@@ -222,11 +219,13 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $model->fill($attributes);
         $model->save();
         $model->topic()->save($topic);
+
         return $model;
     }
 
     /**
      * @return TopicContentContract|TopicFileContentContract|Model
+     *
      * @throws TopicException
      */
     private function updateTopicContentModelFromRequest(FormRequest $request, TopicContentContract $topicContent): Model
@@ -248,13 +247,14 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         // we only update validated attributes and we removed validations for fields that would cause problems :)
         $topicContent->fill($attributes);
         $topicContent->save();
+
         return $topicContent;
     }
 
     private function getRulesForTopicContentUpdate(FormRequest $request, TopicContentContract $topicContent)
     {
         // we want to do partial update, so we add 'sometimes' to all rules
-        $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes' . $field_rules, $topicContent::rules());
+        $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes'.$field_rules, $topicContent::rules());
 
         // don't try to validate file keys in request if they don't contain file during topic / topic content update
         if ($topicContent instanceof TopicFileContentContract) {
@@ -264,12 +264,14 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
                 }
             }
         }
+
         return $partialRules;
     }
 
     public function delete(int $id): ?bool
     {
         $topic = $this->findWith($id, ['*'], ['topicable']);
+
         return !is_null($topic) && $this->deleteModel($topic);
     }
 
@@ -287,6 +289,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
                 }
             }
         }
+
         return true;
     }
 }

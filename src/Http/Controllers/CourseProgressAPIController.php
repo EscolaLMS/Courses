@@ -31,11 +31,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
 
     public function index(Request $request): JsonResponse
     {
-        try {
-            return $this->sendResponseForResource(ProgressResource::collection($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), 400);
-        }
+        return $this->sendResponseForResource(ProgressResource::collection($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
     }
 
     /**
@@ -43,17 +39,13 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
      */
     public function show($course_id, Request $request): JsonResponse
     {
-        try {
-            $course = $this->courseRepositoryContract->getById($course_id);
+        $course = $this->courseRepositoryContract->getById($course_id);
 
-            if (!$course->active) {
-                return $this->sendError(__('Course is not active'), 403);
-            }
-
-            return $this->sendResponse(CourseProgressCollection::make($request->user(), $course)->getProgress(), __('Progress'));
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), 400);
+        if (!$course->active) {
+            return $this->sendError(__('Course is not active'), 403);
         }
+
+        return $this->sendResponse(CourseProgressCollection::make($request->user(), $course)->getProgress(), __('Progress'));
     }
 
     /**
@@ -61,34 +53,28 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
      */
     public function store($course_id, CourseProgressAPIRequest $request): JsonResponse
     {
-        try {
-            $course = $this->courseRepositoryContract->getById($course_id);
+        $course = $this->courseRepositoryContract->getById($course_id);
 
-            if (!$course->active) {
-                return $this->sendError(__('Course is not active'), 403);
-            }
-
-            $progress = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
-            return $this->sendResponse($progress->getProgress(), __('Saved progress'));
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), 400);
+        if (!$course->active) {
+            return $this->sendError(__('Course is not active'), 403);
         }
+
+        $progress = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
+
+        return $this->sendResponse($progress->getProgress(), __('Saved progress'));
     }
 
     public function ping($topic_id, Request $request): JsonResponse
     {
-        try {
-            $topic = $this->topicRepositoryContract->getById($topic_id);
+        $topic = $this->topicRepositoryContract->getById($topic_id);
 
-            if (!$topic->active) {
-                return $this->sendError(__('Topic is not active'), 403);
-            }
-
-            $this->progressServiceContract->ping($request->user(), $topic);
-            return $this->sendResponseForResource(new Status(true), 'Status');
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), 400);
+        if (!$topic->active) {
+            return $this->sendError(__('Topic is not active'), 403);
         }
+
+        $this->progressServiceContract->ping($request->user(), $topic);
+
+        return $this->sendResponseForResource(new Status(true), 'Status');
     }
 
     /**
@@ -96,23 +82,19 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
      */
     public function h5p($topic_id, Request $request): JsonResponse
     {
-        try {
-            $topic = $this->topicRepositoryContract->getById($topic_id);
+        $topic = $this->topicRepositoryContract->getById($topic_id);
 
-            if (!$topic->active) {
-                return $this->sendError(__('Topic is not active'), 403);
-            }
+        if (!$topic->active) {
+            return $this->sendError(__('Topic is not active'), 403);
+        }
 
-            $this->progressServiceContract->h5p(
+        $this->progressServiceContract->h5p(
                 $request->user(),
                 $topic,
                 $request->input('event'),
                 $request->input('data'),
             );
 
-            return $this->sendResponseForResource(new Status(true), 'Status');
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), 400);
-        }
+        return $this->sendResponseForResource(new Status(true), 'Status');
     }
 }

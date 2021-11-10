@@ -3,11 +3,11 @@
 namespace Tests\APIs;
 
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Events\VideoUpdated;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\TopicTypes\Events\VideoUpdated;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -26,20 +26,19 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->course = Course::factory()->create([
-            'author_id' => $this->user->id
+            'author_id' => $this->user->id,
         ]);
         $this->lesson = Lesson::factory(['course_id' => $this->course->id])->create();
         $this->topic = Topic::factory()->create([
             'lesson_id' => $this->lesson->id,
-            'json' => ['foo' => 'bar', 'bar' => 'foo']
+            'json' => ['foo' => 'bar', 'bar' => 'foo'],
         ]);
     }
 
     /**
      * @test
      */
-
-    public function test_update_topic_image()
+    public function testUpdateTopicImage()
     {
         Storage::fake('local');
 
@@ -49,12 +48,12 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'multipart/form-data',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Image',
-                'value' => $file
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Image',
+                'value' => $file,
             ]
         );
 
@@ -65,16 +64,14 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_images', [
-            'value' => $path
+            'value' => $path,
         ]);
     }
 
-
-
-    public function test_update_topic_audio()
+    public function testUpdateTopicAudio()
     {
         Storage::fake('local');
 
@@ -83,12 +80,12 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
-                'value' => $file
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'value' => $file,
             ]
         );
 
@@ -99,14 +96,14 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_audios', [
-            'value' => $path
+            'value' => $path,
         ]);
     }
 
-    public function test_update_topic_audio_with_new_file()
+    public function testUpdateTopicAudioWithNewFile()
     {
         Storage::fake('local');
 
@@ -115,12 +112,12 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
-                'value' => $file
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'value' => $file,
             ]
         );
 
@@ -130,11 +127,11 @@ class TopicTutorUpdateApiTest extends TestCase
 
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_audios', [
             'id' => $data->data->topicable->id,
-            'value' => $path
+            'value' => $path,
         ]);
 
         // ***
@@ -146,10 +143,10 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
-                'value' => $file2
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'value' => $file2,
             ]
         );
 
@@ -159,11 +156,11 @@ class TopicTutorUpdateApiTest extends TestCase
 
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_audios', [
             'id' => $data->data->topicable->id,
-            'value' => $path
+            'value' => $path,
         ]);
 
         // ***
@@ -173,10 +170,10 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->response = $this->withHeaders([
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Audio',
-                'value' => $path
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'value' => $path,
             ]
         );
 
@@ -186,15 +183,15 @@ class TopicTutorUpdateApiTest extends TestCase
 
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_audios', [
             'id' => $data->data->topicable->id,
-            'value' => $path
+            'value' => $path,
         ]);
     }
 
-    public function test_update_topic_video()
+    public function testUpdateTopicVideo()
     {
         Storage::fake('local');
         Event::fake([VideoUpdated::class]);
@@ -205,12 +202,12 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\Video',
-                'value' => $file
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Video',
+                'value' => $file,
             ]
         );
 
@@ -221,27 +218,27 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_videos', [
-            'value' => $path
+            'value' => $path,
         ]);
 
         Event::assertDispatched(VideoUpdated::class);
     }
 
-    public function test_update_topic_richtext()
+    public function testUpdateTopicRichtext()
     {
         $this->response = $this->withHeaders([
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
-                'value' => 'lorem ipsum'
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichText',
+                'value' => 'lorem ipsum',
             ]
         );
 
@@ -253,11 +250,11 @@ class TopicTutorUpdateApiTest extends TestCase
         $path = $data->data->topicable->value;
 
         $this->assertDatabaseHas('topic_richtexts', [
-            'value' => $path
+            'value' => $path,
         ]);
     }
 
-    public function test_update_topic_pdf()
+    public function testUpdateTopicPdf()
     {
         Storage::fake('local');
 
@@ -267,12 +264,12 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\PDF',
-                'value' => $file
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\PDF',
+                'value' => $file,
             ]
         );
 
@@ -283,47 +280,47 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->topicId = $data->data->id;
         $path = $data->data->topicable->value;
 
-        Storage::disk('local')->assertExists("/" . $path);
+        Storage::disk('local')->assertExists('/'.$path);
 
         $this->assertDatabaseHas('topic_pdfs', [
-            'value' => $path
+            'value' => $path,
         ]);
     }
 
-    public function test_update_topic_wrong_class()
+    public function testUpdateTopicWrongClass()
     {
         $this->response = $this->withHeaders([
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichTextAAAAAA',
-                'value' => 'lorem ipsum'
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichTextAAAAAA',
+                'value' => 'lorem ipsum',
             ]
         );
 
         $this->response->assertStatus(422);
     }
 
-    public function test_update_topic_with_json()
+    public function testUpdateTopicWithJson()
     {
         $this->response = $this->withHeaders([
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->id,
+            '/api/admin/topics/'.$this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\Courses\Models\TopicContent\RichText',
+                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichText',
                 'value' => 'lorem ipsum',
                 'introduction' => 'asdf1',
                 'summary' => 'asdf2',
                 'description' => 'asdf3',
-                'json' => json_encode(['foo' => 'foobar'])
+                'json' => json_encode(['foo' => 'foobar']),
             ]
         );
 
@@ -335,7 +332,7 @@ class TopicTutorUpdateApiTest extends TestCase
         $path = $data['data']['topicable']['value'];
 
         $this->assertDatabaseHas('topic_richtexts', [
-            'value' => $path
+            'value' => $path,
         ]);
         $this->assertEquals(['foo' => 'foobar'], $data['data']['json']);
         $this->assertEquals('foobar', $data['data']['json']['foo']);
@@ -347,7 +344,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->get(
-            '/api/courses/' . $this->topic->lesson->course_id . '/program'
+            '/api/courses/'.$this->topic->lesson->course_id.'/program'
         );
 
         $this->response->assertOk();

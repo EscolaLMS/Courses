@@ -5,14 +5,6 @@ namespace EscolaLms\Courses;
 use EscolaLms\Auth\Dtos\UserUpdateDto;
 use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
 use EscolaLms\Auth\Http\Resources\UserResource;
-use EscolaLms\Courses\AuthServiceProvider;
-use EscolaLms\Courses\Models\TopicContent\Audio;
-use EscolaLms\Courses\Models\TopicContent\H5P;
-use EscolaLms\Courses\Models\TopicContent\Image;
-use EscolaLms\Courses\Models\TopicContent\OEmbed;
-use EscolaLms\Courses\Models\TopicContent\PDF;
-use EscolaLms\Courses\Models\TopicContent\RichText;
-use EscolaLms\Courses\Models\TopicContent\Video;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
@@ -46,24 +38,16 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     public function register()
     {
         $this->app->register(AuthServiceProvider::class);
 
-        TopicRepository::registerContentClass(Audio::class);
-        TopicRepository::registerContentClass(Video::class);
-        TopicRepository::registerContentClass(Image::class);
-        TopicRepository::registerContentClass(RichText::class);
-        TopicRepository::registerContentClass(H5P::class);
-        TopicRepository::registerContentClass(OEmbed::class);
-        TopicRepository::registerContentClass(PDF::class);
-
         UserResource::extend(fn ($thisObj) => [
-            'bio' => $thisObj->bio
+            'bio' => $thisObj->bio,
         ]);
 
         UserUpdateDto::extendConstructor([
@@ -75,7 +59,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ]);
 
         ProfileUpdateRequest::extendRules([
-            'bio' => ['string']
+            'bio' => ['string'],
         ]);
     }
 }

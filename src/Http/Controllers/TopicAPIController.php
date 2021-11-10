@@ -10,18 +10,16 @@ use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Resources\TopicResource;
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Class TopicController
- * @package App\Http\Controllers
+ * Class TopicController.
  */
 class TopicAPIController extends AppBaseController implements TopicAPISwagger
 {
-    /** @var  TopicRepository */
+    /** @var TopicRepository */
     private $topicRepository;
 
     public function __construct(TopicRepository $topicRepo)
@@ -106,11 +104,10 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendSuccess('Topic deleted successfully');
     }
 
-
     public function classes()
     {
         $classes = $this->topicRepository->availableContentClasses();
 
-        return $this->sendResponse($classes, 'Topic content availabe list');
+        return $this->sendResponse($classes, 'Topic content available list');
     }
 }

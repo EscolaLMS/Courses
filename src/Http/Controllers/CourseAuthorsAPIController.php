@@ -21,6 +21,7 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
     public function index(Request $request): JsonResponse
     {
         $tutors = $this->courseRepositoryContract->findTutors();
+
         return $this->sendResponseForResource(TutorResource::collection($tutors), 'Tutors retrieved successfully');
     }
 
@@ -29,14 +30,12 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
      */
     public function show($id, Request $request): JsonResponse
     {
-        try {
-            $tutor = $this->courseRepositoryContract->findTutor($id);
-        } catch (\Exception $error) {
-            return $this->sendError($error->getMessage(), 404);
-        }
+        $tutor = $this->courseRepositoryContract->findTutor($id);
+
         if (empty($tutor)) {
             return $this->sendError('Not found', 404);
         }
+
         return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
     }
 }
