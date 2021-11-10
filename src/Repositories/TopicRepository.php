@@ -79,7 +79,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     public static function unregisterContentClass(string $class): array
     {
         if (($key = array_search($class, self::$contentClasses)) !== false) {
-            unset(self::$contentClasses[$key]);
+            unset(self::$contentClasses[$class]);
         }
 
         return self::$contentClasses;
