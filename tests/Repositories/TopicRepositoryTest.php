@@ -13,6 +13,7 @@ use EscolaLms\Courses\TopicTypes\TopicContent\OEmbed;
 use EscolaLms\Courses\TopicTypes\TopicContent\RichText;
 use EscolaLms\Courses\TopicTypes\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Routing\Redirector;
 
 class TopicRepositoryTest extends TestCase
 {
@@ -57,7 +58,7 @@ class TopicRepositoryTest extends TestCase
 
         /** @var CreateTopicApiRequestMock $request */
         $request = new CreateTopicApiRequestMock();
-        $request->setContainer(app());
+        $request->setContainer(app())->setRedirector(app()->make(Redirector::class));
         $request->replace($topic)->manualValidation();
 
         $createdTopic = $this->topicRepo->createFromRequest($request);
@@ -110,7 +111,7 @@ class TopicRepositoryTest extends TestCase
 
         /** @var CreateTopicApiRequestMock $request */
         $request = new CreateTopicApiRequestMock();
-        $request->setContainer(app());
+        $request->setContainer(app())->setRedirector(app()->make(Redirector::class));
         $request->replace($topic)->manualValidation();
 
         $createdTopic = $this->topicRepo->createFromRequest($request);
@@ -134,7 +135,7 @@ class TopicRepositoryTest extends TestCase
 
         /** @var UpdateTopicApiRequestMock $request2 */
         $request2 = new UpdateTopicApiRequestMock();
-        $request2->setContainer(app());
+        $request2->setContainer(app())->setRedirector(app()->make(Redirector::class));
         $request2->replace($fakeTopic)->manualValidation();
 
         $updatedTopic = $this->topicRepo->updateFromRequest($request2);
@@ -156,7 +157,7 @@ class TopicRepositoryTest extends TestCase
 
         /** @var UpdateTopicApiRequestMock $request3 */
         $request3 = new UpdateTopicApiRequestMock();
-        $request3->setContainer(app());
+        $request3->setContainer(app())->setRedirector(app()->make(Redirector::class));
         $request3->replace($fakeTopic2)->manualValidation();
 
         $updatedTopic2 = $this->topicRepo->updateFromRequest($request3);
