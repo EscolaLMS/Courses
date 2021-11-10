@@ -38,7 +38,7 @@ jobs:
         run: cp -r env/codecov/. .
 
       - name: Update composer
-        run: COMPOSER_ROOT_VERSION=dev-main composer update
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
       - name: Clear config
         run: vendor/bin/testbench config:clear
