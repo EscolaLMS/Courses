@@ -4,10 +4,8 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicResource;
-use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
 use Exception;
-use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -20,7 +18,7 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
     protected $fieldSearchable = [];
 
     /**
-     * Return searchable fields
+     * Return searchable fields.
      *
      * @return array
      */
@@ -30,7 +28,7 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
     }
 
     /**
-     * Configure the Model
+     * Configure the Model.
      **/
     public function model()
     {
@@ -45,7 +43,7 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
         $success = $file->storeAs($path, $name);
 
         if (!$success) {
-            throw new Exception("Failed to store uploaded file");
+            throw new Exception('Failed to store uploaded file');
         }
 
         return $this->create([
@@ -59,16 +57,18 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
     {
         $topicResource = $this->model->query()->findOrFail($id);
 
-        $fullpath = $topicResource->path . $topicResource->name;
+        $fullpath = $topicResource->path.$topicResource->name;
         if (Storage::exists($fullpath)) {
             Storage::delete($fullpath);
         }
+
         return $topicResource->delete();
     }
 
     public function rename(int $id, string $name): bool
     {
         $topicResource = $this->model->newQuery()->findOrFail($id);
+
         return $this->renameModel($topicResource, $name);
     }
 
@@ -77,16 +77,20 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
         $newExtension = Str::afterLast($name, '.');
         if (empty($newExtension) || $newExtension === $name) {
             $oldExtension = Str::afterLast($model->name, '.');
-            $name = $name . '.' . $oldExtension;
+            $name = $name.'.'.$oldExtension;
         }
-        $oldPath = $model->path . $model->name;
-        $newPath = $model->path . $name;
+        $oldPath = $model->path.$model->name;
+        $newPath = $model->path.$name;
         if (Storage::exists($oldPath)) {
-            Storage::move($oldPath, $newPath); // will throw FileExistsException if file at newPath exists
+            if (!Storage::exists($newPath)) {
+                Storage::move($oldPath, $newPath);
+            }
             $model->name = $name;
             $model->save();
+
             return true;
         }
+
         return false;
     }
 }

@@ -19,11 +19,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Class CourseRepository
- * @package EscolaLms\Courses\Repositories
+ * Class CourseRepository.
+ *
  * @version April 27, 2021, 11:19 am UTC
  */
-
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
     private LessonRepositoryContract $lessonRepository;
@@ -45,7 +44,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     ];
 
     /**
-     * Return searchable fields
+     * Return searchable fields.
      *
      * @return array
      */
@@ -55,7 +54,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     }
 
     /**
-     * Configure the Model
+     * Configure the Model.
      **/
     public function model()
     {
@@ -69,9 +68,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     }
 
     /**
-     * Recursive flatten object by given $key
+     * Recursive flatten object by given $key.
+     *
      * @param object $input an object with children key
-     * @param string $key children key
+     * @param string $key   children key
      */
     public static function flatten($input, $key)
     {
@@ -85,6 +85,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
                 $output[] = $child;
             }
         }
+
         return $output;
     }
 
@@ -98,7 +99,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function allQueryBuilder(array $search = [], array $criteria = []): Builder
     {
-        /** search main category and all subcategories */
+        /* search main category and all subcategories */
         if (isset($search) && isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
             $flat = self::flatten($collection, 'children');
@@ -119,12 +120,12 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $query = $this->applyCriteria($query, $criteria);
         }
 
-        /** search by id in array */
+        /* search by id in array */
         if (isset($search['ids']) && !empty($search['ids'])) {
             $query->whereIn('id', array_filter($search['ids'], 'is_numeric'));
         }
 
-        /** search by TAG */
+        /* search by TAG */
 
         if (isset($search['tag']) && $search['tag']) {
             $query->whereHas('tags', function (Builder $query) use ($search) {
@@ -137,8 +138,8 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     }
 
     /**
-     * Create model record
-     * 
+     * Create model record.
+     *
      * @return Course
      */
     public function create(array $input): Model
@@ -157,19 +158,19 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if (isset($input['video'])) {
             /** @var UploadedFile $video */
             $video = $input['video'];
-            $update['video_path'] = $video->storePublicly("course/$courseId/videos");
+            $update['video_path'] = $video->storePublicly("courses/$courseId/videos");
         }
 
         if (isset($input['image'])) {
             /** @var UploadedFile $image */
             $image = $input['image'];
-            $update['image_path'] = $image->storePublicly("course/$courseId/images");
+            $update['image_path'] = $image->storePublicly("courses/$courseId/images");
         }
 
         if (isset($input['poster'])) {
             /** @var UploadedFile $poster */
             $poster = $input['poster'];
-            $update['poster_path'] = $poster->storePublicly("course/$courseId/posters");
+            $update['poster_path'] = $poster->storePublicly("courses/$courseId/posters");
         }
 
         if (count($update)) {
@@ -180,7 +181,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     }
 
     /**
-     * Update model record for given id
+     * Update model record for given id.
      *
      * @return Course
      */
@@ -197,19 +198,19 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if (isset($input['video'])) {
             /** @var UploadedFile $video */
             $video = $input['video'];
-            $input['video_path'] = $video->storePublicly("course/$id/videos");
+            $input['video_path'] = $video->storePublicly("courses/$id/videos");
         }
 
         if (isset($input['image'])) {
             /** @var UploadedFile $image */
             $image = $input['image'];
-            $input['image_path'] = $image->storePublicly("course/$id/images");
+            $input['image_path'] = $image->storePublicly("courses/$id/images");
         }
 
         if (isset($input['poster'])) {
             /** @var UploadedFile $poster */
             $poster = $input['poster'];
-            $input['poster_path'] = $poster->storePublicly("course/$id/posters");
+            $input['poster_path'] = $poster->storePublicly("courses/$id/posters");
         }
 
         if (isset($input['categories']) && is_array($input['categories'])) {
@@ -217,8 +218,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         if (isset($input['tags']) && is_array($input['tags'])) {
-
-            /** this is actually replacing the tags, even when you do send exactly the same  */
+            /* this is actually replacing the tags, even when you do send exactly the same  */
             $model->tags()->delete();
 
             $tags = array_map(function ($tag) {
@@ -243,6 +243,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     public function delete(int $id): ?bool
     {
         $course = $this->findWith($id, ['*'], ['lessons.topics']);
+
         return !is_null($course) && $this->deleteModel($course);
     }
 
@@ -251,19 +252,21 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         foreach ($course->lessons as $lesson) {
             $this->lessonRepository->deleteModel($lesson);
         }
+
         return $this->deleteAndClearStorage($course);
     }
 
     private function deleteAndClearStorage(Course $course): ?bool
     {
         if ($course->delete()) {
-            $path = Storage::path('course/' . $course->getKey());
+            $path = Storage::path('courses/'.$course->getKey());
             try {
                 File::cleanDirectory($path);
                 Storage::deleteDirectory($path);
             } catch (\Throwable $th) {
             }
         }
+
         return true;
     }
 

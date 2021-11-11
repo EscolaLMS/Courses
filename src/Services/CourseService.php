@@ -50,10 +50,6 @@ class CourseService implements CourseServiceContract
         return $query;
     }
 
-    /**
-     * @param OrderDto $orderDto
-     * @return array
-     */
     private function prepareCriteria(OrderDto $orderDto): array
     {
         $criteria = [];
@@ -61,6 +57,7 @@ class CourseService implements CourseServiceContract
         if (!is_null($orderDto->getOrder())) {
             $criteria[] = new OrderCriterion($orderDto->getOrderBy(), $orderDto->getOrder());
         }
+
         return $criteria;
     }
 
@@ -83,7 +80,7 @@ class CourseService implements CourseServiceContract
         $course = Course::with(['scorm.scos'])->findOrFail($courseId);
 
         if (empty($course->scorm_id)) {
-            throw new Error("This course does not have SCORM package!");
+            throw new Error('This course does not have SCORM package!');
         }
 
         $uuid = false;
@@ -95,21 +92,45 @@ class CourseService implements CourseServiceContract
         }
 
         if (!$uuid) {
-            throw new Error("This course does not have SCORM entry_url");
+            throw new Error('This course does not have SCORM entry_url');
         }
 
         //$scormService = App::make(ScormServiceContract::class);
 
         $data = $this->scormService->getScoByUuid($uuid);
-        $data['entry_url_absolute'] = Storage::url('scorm/' . $data->scorm->version . '/' . $data->scorm->uuid . '/' . $data->entry_url);
+        $data['entry_url_absolute'] = Storage::url('scorm/'.$data->scorm->version.'/'.$data->scorm->uuid.'/'.$data->entry_url);
 
         $data['player'] = (object) [
             'lmsCommitUrl' => '/api/lms',
             'logLevel' => 1,
             'autoProgress' => true,
-            'cmi' => [] // cmi is user progress
+            'cmi' => [], // cmi is user progress
         ];
 
         return view('scorm::player', ['data' => $data]);
+    }
+
+    public function fixAssetPaths(int $courseId): array
+    {
+        $results = [];
+        $course = $this->courseRepository->findWith($courseId, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
+        $results = $results + $course->fixAssetPaths();
+
+        foreach ($course->lessons as $lesson) {
+            foreach ($lesson->topics as $topic) {
+                $topicable = $topic->topicable;
+                if (isset($topicable)) {
+                    foreach ($topic->topicable->fixAssetPaths() as $fix) {
+                        $results = $results + $fix;
+                    }
+                }
+
+                foreach ($topic->resources as $resource) {
+                    $results = $results + $resource->fixAssetPaths();
+                }
+            }
+        }
+
+        return $results;
     }
 }

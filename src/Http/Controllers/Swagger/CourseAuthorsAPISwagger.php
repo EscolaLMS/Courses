@@ -2,7 +2,6 @@
 
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
-use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

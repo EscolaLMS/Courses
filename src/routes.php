@@ -3,6 +3,7 @@
 use EscolaLms\Courses\Http\Controllers\CourseAccessAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseAuthorsAPIController;
+use EscolaLms\Courses\Http\Controllers\CourseExportImportAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
@@ -12,13 +13,13 @@ use Illuminate\Support\Facades\Route;
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
-    Route::post('courses/sort', [CourseAPIController::class, "sort"]);
+    Route::post('courses/sort', [CourseAPIController::class, 'sort']);
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
     Route::resource('courses', CourseAPIController::class);
     Route::resource('lessons', LessonAPIController::class);
     Route::get('topics/types', [TopicAPIController::class, 'classes']);
     Route::resource('topics', TopicAPIController::class);
-    Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
+    Route::post('topics/{topic}', [TopicAPIController::class, 'update']);
 
     Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list']);
     Route::post('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'upload']);
@@ -32,6 +33,8 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
+
+    Route::get('courses/{course}/export', [CourseExportImportAPIController::class, 'export']);
 });
 
 // user endpoints

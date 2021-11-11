@@ -18,8 +18,10 @@ use EscolaLms\Courses\Repositories\LessonRepository;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Repositories\TopicResourceRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Courses\Services\Contracts\ExportImportServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
+use EscolaLms\Courses\Services\ExportImportService;
 use EscolaLms\Courses\Services\ProgressService;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,6 +36,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         TopicRepositoryContract::class => TopicRepository::class,
         TopicResourceRepositoryContract::class => TopicResourceRepository::class,
         LessonRepositoryContract::class => LessonRepository::class,
+        ExportImportServiceContract::class => ExportImportService::class,
     ];
 
     public function boot()

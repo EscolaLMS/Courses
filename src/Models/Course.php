@@ -127,12 +127,11 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          type="string"
  *      ),
  * )
- * 
- * @property bool $active
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
+ *
+ * @property bool                                                                        $active
+ * @property \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
+ * @property \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[]  $topics
  */
-
 class Course extends Model
 {
     use HasFactory;
@@ -180,7 +179,7 @@ class Course extends Model
     ];
 
     /**
-     * Validation rules
+     * Validation rules.
      *
      * @var array
      */
@@ -236,6 +235,7 @@ class Course extends Model
         if (isset($this->attributes['image_path'])) {
             return url(Storage::url($this->attributes['image_path']));
         }
+
         return null;
     }
 
@@ -244,6 +244,7 @@ class Course extends Model
         if (isset($this->attributes['video_path'])) {
             return url(Storage::url($this->attributes['video_path']));
         }
+
         return null;
     }
 
@@ -252,6 +253,7 @@ class Course extends Model
         if (isset($this->attributes['poster_path'])) {
             return url(Storage::url($this->attributes['poster_path']));
         }
+
         return null;
     }
 
@@ -278,5 +280,34 @@ class Course extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('courses.active', '=', true);
+    }
+
+    private function fixPath($key): array
+    {
+        $value = $this->$key;
+        $destination = sprintf('courses/%d/%s', $this->id, basename($value));
+        if (strpos($value, $destination) === false && Storage::exists($value)) {
+            $result = [$value, $destination];
+            if (!Storage::exists($destination)) {
+                Storage::move($value, $destination);
+            }
+
+            $this->$key = $destination;
+            $this->save();
+
+            return $result;
+        }
+
+        return [];
+    }
+
+    public function fixAssetPaths(): array
+    {
+        $results = [];
+        $results = $results + $this->fixPath('image');
+        $results = $results + $this->fixPath('video');
+        $results = $results + $this->fixPath('poster');
+
+        return $results;
     }
 }
