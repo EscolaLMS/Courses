@@ -5,7 +5,13 @@ namespace Tests\APIs;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\TopicTypes\Models\TopicContent\Audio;
+use EscolaLms\TopicTypes\Models\TopicContent\Image;
+use EscolaLms\TopicTypes\Models\TopicContent\PDF;
+use EscolaLms\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
 
