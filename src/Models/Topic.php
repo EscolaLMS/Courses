@@ -203,4 +203,14 @@ class Topic extends Model
             }
         });
     }
+
+    public function getCourseAttribute(): ?Course
+    {
+        return $this->lesson ? $this->lesson->course : null;
+    }
+
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->active && ($this->course ? $this->course->is_active : true);
+    }
 }

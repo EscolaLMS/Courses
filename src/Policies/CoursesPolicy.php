@@ -72,7 +72,7 @@ class CoursesPolicy
      */
     public function attend(?User $user, Course $course)
     {
-        if (intval($course->base_price) === 0 && $course->active) {
+        if (intval($course->base_price) === 0 && $this->buy($user, $course)) {
             return true;
         }
 
@@ -88,27 +88,20 @@ class CoursesPolicy
             return true;
         };
 
-        return $course->active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
+        return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
     }
 
     public function view(?User $user, Course $course)
     {
-        if ($course->active) {
+        if ($course->is_active && $course->findable) {
             return true;
         }
 
-        if (empty($user)) {
-            return false;
-        }
+        return $this->attend($user, $course);
+    }
 
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->can('update course') && $course->author_id === $user->id) {
-            return true;
-        };
-
-        return false;
+    public function buy(?User $user, Course $course)
+    {
+        return $course->is_active && $course->purchasable;
     }
 }

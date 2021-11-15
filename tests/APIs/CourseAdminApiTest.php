@@ -3,7 +3,6 @@
 namespace Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
@@ -12,8 +11,8 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Testing\TestResponse;
 
 class CourseAdminApiTest extends TestCase
 {
@@ -47,6 +46,43 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(201);
 
         $this->assertApiResponse($course);
+    }
+
+
+    public function test_create_and_update_course_with_deadline()
+    {
+        $course = Course::factory()->make([
+            'active' => true,
+            'active_from' => Carbon::now()->subDay(1),
+            'active_to' => Carbon::now()->addDay(1),
+            'hours_to_complete' => 24,
+        ])->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses',
+            $course
+        );
+
+        $course['author_id'] = $this->user->id;
+
+        $this->response->assertStatus(201);
+
+        $this->assertApiResponse($course);
+
+        $dbCourse = Course::find($this->response->json('data.id'));
+        $this->assertTrue($dbCourse->is_active);
+
+        $course['active_from'] = Carbon::now()->subDay(2);
+        $course['active_to'] = Carbon::now()->subDay(1);
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $dbCourse->getKey(),
+            $course
+        );
+
+        $dbCourse->refresh();
+        $this->assertFalse($dbCourse->is_active);
     }
 
     /**

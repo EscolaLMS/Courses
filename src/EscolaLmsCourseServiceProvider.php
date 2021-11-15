@@ -6,6 +6,7 @@ use EscolaLms\Auth\Dtos\UserUpdateDto;
 use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
 use EscolaLms\Auth\Http\Resources\UserResource;
 use EscolaLms\Courses\AuthServiceProvider;
+use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Courses\Models\TopicContent\Audio;
 use EscolaLms\Courses\Models\TopicContent\H5P;
 use EscolaLms\Courses\Models\TopicContent\Image;
@@ -29,6 +30,8 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use EscolaLms\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
@@ -48,10 +51,23 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+    }
+
+    protected function bootForConsole(): void
+    {
+        $this->publishes([
+            __DIR__ . '/config.php' => config_path('escolalms_courses.php'),
+        ], 'escolalms_courses.config');
     }
 
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
+
         $this->app->register(AuthServiceProvider::class);
 
         TopicRepository::registerContentClass(Audio::class);
@@ -77,5 +93,9 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProfileUpdateRequest::extendRules([
             'bio' => ['string']
         ]);
+
+        $this->callAfterResolving(EscolaLmsSettingsServiceProvider::class, function () {
+            AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
+        });
     }
 }

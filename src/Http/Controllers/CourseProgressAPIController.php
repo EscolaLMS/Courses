@@ -47,6 +47,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
             $course = $this->courseRepositoryContract->getById($course_id);
 
             if (!$course->active) {
+                // We only check $course->active, because if course has deadline we still want to return progress table
                 return $this->sendError(__('Course is not active'), 403);
             }
 
@@ -68,8 +69,13 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
                 return $this->sendError(__('Course is not active'), 403);
             }
 
-            $progress = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
-            return $this->sendResponse($progress->getProgress(), __('Saved progress'));
+            $courseProgressCollection = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
+
+            if ($courseProgressCollection->afterDeadline()) {
+                return $this->sendError(__('Deadline missed'), 403);
+            }
+
+            return $this->sendResponse($courseProgressCollection->getProgress(), __('Saved progress'));
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }
@@ -80,11 +86,19 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         try {
             $topic = $this->topicRepositoryContract->getById($topic_id);
 
+            if (!$topic->course->active) {
+                return $this->sendError(__('Course is not active'), 403);
+            }
             if (!$topic->active) {
                 return $this->sendError(__('Topic is not active'), 403);
             }
 
-            $this->progressServiceContract->ping($request->user(), $topic);
+            $courseProgressCollection = $this->progressServiceContract->ping($request->user(), $topic);
+
+            if ($courseProgressCollection->afterDeadline()) {
+                return $this->sendError(__('Deadline missed'), 403);
+            }
+
             return $this->sendResponseForResource(new Status(true), 'Status');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
@@ -99,18 +113,25 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         try {
             $topic = $this->topicRepositoryContract->getById($topic_id);
 
-            if (!$topic->active) {
+            if (!$topic->course->is_active) {
+                return $this->sendError(__('Course is not active'), 403);
+            }
+            if (!$topic->is_active) {
                 return $this->sendError(__('Topic is not active'), 403);
             }
 
-            $this->progressServiceContract->h5p(
+            $result = $this->progressServiceContract->h5p(
                 $request->user(),
                 $topic,
                 $request->input('event'),
                 $request->input('data'),
             );
 
-            return $this->sendResponseForResource(new Status(true), 'Status');
+            if ($result) {
+                return $this->sendResponseForResource(new Status(true), 'Status');
+            } else {
+                return $this->sendError(__('Deadline missed'), 403);
+            }
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), 400);
         }

@@ -4,9 +4,9 @@ namespace EscolaLms\Courses\ValueObjects;
 
 use Carbon\Carbon;
 use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
@@ -28,8 +28,12 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     private Collection $topics;
     private EloquentCollection $progress;
 
+    private ?CourseUserPivot $pivot;
+
     private int $totalSpentTime;
+    private ?Carbon $startDate;
     private ?Carbon $finishDate;
+    private ?Carbon $deadline;
 
     public function __construct(
         CourseProgressRepositoryContract $courseProgressRepositoryContract
@@ -42,7 +46,10 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->user = $user;
         $this->course = $course;
         $this->totalSpentTime = 0;
+        $this->startDate = null;
         $this->finishDate = null;
+        $this->pivot = CourseUserPivot::query()->where('user_id', $user->getKey())->where('course_id', $course->getKey())->first();
+        $this->deadline = $this->pivot ? $this->pivot->deadline : null;
         $this->topics = $this->getActiveTopicIdsFromCourses();
         $this->progress = $this->buildProgress();
 
@@ -69,19 +76,37 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         }
 
         /** @var EloquentCollection $courseProgresses */
-        $courseProgresses = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->get(['topic_id', 'status', 'seconds', 'finished_at']);
+        $courseProgresses = CourseProgress::where('user_id', $this->user->getKey())->whereIn('topic_id', $this->topics->toArray())->get(['topic_id', 'status', 'seconds', 'started_at', 'finished_at']);
 
         $this->totalSpentTime = $courseProgresses->sum('seconds');
+        $this->startDate = $courseProgresses->min('started_at');
         $this->finishDate = $courseProgresses->max('finished_at');
+
+        if (is_null($this->deadline) && !is_null($this->course->hours_to_complete) && !is_null($this->startDate)) {
+            $this->deadline = $this->startDate->addHours($this->course->hours_to_complete);
+        }
+        if (!is_null($this->course->active_to) && (is_null($this->deadline) || $this->course->active_to->lessThan($this->deadline))) {
+            $this->deadline = $this->course->active_to;
+        }
+
+        if (!is_null($this->pivot)) {
+            $this->pivot->deadline = $this->deadline;
+            $this->pivot->save();
+        }
 
         return $courseProgresses->sortBy('topic_id')->values();
     }
 
     public function ping(Topic $topic): self
     {
+        if (!$this->topicCanBeProgressed($topic)) {
+            return $this;
+        }
+
         $secondsPassed = 0;
 
         $progress = $this->courseProgressRepositoryContract->findProgress($topic, $this->user);
+
         if ($progress->status === ProgressStatus::COMPLETE) {
             throw new RuntimeException("Topic is already finished.");
         }
@@ -138,14 +163,20 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function setProgress(array $progress): CourseProgressCollectionContract
     {
+        if (!$this->courseCanBeProgressed()) {
+            return $this;
+        }
+
         foreach ($progress as $topicProgress) {
             $topic = Topic::findOrFail($topicProgress['topic_id']);
 
-            $this->courseProgressRepositoryContract->updateInTopic(
-                $topic,
-                $this->user,
-                $topicProgress['status']
-            );
+            if ($this->topicCanBeProgressed($topic)) {
+                $this->courseProgressRepositoryContract->updateInTopic(
+                    $topic,
+                    $this->user,
+                    $topicProgress['status']
+                );
+            }
         }
 
         $this->progress = $this->buildProgress();
@@ -158,13 +189,38 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         return $this->totalSpentTime;
     }
 
+    public function getStartDate(): ?Carbon
+    {
+        return $this->startDate;
+    }
+
     public function getFinishDate(): ?Carbon
     {
         return $this->finishDate;
     }
 
+    public function getDeadline(): ?Carbon
+    {
+        return $this->deadline;
+    }
+
+    public function afterDeadline(): bool
+    {
+        return $this->getDeadline() ? Carbon::now()->greaterThanOrEqualTo($this->getDeadline()) : false;
+    }
+
     public function toArray(): array
     {
         return $this->getProgress()->toArray();
+    }
+
+    public function topicCanBeProgressed(Topic $topic): bool
+    {
+        return $this->courseCanBeProgressed() && $topic->active;
+    }
+
+    public function courseCanBeProgressed(): bool
+    {
+        return $this->course->is_active && !$this->afterDeadline();
     }
 }
