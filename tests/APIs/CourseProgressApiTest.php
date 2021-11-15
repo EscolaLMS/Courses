@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
+use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Events\CourseCompleted;
 use EscolaLms\Courses\Models\Course;
@@ -15,6 +16,7 @@ use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -196,5 +198,106 @@ class CourseProgressApiTest extends TestCase
 
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->assertFalse($courseProgress->isFinished());
+    }
+
+    public function test_active_to()
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create(['active' => true, 'active_to' => Carbon::now()->subDay()]);
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->getKey()
+        ]);
+        $topics = Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+        $oneTopic = null;
+        foreach ($topics as $topic) {
+            $oneTopic = $topic;
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => 0
+            ]);
+        }
+        $user->courses()->save($course);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+        );
+        $this->response->assertStatus(403);
+        $this->response->assertJsonFragment([
+            'message' => 'Deadline missed'
+        ]);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/' . $course->getKey()
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress'
+        );
+        $this->assertTrue(Carbon::parse($this->response->json('data.0.deadline'))->lessThanOrEqualTo(Carbon::now()->subDay()));
+        $this->assertEquals($this->response->json('data.0.course.active_to'), $this->response->json('data.0.deadline'));
+    }
+
+    public function test_deadline()
+    {
+        $user = User::factory()->create();
+
+        $now = CarbonImmutable::now()->roundSeconds();
+        $hours = rand(1, 10);
+
+        $course = Course::factory()->create(['active' => true, 'hours_to_complete' => $hours]);
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->getKey()
+        ]);
+        $topics = Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+        $oneTopic = null;
+        foreach ($topics as $topic) {
+            $oneTopic = $topic;
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => 0
+            ]);
+        }
+        $user->courses()->save($course);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+        );
+        $this->response->assertStatus(200);
+
+        // ping two times for topic to be marked as "started"
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/' . $course->getKey()
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress'
+        );
+        $json = $this->response->json();
+        $deadline = CarbonImmutable::parse($json['data'][0]['deadline']);
+
+        $this->assertTrue($now->lessThan($deadline));
+        $this->assertTrue($now->lessThanOrEqualTo($deadline->subHours($hours)->addSecond()));
     }
 }

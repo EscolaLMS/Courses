@@ -52,6 +52,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $user = $request->user();
         if (!isset($user) || !$user->hasRole([UserRole::ADMIN, UserRole::TUTOR])) {
             $search['active'] = true;
+            $search['findable'] = true;
         }
 
         $orderDto = OrderDto::instantiateFromRequest($request);

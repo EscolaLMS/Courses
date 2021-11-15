@@ -12,7 +12,6 @@ use EscolaLms\Courses\Models\User as CoursesUser;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 
 class ProgressService implements ProgressServiceContract
@@ -36,10 +35,10 @@ class ProgressService implements ProgressServiceContract
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
         foreach ($user->groups as $group) {
-            /** @var Group $group */
             if (!$group instanceof Group) {
                 $group = Group::find($group->getKey());
             }
+            /** @var Group $group */
             foreach ($group->courses->where('active', true) as $course) {
                 if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
@@ -52,43 +51,56 @@ class ProgressService implements ProgressServiceContract
     public function update(Course $course, User $user, array $progress): CourseProgressCollection
     {
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
-        if (!empty($progress)) {
-            $courseProgressCollection->setProgress($progress);
-        }
 
-        if (!$user instanceof CoursesUser) {
-            $user = CoursesUser::find($user->getKey());
-        }
+        if ($courseProgressCollection->courseCanBeProgressed()) {
+            if (!empty($progress)) {
+                $courseProgressCollection->setProgress($progress);
+            }
 
-        assert($user instanceof CoursesUser);
+            if (!$user instanceof CoursesUser) {
+                $user = CoursesUser::find($user->getKey());
+            }
 
-        $courseIsFinished = $courseProgressCollection->isFinished();
-        $userHasCourseMarkedAsFinished = $user->finishedCourse($course->getKey());
+            assert($user instanceof CoursesUser);
 
-        if ($courseIsFinished && !$userHasCourseMarkedAsFinished) {
-            $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
-            event(new CourseCompleted($courseProgressCollection->getCourse(), $user));
-        } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
-            $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
+            $courseIsFinished = $courseProgressCollection->isFinished();
+            $userHasCourseMarkedAsFinished = $user->finishedCourse($course->getKey());
+
+            if ($courseIsFinished && !$userHasCourseMarkedAsFinished) {
+                $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
+                event(new CourseCompleted($courseProgressCollection->getCourse(), $user));
+            } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
+                $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
+            }
         }
 
         return $courseProgressCollection;
     }
 
-    public function ping(User $user, Topic $topic): void
+    public function ping(User $user, Topic $topic): CourseProgressCollection
     {
-        $course = $topic->lesson->course;
+        $course = $topic->course;
 
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
-        $courseProgressCollection->ping($topic);
 
-        if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey())) {
-            $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
+        if ($courseProgressCollection->topicCanBeProgressed($topic)) {
+            $courseProgressCollection->ping($topic);
+
+            if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey())) {
+                $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
+            }
         }
+
+        return $courseProgressCollection;
     }
 
-    public function h5p(User $user, Topic $topic, string $event, $json): H5PUserProgress
+    public function h5p(User $user, Topic $topic, string $event, $json): ?H5PUserProgress
     {
-        return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
+        $courseProgressCollection = CourseProgressCollection::make($user, $topic->course);
+
+        if ($courseProgressCollection->topicCanBeProgressed($topic)) {
+            return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
+        }
+        return null;
     }
 }

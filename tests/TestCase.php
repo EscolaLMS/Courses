@@ -9,14 +9,16 @@ use EscolaLms\Courses\AuthServiceProvider;
 use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
+use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
 class TestCase extends \EscolaLms\Core\Tests\TestCase
 {
-    protected $response;
+    protected ?TestResponse $response;
 
     protected function setUp(): void
     {
@@ -36,7 +38,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             AuthServiceProvider::class,
             EscolaLmsScormServiceProvider::class,
             EscolaLmsTagsServiceProvider::class,
-
+            EscolaLmsSettingsServiceProvider::class,
         ];
     }
 

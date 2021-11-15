@@ -53,6 +53,11 @@ class CourseWithProgramResource extends JsonResource
             'lessons' => LessonWithTopicsResource::collection($lessons),
             'poster_path' =>  $course->poster_path,
             'poster_url' =>  $course->poster_url,
+            'active_from' => $course->active_from,
+            'active_to' => $course->active_to,
+            'hours_to_complete' => $course->hours_to_complete,
+            'purchasable' => $course->purchasable,
+            'findable' => $course->findable,
         ];
     }
 }
