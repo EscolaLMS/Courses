@@ -235,8 +235,8 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true);
-            $this->assertTrue($course->findable, true);
+            $this->assertTrue($course->active);
+            $this->assertTrue($course->findable);
         }
 
         $this->response = $this->json(
@@ -249,8 +249,8 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true);
-            $this->assertTrue($course->findable, true);
+            $this->assertTrue($course->active);
+            $this->assertTrue($course->findable);
         }
     }
 
