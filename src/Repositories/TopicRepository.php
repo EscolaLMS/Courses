@@ -13,6 +13,7 @@ use EscolaLms\TopicTypes\Models\Contracts\TopicFileContentContract;
 use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +30,13 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      * @var array
      *            All possible classes that can store content
      */
-    private static array $contentClasses = [];
+    private array $contentClasses = [];
+
+    /**
+     * @var array
+     *            All possible classes that can store content
+     */
+    private array $resourceClasses = [];
 
     /**
      * @var array
@@ -67,27 +74,63 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      *
      * @return array list of unique classes
      */
-    public static function registerContentClass(string $class): array
+    public function registerContentClass(string $class): array
     {
-        if (!in_array($class, self::$contentClasses) && class_exists($class) && (is_a($class, TopicContentContract::class, true))) {
-            self::$contentClasses[] = $class;
+        if (!in_array($class, $this->contentClasses) && class_exists($class) && (is_a($class, TopicContentContract::class, true))) {
+            $this->contentClasses[] = $class;
         }
 
-        return self::$contentClasses;
+        return $this->contentClasses;
     }
 
-    public static function unregisterContentClass(string $class): array
+    public function registerContentClasses(array $classes): array
     {
-        if (($key = array_search($class, self::$contentClasses)) !== false) {
-            unset(self::$contentClasses[$key]);
+        foreach ($classes as $class) {
+            $this->registerContentClass($class);
         }
 
-        return self::$contentClasses;
+        return $this->contentClasses;
     }
 
-    public static function availableContentClasses(): array
+    public function registerResourceClass(string $topicTypeClass, string $resourceClass, string $type = 'client'): array
     {
-        return self::$contentClasses;
+        if (!isset($this->resourceClasses[$type][$topicTypeClass]) && class_exists($resourceClass) && (is_a($resourceClass, JsonResource::class, true))) {
+            $this->contentClasses[$type][$topicTypeClass] = $resourceClass;
+        }
+
+        return $this->contentClasses[$type];
+    }
+
+    public function registerResourceClasses(string $topicTypeClass, array $resourceClasses): array
+    {
+        foreach ($resourceClasses as $type => $resourceClass) {
+            $this->registerResourceClass($topicTypeClass, $resourceClass, $type);
+        }
+
+        return $this->contentClasses;
+    }
+
+    public function getResourceClass(string $topicTypeClass, string $type = 'client'): string
+    {
+        if (isset($this->resourceClasses[$type][$topicTypeClass])) {
+            return $this->resourceClasses[$type][$topicTypeClass];
+        }
+
+        return false;
+    }
+
+    public function unregisterContentClass(string $class): array
+    {
+        if (($key = array_search($class, $this->contentClasses)) !== false) {
+            unset($this->contentClasses[$key]);
+        }
+
+        return $this->contentClasses;
+    }
+
+    public function availableContentClasses(): array
+    {
+        return $this->contentClasses;
     }
 
     public function getById($id): Topic
@@ -167,7 +210,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         if ($request->has('topicable_type')) {
             $class = $request->input('topicable_type');
 
-            if (!in_array($class, self::$contentClasses)) {
+            if (!in_array($class, $this->contentClasses)) {
                 throw new Error("Type '$class' is not allowed");
             }
 
@@ -198,7 +241,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     {
         $class = $request->input('topicable_type');
 
-        if (!in_array($class, self::$contentClasses)) {
+        if (!in_array($class, $this->contentClasses)) {
             throw new Error("Type '$class' is not allowed");
         }
 

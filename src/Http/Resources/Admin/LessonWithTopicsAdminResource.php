@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace EscolaLms\Courses\Http\Resources\Admin;
 
 use EscolaLms\Courses\Models\Lesson;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +18,7 @@ class LessonWithTopicsAdminResource extends JsonResource
     }
 
     /**
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      */
     public function toArray($request): array
     {
