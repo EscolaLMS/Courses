@@ -25,7 +25,7 @@ interface TopicRepositoryContract extends BaseRepositoryContract
 
     public function registerResourceClasses(string $topicTypeClass, array $resourceClasses): array;
 
-    public function getResourceClass(string $topicTypeClass, string $type = 'client'): string;
+    public function getResourceClass(string $topicTypeClass = null, string $type = 'client'): string;
 
     public function deleteModel(Topic $topic): ?bool;
 }

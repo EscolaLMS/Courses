@@ -95,10 +95,10 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     public function registerResourceClass(string $topicTypeClass, string $resourceClass, string $type = 'client'): array
     {
         if (!isset($this->resourceClasses[$type][$topicTypeClass]) && class_exists($resourceClass) && (is_a($resourceClass, JsonResource::class, true))) {
-            $this->contentClasses[$type][$topicTypeClass] = $resourceClass;
+            $this->resourceClasses[$type][$topicTypeClass] = $resourceClass;
         }
 
-        return $this->contentClasses[$type];
+        return $this->resourceClasses[$type];
     }
 
     public function registerResourceClasses(string $topicTypeClass, array $resourceClasses): array
@@ -107,10 +107,10 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             $this->registerResourceClass($topicTypeClass, $resourceClass, $type);
         }
 
-        return $this->contentClasses;
+        return $this->resourceClasses;
     }
 
-    public function getResourceClass(string $topicTypeClass, string $type = 'client'): string
+    public function getResourceClass(string $topicTypeClass = null, string $type = 'client'): string
     {
         if (isset($this->resourceClasses[$type][$topicTypeClass])) {
             return $this->resourceClasses[$type][$topicTypeClass];

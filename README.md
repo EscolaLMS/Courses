@@ -13,6 +13,7 @@ Courses and content package
 ## Model relation
 
 The model user must be extended with the class HasCourses :
+
 ```
 class User extends EscolaLms\Core\Models\User
 {
@@ -51,8 +52,7 @@ In the ServiceProvider register your class like
 
 ```php
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Courses\Repositories\TopicRepository;
-use CustomPackage\Models\TopicContentCustom;
+use EscolaLms\Courses\Facades\Topic;
 
 
 class CustomServiceProvider extends ServiceProvider
@@ -62,7 +62,17 @@ class CustomServiceProvider extends ServiceProvider
 
     public function register()
     {
-        TopicRepository::registerContentClass(TopicContentCustom::class);
+        Topic::registerContentClass(TopicContentCustom::class);
+        // or
+        Topic::registerContentClasses([TopicContentCustom::class, TopicAnotherContentCustom::class]);
+
+        // also register JSON Resource for a type
+        Topic::registerResourceClasses(Audio::class, [
+            'client' => ClientAudioResource::class,
+            'admin' => AdminAudioResource::class,
+            'export' => ExportAudioResource::class,
+        ]);
+
     }
 }
 ```
