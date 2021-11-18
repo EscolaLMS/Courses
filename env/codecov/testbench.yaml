@@ -15,3 +15,4 @@ providers:
   - EscolaLms\Courses\EscolaLmsCourseServiceProvider
   - EscolaLms\Tags\EscolaLmsTagsServiceProvider
   - EscolaLms\Scorm\EscolaLmsScormServiceProvider
+  - EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider

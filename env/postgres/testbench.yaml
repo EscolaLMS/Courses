@@ -14,3 +14,4 @@ providers:
   - EscolaLms\Auth\EscolaLmsAuthServiceProvider
   - EscolaLms\Courses\EscolaLmsCourseServiceProvider
   - EscolaLms\Scorm\EscolaLmsScormServiceProvider
+  - EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider
