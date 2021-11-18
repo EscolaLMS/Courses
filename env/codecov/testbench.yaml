@@ -12,7 +12,7 @@ providers:
   - EscolaLms\Categories\EscolaLmsCategoriesServiceProvider
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Auth\EscolaLmsAuthServiceProvider
+  - EscolaLms\Scorm\EscolaLmsScormServiceProvider
   - EscolaLms\Courses\EscolaLmsCourseServiceProvider
   - EscolaLms\Tags\EscolaLmsTagsServiceProvider
-  - EscolaLms\Scorm\EscolaLmsScormServiceProvider
   - EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider
