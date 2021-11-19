@@ -32,8 +32,8 @@ use Illuminate\Support\Facades\Storage;
  *          type="string"
  *      )
  * )
- * 
- * @property-read null|\EscolaLms\Courses\Models\Topic $topic
+ *
+ * @property \EscolaLms\Courses\Models\Topic|null $topic
  */
 class TopicResource extends Model
 {
@@ -65,6 +65,37 @@ class TopicResource extends Model
 
     public function getUrlAttribute()
     {
-        return Storage::url($this->path . $this->name);
+        return Storage::url($this->path.$this->name);
+    }
+
+    private function fixPath($key): array
+    {
+        // FIXME of this code relates to https://github.com/EscolaLMS/Courses/issues/159
+        $value = $this->$key.$this->name;
+        $topic = $this->topic;
+        $course = $topic->lesson->course;
+
+        $destination = sprintf('courses/%d/topic/%d/resources/%s', $course->id, $topic->id, basename($value));
+
+        if (strpos($value, $destination) === false && Storage::exists($value)) {
+            $result = [$value, $destination];
+            if (!Storage::exists($destination)) {
+                Storage::move($value, $destination);
+            }
+            $this->$key = $destination;
+            $this->save();
+
+            return $result;
+        }
+
+        return [];
+    }
+
+    public function fixAssetPaths(): array
+    {
+        $results = [];
+        $results = $results + $this->fixPath('path');
+
+        return $results;
     }
 }

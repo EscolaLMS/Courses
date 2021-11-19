@@ -1,11 +1,12 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace EscolaLms\Courses\Http\Resources\Admin;
 
 use EscolaLms\Courses\Facades\Topic;
+use EscolaLms\Courses\Http\Resources\TopicResourceResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TopicResource extends JsonResource
+class TopicAdminResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,8 +19,8 @@ class TopicResource extends JsonResource
     {
         $topicable = $this->topicable;
 
-        if (Topic::getResourceClass($this->topicable_type, 'client')) {
-            $resourceClass = Topic::getResourceClass($this->topicable_type, 'client');
+        if (Topic::getResourceClass($this->topicable_type, 'admin')) {
+            $resourceClass = Topic::getResourceClass($this->topicable_type, 'admin');
             $resource = new $resourceClass($this->topicable);
             $topicable = $resource->toArray($request);
         }

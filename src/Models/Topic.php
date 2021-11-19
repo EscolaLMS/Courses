@@ -3,14 +3,12 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Courses\Database\Factories\TopicFactory;
-use EscolaLms\Courses\Repositories\TopicRepository;
+use EscolaLms\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Validation\Rule;
 
@@ -89,9 +87,9 @@ use Illuminate\Validation\Rule;
  *          type="object",
  *      )
  * )
- * 
- * @property bool $active
- * @property-read null|\EscolaLms\Courses\Models\Lesson $lesson
+ *
+ * @property bool                                  $active
+ * @property \EscolaLms\Courses\Models\Lesson|null $lesson
  */
 class Topic extends Model
 {
@@ -143,7 +141,7 @@ class Topic extends Model
             'introduction' => ['string'],
             'description' => ['string'],
             'lesson_id' => ['integer', 'exists:lessons,id'],
-            'topicable_type' => ['string', Rule::in(TopicRepository::availableContentClasses())],
+            'topicable_type' => ['string', Rule::in(TopicFacade::availableContentClasses())],
             'order' => ['integer'],
             'active' => ['boolean'],
             'preview' => ['boolean'],
@@ -190,9 +188,10 @@ class Topic extends Model
     public function getStorageDirectoryAttribute(): string
     {
         if ($this->lesson && $this->lesson->course_id) {
-            return 'course/' . $this->lesson->course_id . "/topic/" .  $this->getKey()  . "/";
+            return 'course/'.$this->lesson->course_id.'/topic/'.$this->getKey().'/';
         }
-        return "topic/" .  $this->getKey()  . "/";
+
+        return 'topic/'.$this->getKey().'/';
     }
 
     protected static function booted()

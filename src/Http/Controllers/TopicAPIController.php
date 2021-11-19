@@ -10,7 +10,7 @@ use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Resources\TopicResource;
-use EscolaLms\Courses\Repositories\TopicRepository;
+use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -22,7 +22,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
     /** @var TopicRepository */
     private $topicRepository;
 
-    public function __construct(TopicRepository $topicRepo)
+    public function __construct(TopicRepositoryContract $topicRepo)
     {
         $this->topicRepository = $topicRepo;
     }

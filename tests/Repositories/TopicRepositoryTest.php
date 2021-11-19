@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Tests\Repositories;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
@@ -27,7 +28,7 @@ class TopicRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->topicRepo = \App::make(TopicRepository::class);
+        $this->topicRepo = \App::make(TopicRepositoryContract::class);
     }
 
     /**
@@ -182,9 +183,9 @@ class TopicRepositoryTest extends TestCase
 
     public function testUnregisterContentClass()
     {
-        $this->topicRepo::registerContentClass(Video::class);
-        $this->assertTrue(in_array(Video::class, $this->topicRepo::availableContentClasses()));
-        $this->topicRepo::unregisterContentClass(Video::class);
-        $this->assertTrue(!in_array(Video::class, $this->topicRepo::availableContentClasses()));
+        $this->topicRepo->registerContentClass(Video::class);
+        $this->assertTrue(in_array(Video::class, $this->topicRepo->availableContentClasses()));
+        $this->topicRepo->unregisterContentClass(Video::class);
+        $this->assertTrue(!in_array(Video::class, $this->topicRepo->availableContentClasses()));
     }
 }

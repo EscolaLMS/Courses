@@ -15,8 +15,17 @@ interface TopicRepositoryContract extends BaseRepositoryContract
 
     public function updateFromRequest(UpdateTopicAPIRequest $request): Topic;
 
-    public static function registerContentClass(string $class): array;
-    public static function unregisterContentClass(string $class): array;
+    public function registerContentClass(string $class): array;
+
+    public function registerContentClasses(array $classes): array;
+
+    public function unregisterContentClass(string $class): array;
+
+    public function registerResourceClass(string $topicTypeClass, string $resourceClass, string $type = 'client'): array;
+
+    public function registerResourceClasses(string $topicTypeClass, array $resourceClasses): array;
+
+    public function getResourceClass(string $topicTypeClass = null, string $type = 'client'): string;
 
     public function deleteModel(Topic $topic): ?bool;
 }
