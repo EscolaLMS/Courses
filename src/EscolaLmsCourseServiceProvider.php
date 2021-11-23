@@ -25,6 +25,14 @@ use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
+use EscolaLms\TopicTypes\Models\TopicContent\Audio;
+use EscolaLms\TopicTypes\Models\TopicContent\H5P;
+use EscolaLms\TopicTypes\Models\TopicContent\Image;
+use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
+use EscolaLms\TopicTypes\Models\TopicContent\PDF;
+use EscolaLms\TopicTypes\Models\TopicContent\RichText;
+use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
@@ -44,6 +52,16 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        Relation::morphMap([
+            'EscolaLms\Courses\Models\TopicContent\Audio' => Audio::class,
+            'EscolaLms\Courses\Models\TopicContent\H5P' => H5P::class,
+            'EscolaLms\Courses\Models\TopicContent\Image' => Image::class,
+            'EscolaLms\Courses\Models\TopicContent\OEmbed' => OEmbed::class,
+            'EscolaLms\Courses\Models\TopicContent\PDF' => PDF::class,
+            'EscolaLms\Courses\Models\TopicContent\RichText' => RichText::class,
+            'EscolaLms\Courses\Models\TopicContent\Video' => Video::class,
+        ]);
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();

@@ -188,4 +188,19 @@ class TopicRepositoryTest extends TestCase
         $this->topicRepo->unregisterContentClass(Video::class);
         $this->assertTrue(!in_array(Video::class, $this->topicRepo->availableContentClasses()));
     }
+
+    public function testOldTopicContentClass()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()]);
+        $richText = RichText::factory()->create();
+
+        $topic->topicable_id = $richText->getKey();
+        $topic->topicable_type = 'EscolaLms\Courses\Models\TopicContent\RichText';
+        $topic->save();
+
+        $this->assertEquals('EscolaLms\Courses\Models\TopicContent\RichText', $topic->topicable_type);
+        $this->assertEquals(RichText::class, get_class($topic->topicable));
+    }
 }
