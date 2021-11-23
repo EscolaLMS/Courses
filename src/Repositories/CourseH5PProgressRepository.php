@@ -28,7 +28,7 @@ class CourseH5PProgressRepository extends BaseRepository implements CourseH5PPro
         return H5PUserProgress::class;
     }
 
-    public function store(Topic $topic, Authenticatable $user, string $event, $data) : H5PUserProgress
+    public function store(Topic $topic, Authenticatable $user, string $event, $data): H5PUserProgress
     {
         return $this->model->updateOrCreate([
             'topic_id' => $topic->getKey(),
@@ -38,5 +38,4 @@ class CourseH5PProgressRepository extends BaseRepository implements CourseH5PPro
             'data' => $data,
         ]);
     }
-
 }

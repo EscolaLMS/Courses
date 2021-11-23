@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Models;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
+use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Model\ScormModel;
 
@@ -126,6 +128,31 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          description="poster_url",
  *          type="string"
  *      ),
+ *      @OA\Property(
+ *          property="active_from",
+ *          description="active_from",
+ *          type="datetime"
+ *      ),
+ *      @OA\Property(
+ *          property="active_to",
+ *          description="active_to",
+ *          type="datetime"
+ *      ),
+ *      @OA\Property(
+ *          property="hours_to_complete",
+ *          description="hours_to_complete",
+ *          type="integer"
+ *      ),
+ *      @OA\Property(
+ *          property="purchasable",
+ *          description="purchasable",
+ *          type="boolean"
+ *      ),
+ *      @OA\Property(
+ *          property="findable",
+ *          description="findable",
+ *          type="boolean"
+ *      ),
  * )
  * 
  * @property bool $active
@@ -154,6 +181,11 @@ class Course extends Model
         'level',
         'scorm_id',
         'poster_path',
+        'active_from',
+        'active_to',
+        'hours_to_complete',
+        'purchasable',
+        'findable',
     ];
 
     /**
@@ -177,6 +209,11 @@ class Course extends Model
         'level' => 'string',
         'scorm_id' => 'integer',
         'poster_path' => 'string',
+        'active_from' => 'datetime',
+        'active_to' => 'datetime',
+        'hours_to_complete' => 'integer',
+        'purchasable' => 'boolean',
+        'findable' => 'boolean',
     ];
 
     /**
@@ -202,6 +239,11 @@ class Course extends Model
         'scorm_id' => 'nullable|exists:scorm,id',
         'poster_path' => 'nullable|string|max:255',
         'poster' => 'file|image',
+        'active_from' => 'date|nullable',
+        'active_to' => 'date|nullable',
+        'hours_to_complete' => 'integer|nullable',
+        'purchasable' => 'boolean',
+        'findable' => 'boolean',
     ];
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
@@ -275,8 +317,31 @@ class Course extends Model
         return $this->belongsTo(ScormModel::class, 'scorm_id');
     }
 
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->active
+            && (is_null($this->active_from) || Carbon::now()->greaterThanOrEqualTo($this->active_from))
+            && (is_null($this->active_to) || Carbon::now()->lessThanOrEqualTo($this->active_to));
+    }
+
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('courses.active', '=', true);
+        return $query
+            ->where('courses.active', '=', true)
+            ->where(function (Builder $query) {
+                return $query->whereDate('active_from', '>=', Carbon::now())->orWhereNull('active_from');
+            })
+            ->where(function (Builder $query) {
+                return $query->whereDate('active_to', '<=', Carbon::now())->orWhereNull('active_to');
+            });
+    }
+
+    protected static function booted()
+    {
+        self::creating(function (Course $course) {
+            if (is_null($course->findable)) {
+                $course->findable = config('escolalms_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
+            }
+        });
     }
 }

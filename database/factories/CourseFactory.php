@@ -42,9 +42,13 @@ class CourseFactory extends Factory
             'description' => $this->faker->markdown,
             'level' => $this->faker->randomElement(['beginner', 'regular', 'expert']),
             'poster_path' => "poster.jpg",
+            'purchasable' => true,
+            'findable' => true,
+            'active_from' => null,
+            'active_to' => null,
+            'hours_to_complete' => null,
         ];
     }
-
 
     public function configure()
     {

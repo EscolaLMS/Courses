@@ -2,7 +2,6 @@
 
 namespace EscolaLms\Courses\Repositories;
 
-use Carbon\Carbon;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Topic;
@@ -10,6 +9,7 @@ use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Carbon;
 
 class CourseProgressRepository extends BaseRepository implements CourseProgressRepositoryContract
 {
@@ -51,9 +51,18 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             $update['finished_at'] = Carbon::now();
         }
 
-        $topic->progress()->updateOrCreate([
+        $courseProgress = $topic->progress()->updateOrCreate([
             'user_id' => $user->getKey(),
         ], $update);
+
+        if (is_null($courseProgress->started_at)) {
+            if ($courseProgress->finished_at) {
+                $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
+            } elseif (!is_null($courseProgress->seconds)) {
+                $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
+            }
+            $courseProgress->save();
+        }
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon
