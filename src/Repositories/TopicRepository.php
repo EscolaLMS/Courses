@@ -116,7 +116,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             return $this->resourceClasses[$type][$topicTypeClass];
         }
 
-        return false;
+        return '';
     }
 
     public function unregisterContentClass(string $class): array
