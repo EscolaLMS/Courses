@@ -214,7 +214,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
                 throw new Error("Type '$class' is not allowed");
             }
 
-            if ($class === $topic->topicable_type && $request->hasAny(array_keys($class::rules()))) {
+            if ($topic->topicable && $class === get_class($topic->topicable) && $request->hasAny(array_keys($class::rules()))) {
                 $this->updateTopicContentModelFromRequest($request, $topic->topicable);
             } else {
                 $topicContent = $this->createTopicContentModelFromRequest($request, $topic);
@@ -297,7 +297,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     private function getRulesForTopicContentUpdate(FormRequest $request, TopicContentContract $topicContent)
     {
         // we want to do partial update, so we add 'sometimes' to all rules
-        $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes'.$field_rules, $topicContent::rules());
+        $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes' . $field_rules, $topicContent::rules());
 
         // don't try to validate file keys in request if they don't contain file during topic / topic content update
         if ($topicContent instanceof TopicFileContentContract) {

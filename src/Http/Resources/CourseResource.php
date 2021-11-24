@@ -40,6 +40,11 @@ class CourseResource extends JsonResource
             'description' =>  $course->description,
             'level' =>  $course->level,
             'poster_path' =>  $course->poster_path,
+            'active_from' => $course->active_from,
+            'active_to' => $course->active_to,
+            'hours_to_complete' => $course->hours_to_complete,
+            'purchasable' => $course->purchasable,
+            'findable' => $course->findable,
         ];
     }
 }

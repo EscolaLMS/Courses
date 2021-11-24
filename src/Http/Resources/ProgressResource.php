@@ -34,7 +34,9 @@ class ProgressResource extends JsonResource
             'course' => CourseResource::make(CourseContent::make($course)),
             'categories' => CategoryResource::collection($course->categories),
             'progress' => $this->getResource()->getProgress()->toArray(),
+            'start_date' => $this->getResource()->getStartDate(),
             'finish_date' => $this->getResource()->isFinished() ? $this->getResource()->getFinishDate() : null,
+            'deadline' => $this->getResource()->getDeadline(),
             'total_spent_time' => $this->getResource()->getTotalSpentTime() ?? 0,
         ];
     }

@@ -15,7 +15,6 @@ class GetCourseCurriculumAPIRequest extends FormRequest
      */
     public function authorize()
     {
-        $user = auth()->user();
         $course = $this->getCourse();
         return Gate::check('attend', $course);
     }

@@ -5,6 +5,8 @@ namespace EscolaLms\Courses;
 use EscolaLms\Auth\Dtos\UserUpdateDto;
 use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
 use EscolaLms\Auth\Http\Resources\UserResource;
+use EscolaLms\Courses\AuthServiceProvider;
+use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
@@ -21,6 +23,16 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use EscolaLms\Settings\Facades\AdministrableConfig;
+use EscolaLms\TopicTypes\Models\TopicContent\Audio;
+use EscolaLms\TopicTypes\Models\TopicContent\H5P;
+use EscolaLms\TopicTypes\Models\TopicContent\Image;
+use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
+use EscolaLms\TopicTypes\Models\TopicContent\PDF;
+use EscolaLms\TopicTypes\Models\TopicContent\RichText;
+use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
@@ -38,12 +50,35 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__.'/routes.php');
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        Relation::morphMap([
+            'EscolaLms\Courses\Models\TopicContent\Audio' => Audio::class,
+            'EscolaLms\Courses\Models\TopicContent\H5P' => H5P::class,
+            'EscolaLms\Courses\Models\TopicContent\Image' => Image::class,
+            'EscolaLms\Courses\Models\TopicContent\OEmbed' => OEmbed::class,
+            'EscolaLms\Courses\Models\TopicContent\PDF' => PDF::class,
+            'EscolaLms\Courses\Models\TopicContent\RichText' => RichText::class,
+            'EscolaLms\Courses\Models\TopicContent\Video' => Video::class,
+        ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+    }
+
+    protected function bootForConsole(): void
+    {
+        $this->publishes([
+            __DIR__ . '/config.php' => config_path('escolalms_courses.php'),
+        ], 'escolalms_courses.config');
     }
 
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
+
         $this->app->register(AuthServiceProvider::class);
 
         UserResource::extend(fn ($thisObj) => [
@@ -61,5 +96,9 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProfileUpdateRequest::extendRules([
             'bio' => ['string'],
         ]);
+
+        $this->callAfterResolving(EscolaLmsSettingsServiceProvider::class, function () {
+            AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
+        });
     }
 }

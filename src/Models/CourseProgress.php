@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|CourseProgress whereUserId($value)
  * @mixin \Eloquent
  */
-
 class CourseProgress extends Model
 {
     use HasFactory;
@@ -44,7 +43,8 @@ class CourseProgress extends Model
         'topic_id',
         'status',
         'seconds',
-        'finished_at'
+        'started_at',
+        'finished_at',
     ];
 
     /**
@@ -54,8 +54,14 @@ class CourseProgress extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'finished_at' => 'datetime'
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function topic(): BelongsTo
     {
