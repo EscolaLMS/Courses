@@ -112,4 +112,17 @@ class CourseService implements CourseServiceContract
 
         return view('scorm::player', ['data' => $data]);
     }
+
+    public function sendNotificationsForCourseAssignments(array $changes): void
+    {
+        if (array_key_exists('attached', $changes)) {
+            foreach ($changes['attached'] as $attached) {
+                //dd('attached', $attached);
+            }
+        }
+        if (array_key_exists('detached', $changes)) {
+            foreach ($changes['detached'] as $detached) {
+            }
+        }
+    }
 }

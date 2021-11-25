@@ -7,10 +7,13 @@ use EscolaLms\Courses\Notifications\Variables\DeadlineNotificationVariables;
 use EscolaLms\Notifications\Core\NotificationAbstract;
 use EscolaLms\Notifications\Core\NotificationContract;
 use EscolaLms\Notifications\Core\Traits\NotificationDefaultImplementation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class DeadlineNotification extends NotificationAbstract implements NotificationContract
+class DeadlineNotification extends NotificationAbstract implements NotificationContract, ShouldQueue
 {
     use NotificationDefaultImplementation;
+    use Queueable;
 
     private Course $course;
 

@@ -8,9 +8,11 @@ use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
 use EscolaLms\Courses\AuthServiceProvider;
 use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
+use EscolaLms\Notifications\EscolaLmsNotificationsServiceProvider;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
+use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
 use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
@@ -41,6 +43,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsTagsServiceProvider::class,
             EscolaLmsTopicTypesServiceProvider::class,
             EscolaLmsSettingsServiceProvider::class,
+            EscolaLmsTemplatesServiceProvider::class,
+            EscolaLmsNotificationsServiceProvider::class,
         ];
     }
 

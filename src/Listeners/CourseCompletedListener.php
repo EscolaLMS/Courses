@@ -5,13 +5,10 @@ namespace EscolalLms\Courses\Listeners;
 use EscolaLms\Courses\Events\CourseCompleted;
 use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Notifications\UserFinishedCourseNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CourseCompletedListener
+class CourseCompletedListener implements ShouldQueue
 {
-    public function __construct()
-    {
-    }
-
     public function handle(CourseCompleted $event)
     {
         $user = $event->getUser();

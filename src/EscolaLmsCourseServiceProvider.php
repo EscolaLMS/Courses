@@ -81,6 +81,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
 
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(NotificationServiceProvider::class);
+        $this->app->register(ScheduleServiceProvider::class);
 
         UserResource::extend(fn ($thisObj) => [
             'bio' => $thisObj->bio,

@@ -7,10 +7,13 @@ use EscolaLms\Courses\Notifications\Variables\UserFinishedCourseNotificationVari
 use EscolaLms\Notifications\Core\NotificationAbstract;
 use EscolaLms\Notifications\Core\NotificationContract;
 use EscolaLms\Notifications\Core\Traits\NotificationDefaultImplementation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserFinishedCourseNotification extends NotificationAbstract implements NotificationContract
+class UserFinishedCourseNotification extends NotificationAbstract implements NotificationContract, ShouldQueue
 {
     use NotificationDefaultImplementation;
+    use Queueable;
 
     private Course $course;
 
@@ -41,7 +44,7 @@ class UserFinishedCourseNotification extends NotificationAbstract implements Not
 
     public static function templateVariablesClass(): string
     {
-        return DeadlineNotificationVariables::class;
+        return UserFinishedCourseNotificationVariables::class;
     }
 
     public function additionalDataForVariables(): array

@@ -8,10 +8,13 @@ use EscolaLms\Courses\Notifications\Variables\UserAssignmentCourseNotificationVa
 use EscolaLms\Notifications\Core\NotificationAbstract;
 use EscolaLms\Notifications\Core\NotificationContract;
 use EscolaLms\Notifications\Core\Traits\NotificationDefaultImplementation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserAssignedToCourseNotification extends NotificationAbstract implements NotificationContract
+class UserAssignedToCourseNotification extends NotificationAbstract implements NotificationContract, ShouldQueue
 {
     use NotificationDefaultImplementation;
+    use Queueable;
 
     private Course $course;
     private User   $byWho;
