@@ -70,8 +70,8 @@ class NotificationsTest extends TestCase
         $listener = new DeadlineIncomingListener();
         $listener->handle($event);
 
-        Notification::assertSentTo($user, DeadlineNotification::class, function (DeadlineNotification $notification) use ($course) {
-            return $notification->additionalDataForVariables()[0]->getKey() === $course->getKey();
+        Notification::assertSentTo($user, DeadlineNotification::class, function (DeadlineNotification $notification) use ($user, $course) {
+            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
         });
     }
 
