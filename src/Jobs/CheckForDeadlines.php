@@ -39,9 +39,6 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
     {
         /** @var Collection $futureDeadlines */
         $futureDeadlines = CourseUserPivot::whereDate('deadline', '>=', Carbon::now())->whereDate('deadline', '<=', Carbon::now()->addDay())->get();
-        $futureDeadlines->filter(function (CourseUserPivot $pivot) {
-            return is_null(EscolaLmsNotifications::findDatabaseNotification(DeadlineNotification::class, $pivot->user, ['course_id' => $pivot->course->getKey()]));
-        });
         foreach ($futureDeadlines as $courseUserPivot) {
             event(new DeadlineIncoming($courseUserPivot->user, $courseUserPivot->course));
         }
