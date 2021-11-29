@@ -2,6 +2,10 @@
 
 namespace EscolaLms\Courses\Database\Seeders;
 
+use EscolaLms\Courses\Notifications\DeadlineNotification;
+use EscolaLms\Courses\Notifications\UserAssignedToCourseNotification;
+use EscolaLms\Courses\Notifications\UserFinishedCourseNotification;
+use EscolaLms\Courses\Notifications\UserUnassignedFromCourseNotification;
 use EscolaLms\Notifications\Facades\EscolaLmsNotifications;
 use Illuminate\Database\Seeder;
 
