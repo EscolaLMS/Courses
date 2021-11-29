@@ -23,7 +23,6 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
 use EscolaLms\TopicTypes\Models\TopicContent\Audio;
 use EscolaLms\TopicTypes\Models\TopicContent\H5P;
@@ -66,6 +65,8 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
+
+        AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
     }
 
     protected function bootForConsole(): void
@@ -96,9 +97,5 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProfileUpdateRequest::extendRules([
             'bio' => ['string'],
         ]);
-
-        $this->callAfterResolving(EscolaLmsSettingsServiceProvider::class, function () {
-            AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
-        });
     }
 }
