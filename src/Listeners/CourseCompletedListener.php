@@ -13,10 +13,10 @@ class CourseCompletedListener implements ShouldQueue
     {
         $user = $event->getUser();
         $course = $event->getCourse();
-        
+
         $notification = EscolaLmsNotifications::findDatabaseNotification(UserFinishedCourseNotification::class, $user, ['course_id' => $course->getKey()]);
         if (empty($notification)) {
-            $user->notify(new UserFinishedCourseNotification($event->getCourse()));
+            $user->notify(new UserFinishedCourseNotification($course));
         }
     }
 }

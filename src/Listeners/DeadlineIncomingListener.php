@@ -21,7 +21,7 @@ class DeadlineIncomingListener implements ShouldQueue
         }
         $progress = CourseProgressCollection::make($user, $course);
         if (!$progress->isFinished()) {
-            $user->notify(new DeadlineNotification($event->getCourse()));
+            $user->notify(new DeadlineNotification($course));
         }
     }
 }

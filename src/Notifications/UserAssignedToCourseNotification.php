@@ -60,4 +60,11 @@ class UserAssignedToCourseNotification extends NotificationAbstract implements N
             $this->byWho,
         ];
     }
+
+    public function toArray($notifiable, ?string $channel = null): array
+    {
+        return array_merge(parent::toArray($notifiable, $channel), [
+            'course_id' => $this->course->getKey()
+        ]);
+    }
 }
