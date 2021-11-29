@@ -4,6 +4,8 @@ namespace EscolaLms\Courses\Jobs;
 
 use EscolaLms\Courses\Events\DeadlineIncoming;
 use EscolaLms\Courses\Models\CourseUserPivot;
+use EscolaLms\Courses\Notifications\DeadlineNotification;
+use EscolaLms\Notifications\Facades\EscolaLmsNotifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -12,6 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
 {
@@ -34,11 +37,13 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        $futureDeadlines = CourseUserPivot::whereDate('deadline', '>=', Carbon::now())->where('deadline_notification', false)->get();
+        /** @var Collection $futureDeadlines */
+        $futureDeadlines = CourseUserPivot::whereDate('deadline', '>=', Carbon::now())->whereDate('deadline', '<=', Carbon::now()->addDay())->get();
+        $futureDeadlines->filter(function (CourseUserPivot $pivot) {
+            return is_null(EscolaLmsNotifications::findDatabaseNotification(DeadlineNotification::class, $pivot->user, ['course_id' => $pivot->course->getKey()]));
+        });
         foreach ($futureDeadlines as $courseUserPivot) {
-            if (Carbon::parse($courseUserPivot->deadline)->subDay()->lessThan(Carbon::now())) {
-                event(new DeadlineIncoming($courseUserPivot->user, $courseUserPivot->course));
-            }
+            event(new DeadlineIncoming($courseUserPivot->user, $courseUserPivot->course));
         }
     }
 }

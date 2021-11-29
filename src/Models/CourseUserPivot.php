@@ -12,8 +12,6 @@ class CourseUserPivot extends Pivot
 
     protected $casts = [
         'deadline' => 'datetime',
-        'course_completed_notification' => 'boolean',
-        'deadline_notification' => 'boolean',
     ];
 
     public function user(): BelongsTo
