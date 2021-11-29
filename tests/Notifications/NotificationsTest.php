@@ -71,6 +71,7 @@ class NotificationsTest extends TestCase
         $listener->handle($event);
 
         Notification::assertSentTo($user, DeadlineNotification::class, function (DeadlineNotification $notification) use ($user, $course) {
+            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
             return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
         });
     }
@@ -94,7 +95,10 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
 
         $user = ModelsUser::find($student->getKey());
-        Notification::assertSentTo($user, UserAssignedToCourseNotification::class);
+        Notification::assertSentTo($user, UserAssignedToCourseNotification::class, function (UserAssignedToCourseNotification $notification) use ($user, $course) {
+            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
+            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
+        });
     }
 
     public function testUserUnassignedFromCourseNotification()
@@ -117,6 +121,10 @@ class NotificationsTest extends TestCase
 
         $user = ModelsUser::find($student->getKey());
         Notification::assertSentTo($user, UserUnassignedFromCourseNotification::class);
+        Notification::assertSentTo($user, UserUnassignedFromCourseNotification::class, function (UserUnassignedFromCourseNotification $notification) use ($user, $course) {
+            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
+            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
+        });
     }
 
     public function testUserFinishedCourseNotification()
@@ -156,5 +164,9 @@ class NotificationsTest extends TestCase
         $listener->handle($event);
 
         Notification::assertSentTo($student, UserFinishedCourseNotification::class);
+        Notification::assertSentTo($student, UserFinishedCourseNotification::class, function (UserFinishedCourseNotification $notification) use ($student, $course) {
+            $this->assertEquals($course->getKey(), $notification->toArray($student)['course_id']);
+            return $notification->additionalDataForVariables($student)[0]->getKey() === $course->getKey();
+        });
     }
 }
