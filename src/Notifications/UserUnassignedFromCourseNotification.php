@@ -50,7 +50,7 @@ class UserUnassignedFromCourseNotification extends NotificationAbstract implemen
         return UserAssignmentCourseNotificationVariables::class;
     }
 
-    public function additionalDataForVariables(): array
+    public function additionalDataForVariables($notifiable): array
     {
         return [
             $this->course,

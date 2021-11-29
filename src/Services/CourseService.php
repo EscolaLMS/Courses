@@ -121,7 +121,7 @@ class CourseService implements CourseServiceContract
         if (array_key_exists('attached', $changes)) {
             foreach ($changes['attached'] as $attached) {
                 /** @var User $user */
-                $user = User::find($attached);
+                $user = is_int($attached) ? User::find($attached) : $attached;
                 if ($user) {
                     $user->notify(new UserAssignedToCourseNotification($course));
                 }
@@ -130,7 +130,7 @@ class CourseService implements CourseServiceContract
         if (array_key_exists('detached', $changes)) {
             foreach ($changes['detached'] as $detached) {
                 /** @var User $user */
-                $user = User::find($detached);
+                $user = is_int($detached) ? User::find($detached) : $detached;
                 if ($user) {
                     $user->notify(new UserUnassignedFromCourseNotification($course));
                 }

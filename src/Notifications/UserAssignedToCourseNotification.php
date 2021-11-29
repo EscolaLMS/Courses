@@ -50,7 +50,7 @@ class UserAssignedToCourseNotification extends NotificationAbstract implements N
         return UserAssignmentCourseNotificationVariables::class;
     }
 
-    public function additionalDataForVariables(): array
+    public function additionalDataForVariables($notifiable): array
     {
         return [
             $this->course,

@@ -4,11 +4,12 @@ namespace EscolaLms\Courses\Tests;
 
 use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Database\Seeders\NotificationsSeeder;
 use EscolaLms\Courses\Events\CourseCompleted;
-use EscolaLms\Courses\Listeners\DeadlineIncomingListener;
-use EscolaLms\Courses\Jobs\CheckForDeadlines;
 use EscolaLms\Courses\Events\DeadlineIncoming;
+use EscolaLms\Courses\Jobs\CheckForDeadlines;
 use EscolaLms\Courses\Listeners\CourseCompletedListener;
+use EscolaLms\Courses\Listeners\DeadlineIncomingListener;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -34,6 +35,7 @@ class NotificationsTest extends TestCase
     {
         parent::setUp();
         $this->seed(CoursesPermissionSeeder::class);
+        $this->seed(NotificationsSeeder::class);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';

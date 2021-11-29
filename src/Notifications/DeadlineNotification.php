@@ -48,7 +48,7 @@ class DeadlineNotification extends NotificationAbstract implements NotificationC
         return DeadlineNotificationVariables::class;
     }
 
-    public function additionalDataForVariables(): array
+    public function additionalDataForVariables($notifiable): array
     {
         return [
             $this->course

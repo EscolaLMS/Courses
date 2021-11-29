@@ -38,7 +38,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
         if ($request->has('groups')) {
             $course->groups()->syncWithoutDetaching($request->input('groups'));
         }
-        return $this->sendAccessListResponse($course, __('Added to access list'));
+        return $this->sendAccessListResponse($course->refresh(), __('Added to access list'));
     }
 
     public function remove(int $course_id, RemoveAccessAPIRequest $request): JsonResponse
@@ -51,7 +51,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
         if ($request->has('groups')) {
             $course->groups()->detach($request->input('groups'));
         }
-        return $this->sendAccessListResponse($course, __('Removed from access list'));
+        return $this->sendAccessListResponse($course->refresh(), __('Removed from access list'));
     }
 
     public function set(int $course_id, SetAccessAPIRequest $request): JsonResponse
@@ -73,7 +73,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
                 $course->groups()->detach();
             }
         }
-        return $this->sendAccessListResponse($course, __('Set access list'));
+        return $this->sendAccessListResponse($course->refresh(), __('Set access list'));
     }
 
     private function sendAccessListResponse(Course $course, string $message): JsonResponse

@@ -47,7 +47,7 @@ class UserFinishedCourseNotification extends NotificationAbstract implements Not
         return UserFinishedCourseNotificationVariables::class;
     }
 
-    public function additionalDataForVariables(): array
+    public function additionalDataForVariables($notifiable): array
     {
         return [
             $this->course
