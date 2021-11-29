@@ -33,7 +33,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
         $course = $request->getCourse();
         if ($request->has('users')) {
             $changes = $course->users()->syncWithoutDetaching($request->input('users'));
-            $this->courseService->sendNotificationsForCourseAssignments($changes);
+            $this->courseService->sendNotificationsForCourseAssignments($course, $changes);
         }
         if ($request->has('groups')) {
             $course->groups()->syncWithoutDetaching($request->input('groups'));
@@ -46,7 +46,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
         $course = $request->getCourse();
         if ($request->has('users')) {
             $course->users()->detach($request->input('users'));
-            $this->courseService->sendNotificationsForCourseAssignments(['detached' => $request->input('users')]);
+            $this->courseService->sendNotificationsForCourseAssignments($course, ['detached' => $request->input('users')]);
         }
         if ($request->has('groups')) {
             $course->groups()->detach($request->input('groups'));
@@ -64,7 +64,7 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
                 $changes['detached'] = $course->users;
                 $course->users()->detach();
             }
-            $this->courseService->sendNotificationsForCourseAssignments($changes);
+            $this->courseService->sendNotificationsForCourseAssignments($course, $changes);
         }
         if ($request->has('groups')) {
             if (!empty($request->input('groups'))) {

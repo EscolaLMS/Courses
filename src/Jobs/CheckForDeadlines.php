@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses;
+namespace EscolaLms\Courses\Jobs;
 
 use EscolaLms\Courses\Events\DeadlineIncoming;
 use EscolaLms\Courses\Models\CourseUserPivot;

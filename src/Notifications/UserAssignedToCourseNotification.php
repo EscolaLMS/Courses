@@ -17,7 +17,7 @@ class UserAssignedToCourseNotification extends NotificationAbstract implements N
     use Queueable;
 
     private Course $course;
-    private User   $byWho;
+    private ?User  $byWho;
 
     public function __construct(Course $course, ?User $byWho = null)
     {

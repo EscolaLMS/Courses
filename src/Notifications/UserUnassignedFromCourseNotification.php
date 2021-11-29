@@ -17,7 +17,7 @@ class UserUnassignedFromCourseNotification extends NotificationAbstract implemen
     use Queueable;
 
     private Course $course;
-    private User   $byWho;
+    private ?User  $byWho;
 
     public function __construct(Course $course, ?User $byWho = null)
     {

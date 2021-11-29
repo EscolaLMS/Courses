@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses;
 
+use EscolaLms\Courses\Jobs\CheckForDeadlines;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 

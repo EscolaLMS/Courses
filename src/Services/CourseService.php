@@ -4,10 +4,13 @@ namespace EscolaLms\Courses\Services;
 
 use Error;
 use EscolaLms\Core\Dtos\OrderDto;
+use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Notifications\UserAssignedToCourseNotification;
+use EscolaLms\Courses\Notifications\UserUnassignedFromCourseNotification;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Criteria\CourseSearch;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
@@ -113,15 +116,24 @@ class CourseService implements CourseServiceContract
         return view('scorm::player', ['data' => $data]);
     }
 
-    public function sendNotificationsForCourseAssignments(array $changes): void
+    public function sendNotificationsForCourseAssignments(Course $course, array $changes): void
     {
         if (array_key_exists('attached', $changes)) {
             foreach ($changes['attached'] as $attached) {
-                //dd('attached', $attached);
+                /** @var User $user */
+                $user = User::find($attached);
+                if ($user) {
+                    $user->notify(new UserAssignedToCourseNotification($course));
+                }
             }
         }
         if (array_key_exists('detached', $changes)) {
             foreach ($changes['detached'] as $detached) {
+                /** @var User $user */
+                $user = User::find($detached);
+                if ($user) {
+                    $user->notify(new UserUnassignedFromCourseNotification($course));
+                }
             }
         }
     }
