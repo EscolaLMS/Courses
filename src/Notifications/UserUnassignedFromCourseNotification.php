@@ -27,7 +27,10 @@ class UserUnassignedFromCourseNotification extends NotificationAbstract implemen
 
     public static function availableVia(): array
     {
-        return ['mail'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     public static function defaultContentTemplate(): string

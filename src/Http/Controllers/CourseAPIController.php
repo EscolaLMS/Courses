@@ -132,6 +132,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     {
         $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
 
-        return $this->sendResponse([], $request->get('class').' sorted successfully');
+        return $this->sendResponse([], $request->get('class') . ' sorted successfully');
     }
 }

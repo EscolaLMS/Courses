@@ -24,7 +24,10 @@ class UserFinishedCourseNotification extends NotificationAbstract implements Not
 
     public static function availableVia(): array
     {
-        return ['mail'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     public static function defaultContentTemplate(): string
@@ -52,5 +55,12 @@ class UserFinishedCourseNotification extends NotificationAbstract implements Not
         return [
             $this->course
         ];
+    }
+
+    public function toArray($notifiable, ?string $channel = null): array
+    {
+        return array_merge(parent::toArray($notifiable, $channel), [
+            'course_id' => $this->course->getKey()
+        ]);
     }
 }

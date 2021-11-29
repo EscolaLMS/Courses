@@ -3,8 +3,8 @@
 namespace EscolaLms\Courses\Listeners;
 
 use EscolaLms\Courses\Events\DeadlineIncoming;
-use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Notifications\DeadlineNotification;
+use EscolaLms\Notifications\Facades\EscolaLmsNotifications;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeadlineIncomingListener implements ShouldQueue
@@ -13,14 +13,9 @@ class DeadlineIncomingListener implements ShouldQueue
     {
         $user = $event->getUser();
         $course = $event->getCourse();
-        $pivot = CourseUserPivot::where('user_id', $user->getKey())->where('course_id', $course->getKey())->first();
-        if (!$pivot) {
-            $course->users()->attach($user);
-            $pivot = CourseUserPivot::where('user_id', $user->getKey())->where('course_id', $course->getKey())->first();
-        }
-        if (!$pivot->deadline_notification) {
-            $pivot->deadline_notification = true;
-            $pivot->save();
+
+        $notification = EscolaLmsNotifications::findDatabaseNotification(DeadlineIncoming::class, $user, ['course_id' => $course->getKey()]);
+        if (empty($notification)) {
             $user->notify(new DeadlineNotification($event->getCourse()));
         }
     }

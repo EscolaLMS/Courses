@@ -27,7 +27,10 @@ class UserAssignedToCourseNotification extends NotificationAbstract implements N
 
     public static function availableVia(): array
     {
-        return ['mail'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     public static function defaultContentTemplate(): string
