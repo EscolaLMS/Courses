@@ -9,6 +9,7 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\TestResponse;
 
 class CourseAccessApiTest extends TestCase
@@ -28,6 +29,8 @@ class CourseAccessApiTest extends TestCase
             'base_price' => 1337,
             'active' => true,
         ]);
+
+        Notification::fake();
     }
 
     public function testAccessList()

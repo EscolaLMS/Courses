@@ -81,6 +81,8 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
 
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(NotificationServiceProvider::class);
+        $this->app->register(ScheduleServiceProvider::class);
 
         UserResource::extend(fn ($thisObj) => [
             'bio' => $thisObj->bio,
