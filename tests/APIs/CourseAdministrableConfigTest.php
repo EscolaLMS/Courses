@@ -37,7 +37,7 @@ class CourseAdministrableConfigTest extends TestCase
 
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses.platform_visibility' => 'public'
+            'escolalms_courses' => ['platform_visibility' => 'public']
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
