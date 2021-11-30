@@ -83,7 +83,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
 
         $this->app->register(AuthServiceProvider::class);
         
-        if(!app()->bound(EscolaLmsNotificationsServiceProvider::class)){
+        if(app()->bound(EscolaLmsNotificationsServiceProvider::class)){
             $this->register(NotificationServiceProvider::class);
         }
         
