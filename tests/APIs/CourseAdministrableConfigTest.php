@@ -47,11 +47,13 @@ class CourseAdministrableConfigTest extends TestCase
 
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses.platform_visibility' => [
-                'rules' => ['required', 'string', 'in:public,registered'],
-                'public' => true,
-                'readonly' => false,
-                'value' => 'public',
+            'escolalms_courses' => [
+                'platform_visibility' => [
+                    'rules' => ['required', 'string', 'in:public,registered'],
+                    'public' => true,
+                    'readonly' => false,
+                    'value' => 'public',
+                ]
             ]
         ]);
     }
