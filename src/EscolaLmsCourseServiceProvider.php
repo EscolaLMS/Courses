@@ -23,6 +23,8 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
+use EscolaLms\Notifications\EscolaLmsNotificationsServiceProvider;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
 use EscolaLms\TopicTypes\Models\TopicContent\Audio;
 use EscolaLms\TopicTypes\Models\TopicContent\H5P;
@@ -33,7 +35,6 @@ use EscolaLms\TopicTypes\Models\TopicContent\RichText;
 use EscolaLms\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Notifications\EscolaLmsNotificationsServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
 {
@@ -66,8 +67,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
-
-        AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
     }
 
     protected function bootForConsole(): void
@@ -81,13 +80,12 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
 
-        $this->app->register(AuthServiceProvider::class);
-        
-        if(app()->bound(EscolaLmsNotificationsServiceProvider::class)){
-            $this->register(NotificationServiceProvider::class);
+        if (!app()->bound(EscolaLmsNotificationsServiceProvider::class)) {
+            $this->app->register(EscolaLmsNotificationsServiceProvider::class);
         }
-        
+        $this->app->register(AuthServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
+        $this->app->register(NotificationServiceProvider::class);
 
         UserResource::extend(fn ($thisObj) => [
             'bio' => $thisObj->bio,
@@ -104,5 +102,9 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         ProfileUpdateRequest::extendRules([
             'bio' => ['string'],
         ]);
+
+        $this->callAfterResolving(EscolaLmsSettingsServiceProvider::class, function () {
+            AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
+        });
     }
 }
