@@ -24,6 +24,7 @@ use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Notifications\EscolaLmsNotificationsServiceProvider;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
 use EscolaLms\TopicTypes\Models\TopicContent\Audio;
 use EscolaLms\TopicTypes\Models\TopicContent\H5P;
@@ -84,6 +85,11 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         if (!app()->bound(EscolaLmsNotificationsServiceProvider::class)) {
             $this->app->register(EscolaLmsNotificationsServiceProvider::class);
         }
+        
+        if (!app()->bound(EscolaLmsSettingsServiceProvider::class)) {
+            $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        }
+                
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(NotificationServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
