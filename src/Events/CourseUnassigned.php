@@ -7,7 +7,7 @@ use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CourseAssigned
+class CourseUnassigned
 {
     use Dispatchable, SerializesModels;
 

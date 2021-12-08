@@ -9,7 +9,6 @@
     "escolalms/auth": "^0",
     "escolalms/categories": "^0",
     "escolalms/core": "^1",
-    "escolalms/notifications": "^0",
     "escolalms/scorm": "^0",
     "escolalms/settings": "^0",
     "escolalms/tags": "^0",

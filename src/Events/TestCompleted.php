@@ -21,5 +21,4 @@ class TestCompleted
     {
         return $this->user;
     }
-
 }
