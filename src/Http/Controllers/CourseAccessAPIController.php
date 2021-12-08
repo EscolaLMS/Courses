@@ -31,26 +31,16 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
     public function add(int $course_id, AddAccessAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
-        if ($request->has('users')) {
-            $changes = $course->users()->syncWithoutDetaching($request->input('users'));
-            $this->courseService->sendNotificationsForCourseAssignments($course, $changes);
-        }
-        if ($request->has('groups')) {
-            $course->groups()->syncWithoutDetaching($request->input('groups'));
-        }
+        $this->courseService->addAccessForUsers($course, $request->input('users', []));
+        $this->courseService->addAccessForGroups($course, $request->input('groups', []));
         return $this->sendAccessListResponse($course->refresh(), __('Added to access list'));
     }
 
     public function remove(int $course_id, RemoveAccessAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
-        if ($request->has('users')) {
-            $course->users()->detach($request->input('users'));
-            $this->courseService->sendNotificationsForCourseAssignments($course, ['detached' => $request->input('users')]);
-        }
-        if ($request->has('groups')) {
-            $course->groups()->detach($request->input('groups'));
-        }
+        $this->courseService->removeAccessForUsers($course, $request->input('users', []));
+        $this->courseService->removeAccessForGroups($course, $request->input('groups', []));
         return $this->sendAccessListResponse($course->refresh(), __('Removed from access list'));
     }
 
@@ -58,20 +48,10 @@ class CourseAccessAPIController extends EscolaLmsBaseController implements Cours
     {
         $course = $request->getCourse();
         if ($request->has('users')) {
-            if (!empty($request->input('users'))) {
-                $changes = $course->users()->sync($request->input('users'));
-            } else {
-                $changes['detached'] = $course->users;
-                $course->users()->detach();
-            }
-            $this->courseService->sendNotificationsForCourseAssignments($course, $changes);
+            $this->courseService->setAccessForUsers($course, $request->input('users'));
         }
         if ($request->has('groups')) {
-            if (!empty($request->input('groups'))) {
-                $course->groups()->sync($request->input('groups'));
-            } else {
-                $course->groups()->detach();
-            }
+            $this->courseService->setAccessForGroups($course, $request->input('groups'));
         }
         return $this->sendAccessListResponse($course->refresh(), __('Set access list'));
     }

@@ -4,10 +4,7 @@ namespace EscolaLms\Courses\Jobs;
 
 use EscolaLms\Courses\Events\DeadlineIncoming;
 use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Courses\Notifications\DeadlineNotification;
-use EscolaLms\Notifications\Facades\EscolaLmsNotifications;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -1,23 +1,19 @@
 <?php
 
-namespace EscolaLms\Courses\Tests;
+namespace EscolaLms\Courses\Tests\Notifications;
 
 use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Database\Seeders\NotificationsSeeder;
+use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Events\CourseCompleted;
+use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Events\DeadlineIncoming;
 use EscolaLms\Courses\Jobs\CheckForDeadlines;
-use EscolaLms\Courses\Listeners\CourseCompletedListener;
-use EscolaLms\Courses\Listeners\DeadlineIncomingListener;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Notifications\DeadlineNotification;
-use EscolaLms\Courses\Notifications\UserAssignedToCourseNotification;
-use EscolaLms\Courses\Notifications\UserFinishedCourseNotification;
-use EscolaLms\Courses\Notifications\UserUnassignedFromCourseNotification;
+use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -27,7 +23,6 @@ use Illuminate\Support\Facades\Notification;
 
 class NotificationsTest extends TestCase
 {
-
     use DatabaseTransactions;
     use ProgressConfigurable;
 
@@ -35,7 +30,6 @@ class NotificationsTest extends TestCase
     {
         parent::setUp();
         $this->seed(CoursesPermissionSeeder::class);
-        $this->seed(NotificationsSeeder::class);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
@@ -65,20 +59,12 @@ class NotificationsTest extends TestCase
         Event::assertDispatched(DeadlineIncoming::class, function (DeadlineIncoming $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
-
-        $event = new DeadlineIncoming($user, $course);
-        $listener = new DeadlineIncomingListener();
-        $listener->handle($event);
-
-        Notification::assertSentTo($user, DeadlineNotification::class, function (DeadlineNotification $notification) use ($user, $course) {
-            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
-            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
-        });
     }
 
     public function testUserAssignedToCourseNotification()
     {
         Notification::fake();
+        Event::fake();
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
@@ -95,15 +81,15 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
 
         $user = ModelsUser::find($student->getKey());
-        Notification::assertSentTo($user, UserAssignedToCourseNotification::class, function (UserAssignedToCourseNotification $notification) use ($user, $course) {
-            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
-            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
+        Event::assertDispatched(CourseAssigned::class, function (CourseAssigned $event) use ($user, $course) {
+            return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
 
     public function testUserUnassignedFromCourseNotification()
     {
         Notification::fake();
+        Event::fake();
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
@@ -120,10 +106,8 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
 
         $user = ModelsUser::find($student->getKey());
-        Notification::assertSentTo($user, UserUnassignedFromCourseNotification::class);
-        Notification::assertSentTo($user, UserUnassignedFromCourseNotification::class, function (UserUnassignedFromCourseNotification $notification) use ($user, $course) {
-            $this->assertEquals($course->getKey(), $notification->toArray($user)['course_id']);
-            return $notification->additionalDataForVariables($user)[0]->getKey() === $course->getKey();
+        Event::assertDispatched(CourseUnassigned::class, function (CourseUnassigned $event) use ($user, $course) {
+            return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
 
@@ -159,14 +143,9 @@ class NotificationsTest extends TestCase
 
         Event::assertDispatched(CourseCompleted::class);
 
-        $event = new CourseCompleted($course, $student);
-        $listener = new CourseCompletedListener();
-        $listener->handle($event);
-
-        Notification::assertSentTo($student, UserFinishedCourseNotification::class);
-        Notification::assertSentTo($student, UserFinishedCourseNotification::class, function (UserFinishedCourseNotification $notification) use ($student, $course) {
-            $this->assertEquals($course->getKey(), $notification->toArray($student)['course_id']);
-            return $notification->additionalDataForVariables($student)[0]->getKey() === $course->getKey();
+        $user = ModelsUser::find($student->getKey());
+        Event::assertDispatched(CourseCompleted::class, function (CourseCompleted $event) use ($user, $course) {
+            return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
 }

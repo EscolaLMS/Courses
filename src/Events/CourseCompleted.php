@@ -1,6 +1,5 @@
 <?php
 
-
 namespace EscolaLms\Courses\Events;
 
 use EscolaLms\Core\Models\User;
@@ -12,8 +11,8 @@ class CourseCompleted
 {
     use Dispatchable, SerializesModels;
 
-    private Course $course;
     private User $user;
+    private Course $course;
 
     public function __construct(Course $course, User $user)
     {

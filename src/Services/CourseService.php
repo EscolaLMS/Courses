@@ -6,11 +6,11 @@ use Error;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use EscolaLms\Courses\Events\CourseAssigned;
+use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Notifications\UserAssignedToCourseNotification;
-use EscolaLms\Courses\Notifications\UserUnassignedFromCourseNotification;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Criteria\CourseSearch;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
@@ -116,24 +116,66 @@ class CourseService implements CourseServiceContract
         return view('scorm::player', ['data' => $data]);
     }
 
-    public function sendNotificationsForCourseAssignments(Course $course, array $changes): void
+    public function addAccessForUsers(Course $course, array $users = []): void
     {
-        if (array_key_exists('attached', $changes)) {
-            foreach ($changes['attached'] as $attached) {
-                /** @var User $user */
-                $user = is_int($attached) ? User::find($attached) : $attached;
-                if ($user) {
-                    $user->notify(new UserAssignedToCourseNotification($course));
-                }
+        if (!empty($users)) {
+            $changes = $course->users()->syncWithoutDetaching($users);
+            $this->dispatchEventForUsersAttachedToCourse($course, $changes['attached']);
+        }
+    }
+
+    public function addAccessForGroups(Course $course, array $groups = []): void
+    {
+        if (!empty($groups)) {
+            $course->groups()->syncWithoutDetaching($groups);
+        }
+    }
+
+    public function removeAccessForUsers(Course $course, array $users = []): void
+    {
+        if (!empty($users)) {
+            $course->users()->detach($users);
+            $this->dispatchEventForUsersDetachedFromCourse($course, $users);
+        }
+    }
+
+    public function removeAccessForGroups(Course $course, array $groups = []): void
+    {
+        if (!empty($groups)) {
+            $course->groups()->detach($groups);
+        }
+    }
+
+    public function setAccessForUsers(Course $course, array $users = []): void
+    {
+        $changes = $course->users()->sync($users);
+        $this->dispatchEventForUsersAttachedToCourse($course, $changes['attached']);
+        $this->dispatchEventForUsersDetachedFromCourse($course, $changes['detached']);
+    }
+
+    public function setAccessForGroups(Course $course, array $groups = []): void
+    {
+        $course->groups()->sync($groups);
+    }
+
+    private function dispatchEventForUsersAttachedToCourse(Course $course, array $users = []): void
+    {
+        foreach ($users as $attached) {
+            /** @var User $user */
+            $user = is_int($attached) ? User::find($attached) : $attached;
+            if ($user && !$course->userH) {
+                event(new CourseAssigned($user, $course));
             }
         }
-        if (array_key_exists('detached', $changes)) {
-            foreach ($changes['detached'] as $detached) {
-                /** @var User $user */
-                $user = is_int($detached) ? User::find($detached) : $detached;
-                if ($user) {
-                    $user->notify(new UserUnassignedFromCourseNotification($course));
-                }
+    }
+
+    private function dispatchEventForUsersDetachedFromCourse(Course $course, array $users = []): void
+    {
+        foreach ($users as $detached) {
+            /** @var User $user */
+            $user = is_int($detached) ? User::find($detached) : $detached;
+            if ($user) {
+                event(new CourseUnassigned($user, $course));
             }
         }
     }
