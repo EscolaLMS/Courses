@@ -15,6 +15,7 @@ use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -26,7 +27,7 @@ class CourseProgressApiTest extends TestCase
 {
     use CreatesUsers, WithFaker, ProgressConfigurable, MakeServices;
 
-    public function test_show_progress_course()
+    public function test_show_progress_courses()
     {
         $user = User::factory()->create();
         $course = Course::factory()->create(['active' => true]);
@@ -39,6 +40,8 @@ class CourseProgressApiTest extends TestCase
                 'status' => 1
             ]);
         }
+        $tag = new Tag(['title' => 'tag']);
+        $course->tags()->save($tag);
         $user->courses()->save($course);
 
         $this->response = $this->actingAs($user, 'api')->json(
@@ -52,6 +55,7 @@ class CourseProgressApiTest extends TestCase
                     'course',
                     'progress',
                     'categories',
+                    'tags',
                     'finish_date',
                 ]
             ]
