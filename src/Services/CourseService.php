@@ -6,7 +6,7 @@ use Error;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Courses\Events\CourseAssigned;
+use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
 use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
@@ -164,7 +164,7 @@ class CourseService implements CourseServiceContract
             /** @var User $user */
             $user = is_int($attached) ? User::find($attached) : $attached;
             if ($user && !$course->userH) {
-                event(new CourseAssigned($user, $course));
+                event(new EscolaLmsCourseAssignedTemplateEvent($user, $course));
             }
         }
     }

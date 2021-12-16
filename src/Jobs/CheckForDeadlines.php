@@ -2,7 +2,7 @@
 
 namespace EscolaLms\Courses\Jobs;
 
-use EscolaLms\Courses\Events\DeadlineIncoming;
+use EscolaLms\Courses\Events\EscolaLmsCourseDeadlineSoonTemplateEvent;
 use EscolaLms\Courses\Models\CourseUserPivot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -37,7 +37,7 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
         /** @var Collection $futureDeadlines */
         $futureDeadlines = CourseUserPivot::whereDate('deadline', '>=', Carbon::now())->whereDate('deadline', '<=', Carbon::now()->addDay())->get();
         foreach ($futureDeadlines as $courseUserPivot) {
-            event(new DeadlineIncoming($courseUserPivot->user, $courseUserPivot->course));
+            event(new EscolaLmsCourseDeadlineSoonTemplateEvent($courseUserPivot->user, $courseUserPivot->course));
         }
     }
 }
