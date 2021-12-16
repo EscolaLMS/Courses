@@ -4,7 +4,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Events\CourseCompleted;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Group;
@@ -118,7 +118,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        Event::assertDispatched(CourseCompleted::class);
+        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
     }
 
     public function test_ping_progress_course()
@@ -187,7 +187,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        Event::assertDispatched(CourseCompleted::class);
+        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
 
         $lesson = $course->lessons->get(0);
         $topics = Topic::factory(2)->create([

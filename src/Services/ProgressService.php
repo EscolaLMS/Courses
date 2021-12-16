@@ -3,7 +3,7 @@
 namespace EscolaLms\Courses\Services;
 
 use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Events\CourseCompleted;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
@@ -68,7 +68,7 @@ class ProgressService implements ProgressServiceContract
 
             if ($courseIsFinished && !$userHasCourseMarkedAsFinished) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
-                event(new CourseCompleted($courseProgressCollection->getCourse(), $user));
+                event(new EscolaLmsCourseAccessFinishedTemplateEvent($user, $courseProgressCollection->getCourse()));
             } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
             }
