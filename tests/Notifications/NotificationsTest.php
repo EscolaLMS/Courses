@@ -6,7 +6,7 @@ use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
-use EscolaLms\Courses\Events\CourseUnassigned;
+use EscolaLms\Courses\Events\EscolaLmsCourseUnassignedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseDeadlineSoonTemplateEvent;
 use EscolaLms\Courses\Jobs\CheckForDeadlines;
 use EscolaLms\Courses\Models\Course;
@@ -106,7 +106,7 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
 
         $user = ModelsUser::find($student->getKey());
-        Event::assertDispatched(CourseUnassigned::class, function (CourseUnassigned $event) use ($user, $course) {
+        Event::assertDispatched(EscolaLmsCourseUnassignedTemplateEvent::class, function (EscolaLmsCourseUnassignedTemplateEvent $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }

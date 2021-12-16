@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Courses\Enum\ProgressStatus;
+use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\UserTopicTime;
@@ -60,6 +61,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
                 $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
             } elseif (!is_null($courseProgress->seconds)) {
                 $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
+                event(new EscolaLmsCourseStartedTemplateEvent($user, $topic->course));
             }
             $courseProgress->save();
         }

@@ -112,8 +112,8 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
 
         if ($result) {
             return $this->sendResponseForResource(new Status(true), 'Status');
-        } else {
-            return $this->sendError(__('Deadline missed'), 403);
         }
+        return $this->sendError(__('Deadline missed'), 403);
+
     }
 }

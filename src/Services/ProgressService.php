@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Services;
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
@@ -53,6 +54,9 @@ class ProgressService implements ProgressServiceContract
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
 
         if ($courseProgressCollection->courseCanBeProgressed()) {
+            if ($courseProgressCollection->getProgress()->count() === 0) {
+                event(new EscolaLmsCourseAccessStartedTemplateEvent($user, $course));
+            }
             if (!empty($progress)) {
                 $courseProgressCollection->setProgress($progress);
             }

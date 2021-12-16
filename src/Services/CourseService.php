@@ -7,7 +7,7 @@ use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
-use EscolaLms\Courses\Events\CourseUnassigned;
+use EscolaLms\Courses\Events\EscolaLmsCourseUnassignedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -175,7 +175,7 @@ class CourseService implements CourseServiceContract
             /** @var User $user */
             $user = is_int($detached) ? User::find($detached) : $detached;
             if ($user) {
-                event(new CourseUnassigned($user, $course));
+                event(new EscolaLmsCourseUnassignedTemplateEvent($user, $course));
             }
         }
     }

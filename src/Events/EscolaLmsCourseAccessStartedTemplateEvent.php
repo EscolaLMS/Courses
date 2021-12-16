@@ -4,5 +4,5 @@ namespace EscolaLms\Courses\Events;
 
 class EscolaLmsCourseAccessStartedTemplateEvent extends EscolaLmsCourseTemplateEvent
 {
-
+//DONE
 }
