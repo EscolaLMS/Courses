@@ -4,8 +4,10 @@ namespace EscolaLms\Courses\Tests\Notifications;
 
 use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseUnassignedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseDeadlineSoonTemplateEvent;
 use EscolaLms\Courses\Jobs\CheckForDeadlines;
@@ -46,12 +48,12 @@ class NotificationsTest extends TestCase
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);
-        $topics = Topic::factory(2)->create([
+        Topic::factory(2)->create([
             'lesson_id' => $lesson->getKey(),
             'active' => true,
         ]);
         $user->courses()->save($course);
-        $progress = CourseProgressCollection::make($user, $course);
+        CourseProgressCollection::make($user, $course);
 
         $checkForDealines = new CheckForDeadlines();
         $checkForDealines->handle();
@@ -79,6 +81,7 @@ class NotificationsTest extends TestCase
         ]);
 
         $this->response->assertOk();
+        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
 
         $user = ModelsUser::find($student->getKey());
         Event::assertDispatched(EscolaLmsCourseAssignedTemplateEvent::class, function (EscolaLmsCourseAssignedTemplateEvent $event) use ($user, $course) {

@@ -5,6 +5,8 @@ namespace Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -12,6 +14,7 @@ use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
 class CourseAdminApiTest extends TestCase
@@ -46,6 +49,27 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(201);
 
         $this->assertApiResponse($course);
+    }
+
+    public function test_create_course_active()
+    {
+        Event::fake();
+        $course = Course::factory([
+            'active' => true
+        ])->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses',
+            $course
+        );
+
+        $course['author_id'] = $this->user->id;
+
+        $this->response->assertStatus(201);
+
+        $this->assertApiResponse($course);
+        Event::assertDispatched(EscolaLmsCoursedPublishedTemplateEvent::class);
     }
 
 
@@ -115,6 +139,26 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
+    }
+
+    public function test_active_course()
+    {
+        Event::fake();
+        $course = Course::factory([
+            'active' => false
+        ])->create();
+        $editedCourse = Course::factory([
+            'active' => true
+        ])->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            $editedCourse
+        );
+
+        $this->assertApiResponse($editedCourse);
+        Event::assertDispatched(EscolaLmsCoursedPublishedTemplateEvent::class);
     }
 
     /**
