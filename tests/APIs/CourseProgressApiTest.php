@@ -119,7 +119,6 @@ class CourseProgressApiTest extends TestCase
             '/api/courses/progress/' . $course->getKey(),
             ['progress' => $this->getProgressUpdate($course)]
         );
-
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
