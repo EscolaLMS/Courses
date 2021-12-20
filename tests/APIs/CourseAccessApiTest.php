@@ -4,11 +4,14 @@ namespace Tests\APIs;
 
 use EscolaLms\Auth\Models\Group;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
 use EscolaLms\Courses\Http\Resources\UserGroupResource;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\TestResponse;
 
@@ -146,6 +149,7 @@ class CourseAccessApiTest extends TestCase
 
     public function testAddUserAccess()
     {
+        Event::fake();
         $student = User::factory()->create();
 
         $this->assertUserCanNotReadProgram($student, $this->course);
@@ -155,12 +159,13 @@ class CourseAccessApiTest extends TestCase
         ]);
 
         $this->response->assertOk();
-
+        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
         $this->assertUserCanReadProgram($student, $this->course);
     }
 
     public function testRemoveUserAccess()
     {
+        Event::fake();
         $student = User::factory()->create();
         $this->course->users()->sync([$student->getKey()]);
 
@@ -171,7 +176,7 @@ class CourseAccessApiTest extends TestCase
         ]);
 
         $this->response->assertOk();
-
+        Event::assertDispatched(EscolaLmsCourseFinishedTemplateEvent::class);
         $this->assertUserCanNotReadProgram($student, $this->course);
     }
 

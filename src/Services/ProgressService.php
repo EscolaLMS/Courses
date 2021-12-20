@@ -4,6 +4,9 @@ namespace EscolaLms\Courses\Services;
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
@@ -53,6 +56,10 @@ class ProgressService implements ProgressServiceContract
         $courseProgressCollection = CourseProgressCollection::make($user, $course);
 
         if ($courseProgressCollection->courseCanBeProgressed()) {
+            if ($courseProgressCollection->getProgress()->count() === 0) {
+                event(new EscolaLmsCourseAccessStartedTemplateEvent($user, $course));
+                event(new EscolaLmsCourseStartedTemplateEvent($user, $course));
+            }
             if (!empty($progress)) {
                 $courseProgressCollection->setProgress($progress);
             }
@@ -69,6 +76,7 @@ class ProgressService implements ProgressServiceContract
             if ($courseIsFinished && !$userHasCourseMarkedAsFinished) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
                 event(new EscolaLmsCourseAccessFinishedTemplateEvent($user, $courseProgressCollection->getCourse()));
+                event(new EscolaLmsCourseFinishedTemplateEvent($user, $courseProgressCollection->getCourse()));
             } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
             }

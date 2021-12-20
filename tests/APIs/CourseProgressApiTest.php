@@ -5,6 +5,10 @@ namespace EscolaLms\Courses\Tests\APIs;
 use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsTopicFinishedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Group;
@@ -118,7 +122,38 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
+        Event::assertDispatched(EscolaLmsTopicFinishedTemplateEvent::class);
         Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
+        Event::assertDispatched(EscolaLmsCourseFinishedTemplateEvent::class);
+    }
+
+    public function test_verify_course_started(): void
+    {
+        Mail::fake();
+        Notification::fake();
+        Queue::fake();
+        Event::fake();
+
+        $courses = Course::factory(5)->create(['active' => true]);
+        $course = $courses->get(0);
+
+        $student = User::factory([
+            'points' => 0,
+        ])->create();
+
+        $courseProgress = CourseProgressCollection::make($student, $course);
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course)]
+        );
+
+        $courseProgress = CourseProgressCollection::make($student, $course);
+        $this->response->assertOk();
+        $this->assertTrue($courseProgress->isFinished());
+        Event::assertDispatched(EscolaLmsCourseStartedTemplateEvent::class);
+        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
     }
 
     public function test_ping_progress_course()

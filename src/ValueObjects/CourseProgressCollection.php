@@ -102,13 +102,10 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         if (!$this->topicCanBeProgressed($topic)) {
             return $this;
         }
-
-        $secondsPassed = 0;
-
         $progress = $this->courseProgressRepositoryContract->findProgress($topic, $this->user);
 
         if ($progress->status === ProgressStatus::COMPLETE) {
-            throw new RuntimeException("Topic is already finished.");
+            throw new RuntimeException(__("Topic is already finished."));
         }
         $secondsPassed = (int) $progress->seconds;
 
