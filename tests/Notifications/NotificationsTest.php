@@ -52,9 +52,9 @@ class NotificationsTest extends TestCase
             'lesson_id' => $lesson->getKey(),
             'active' => true,
         ]);
-
         $user->courses()->save($course);
         CourseProgressCollection::make($user, $course);
+
         $checkForDealines = new CheckForDeadlines();
         $checkForDealines->handle();
 
