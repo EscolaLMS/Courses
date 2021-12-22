@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;

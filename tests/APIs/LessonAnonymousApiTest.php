@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
