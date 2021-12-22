@@ -10,8 +10,8 @@ use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
+use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -39,8 +39,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             AuthServiceProvider::class,
             EscolaLmsScormServiceProvider::class,
             EscolaLmsTagsServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
             EscolaLmsSettingsServiceProvider::class,
+            EscolaLmsTopicTypesServiceProvider::class,
         ];
     }
 
