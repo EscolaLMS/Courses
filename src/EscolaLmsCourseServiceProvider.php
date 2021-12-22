@@ -68,6 +68,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         }
 
         AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
+        AdministrableConfig::registerConfig('escolalms_courses.reminder_of_deadline_count_days', ['integer', 'min: 1']);
     }
 
     protected function bootForConsole(): void
