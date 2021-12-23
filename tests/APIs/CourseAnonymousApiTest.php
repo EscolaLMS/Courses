@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Course;
