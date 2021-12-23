@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Database\Factories;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicResource;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 class TopicResourceFactory extends Factory
 {
@@ -34,7 +35,7 @@ class TopicResourceFactory extends Factory
             $topic_id = $topic->getKey();
             $path = "public/topic/{$topic_id}/resources/";
             $filename = "{$this->faker->word}.pdf";
-            $dest = storage_path('app/' . $path . $filename);
+            $dest = Storage::path('app/' . $path . $filename);
             $destDir = dirname($dest);
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);

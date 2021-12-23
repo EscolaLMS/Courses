@@ -7,6 +7,7 @@ use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 class CourseFactory extends Factory
 {
@@ -61,9 +62,9 @@ class CourseFactory extends Factory
             $filename_image = "course/$id/" . $word . ".jpg";
             $filename_video = "course/$id/" . $word . ".mp4";
             $filename_poster = "course/$id/" . $word . "poster.jpg";
-            $dest_image = storage_path("app/public/$filename_image");
-            $dest_video = storage_path("app/public/$filename_video");
-            $dest_poster = storage_path("app/public/$filename_poster");
+            $dest_image = Storage::path("app/public/$filename_image");
+            $dest_video = Storage::path("app/public/$filename_video");
+            $dest_poster = Storage::path("app/public/$filename_poster");
             $destDir = dirname($dest_image);
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);
