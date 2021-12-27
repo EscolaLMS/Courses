@@ -18,60 +18,21 @@ class TopicAnonymousApiTest extends TestCase
 
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create([
-            'course_id' => $course->id
+            'course_id' => $course->getKey()
         ]);
         $this->topic = Topic::factory()->create([
-            'lesson_id' => $lesson->id
+            'lesson_id' => $lesson->getKey()
         ]);
     }
 
     /**
      * @test
      */
-    public function test_read_topic()
+    public function testReadTopic()
     {
         $this->response = $this->json(
             'GET',
-            '/api/admin/topics/' . $this->topic->id
-        );
-
-        $this->response->assertStatus(401);
-    }
-
-    /**
-     * @test
-     */
-    public function test_delete_topic()
-    {
-        $this->response = $this->json(
-            'DELETE',
-            '/api/admin/topics/' . $this->topic->id
-        );
-
-        $this->response->assertStatus(401);
-    }
-
-    /**
-     * @test
-     */
-    public function test_update_topic()
-    {
-        $this->response = $this->json(
-            'POST',
-            '/api/admin/topics/' . $this->topic->id
-        );
-
-        $this->response->assertStatus(401);
-    }
-
-    /**
-     * @test
-     */
-    public function test_read_topic_types()
-    {
-        $this->response = $this->json(
-            'GET',
-            '/api/admin/topics/types'
+            '/api/admin/topics/' . $this->topic->getKey()
         );
 
         $this->response->assertStatus(401);

@@ -7,12 +7,11 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Repositories\TopicRepository;
+use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
+use EscolaLms\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
 use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Routing\Redirector;
 
@@ -54,7 +53,7 @@ class TopicRepositoryTest extends TestCase
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
 
-        $topic['topicable_type'] = RichText::class;
+        $topic['topicable_type'] = ExampleTopicType::class;
         $topic['value'] = 'lorem ipsum';
 
         /** @var CreateTopicApiRequestMock $request */
@@ -107,7 +106,7 @@ class TopicRepositoryTest extends TestCase
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
 
-        $topic['topicable_type'] = RichText::class;
+        $topic['topicable_type'] = ExampleTopicType::class;
         $topic['value'] = 'lorem ipsum';
 
         /** @var CreateTopicApiRequestMock $request */
@@ -130,7 +129,7 @@ class TopicRepositoryTest extends TestCase
         $topicableKey = $createdTopic->topicable->getKey();
 
         $fakeTopic = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
-        $fakeTopic['topicable_type'] = RichText::class;
+        $fakeTopic['topicable_type'] = ExampleTopicType::class;
         $fakeTopic['value'] = 'ipsum lorem';
         $fakeTopic['topic'] = $createdTopic->getKey();
 
@@ -152,7 +151,7 @@ class TopicRepositoryTest extends TestCase
         $updatedTopic = $createdTopic->topicable->getKey();
 
         $fakeTopic2 = Topic::factory()->make(['lesson_id' => $lesson->getKey()])->toArray();
-        $fakeTopic2['topicable_type'] = OEmbed::class;
+        $fakeTopic2['topicable_type'] = SecondExampleTopicType::class;
         $fakeTopic2['value'] = 'https://embed.test/embed';
         $fakeTopic2['topic'] = $createdTopic->getKey();
 
@@ -183,10 +182,10 @@ class TopicRepositoryTest extends TestCase
 
     public function testUnregisterContentClass()
     {
-        $this->topicRepo->registerContentClass(Video::class);
-        $this->assertTrue(in_array(Video::class, $this->topicRepo->availableContentClasses()));
-        $this->topicRepo->unregisterContentClass(Video::class);
-        $this->assertTrue(!in_array(Video::class, $this->topicRepo->availableContentClasses()));
+        $this->topicRepo->registerContentClass(ExampleTopicType::class);
+        $this->assertTrue(in_array(ExampleTopicType::class, $this->topicRepo->availableContentClasses()));
+        $this->topicRepo->unregisterContentClass(ExampleTopicType::class);
+        $this->assertTrue(!in_array(ExampleTopicType::class, $this->topicRepo->availableContentClasses()));
     }
 
     public function testOldTopicContentClass()
@@ -194,13 +193,13 @@ class TopicRepositoryTest extends TestCase
         $course = Course::factory()->create();
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->make(['lesson_id' => $lesson->getKey()]);
-        $richText = RichText::factory()->create();
+        $richText = ExampleTopicType::factory()->create();
 
         $topic->topicable_id = $richText->getKey();
-        $topic->topicable_type = 'EscolaLms\Courses\Models\TopicContent\RichText';
+        $topic->topicable_type = ExampleTopicType::class;
         $topic->save();
 
-        $this->assertEquals('EscolaLms\Courses\Models\TopicContent\RichText', $topic->topicable_type);
-        $this->assertEquals(RichText::class, get_class($topic->topicable));
+        $this->assertEquals(ExampleTopicType::class, $topic->topicable_type);
+        $this->assertEquals(ExampleTopicType::class, get_class($topic->topicable));
     }
 }

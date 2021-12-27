@@ -18,6 +18,7 @@ class CreateTopicApiRequestMock extends CreateTopicAPIRequest
 
     public function manualValidation(): self
     {
+
         $this->prepareForValidation();
 
         if (!$this->passesAuthorization()) {

@@ -7,10 +7,13 @@ use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
 use EscolaLms\Courses\AuthServiceProvider;
 use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
+use EscolaLms\Courses\Facades\Topic;
+use EscolaLms\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
+use EscolaLms\Courses\Tests\Http\Resources\TopicType\Admin\ExampleTopicTypeResource;
+use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
@@ -25,6 +28,11 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         parent::setUp();
         Passport::useClientModel(Client::class);
+        Topic::registerContentClasses([ExampleTopicType::class]);
+        Topic::registerContentClasses([SecondExampleTopicType::class]);
+        Topic::registerResourceClasses(ExampleTopicType::class, [
+            'admin' => ExampleTopicTypeResource::class,
+        ]);
     }
 
     protected function getPackageProviders($app)
@@ -40,7 +48,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsScormServiceProvider::class,
             EscolaLmsTagsServiceProvider::class,
             EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
+            EscolaLmsTopicTypeTestServiceProvider::class,
         ];
     }
 
