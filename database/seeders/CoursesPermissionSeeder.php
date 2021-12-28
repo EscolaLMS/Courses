@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Database\Seeders;
 
 use EscolaLms\Core\Enums\UserRole;
+use EscolaLms\Courses\Enums\CoursesPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -16,12 +17,28 @@ class CoursesPermissionSeeder extends Seeder
         $admin = Role::findOrCreate(UserRole::ADMIN, 'api');
         $tutor = Role::findOrCreate(UserRole::TUTOR, 'api');
 
-        Permission::findOrCreate('update course', 'api');
-        Permission::findOrCreate('delete course', 'api');
-        Permission::findOrCreate('create course', 'api');
-        Permission::findOrCreate('attend course', 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_UPDATE, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_CREATE, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_UPDATE_OWNED, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE_OWNED, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND_OWNED, 'api');
 
-        $admin->givePermissionTo(['update course', 'delete course', 'create course', 'attend course']);
-        $tutor->givePermissionTo(['update course', 'delete course', 'create course', 'attend course']);
+        $admin->givePermissionTo([
+            CoursesPermissionsEnum::COURSE_UPDATE,
+            CoursesPermissionsEnum::COURSE_DELETE,
+            CoursesPermissionsEnum::COURSE_CREATE,
+            CoursesPermissionsEnum::COURSE_ATTEND,
+            CoursesPermissionsEnum::COURSE_UPDATE_OWNED,
+            CoursesPermissionsEnum::COURSE_DELETE_OWNED,
+            CoursesPermissionsEnum::COURSE_ATTEND_OWNED,
+        ]);
+        $tutor->givePermissionTo([
+            CoursesPermissionsEnum::COURSE_CREATE,
+            CoursesPermissionsEnum::COURSE_UPDATE_OWNED,
+            CoursesPermissionsEnum::COURSE_DELETE_OWNED,
+            CoursesPermissionsEnum::COURSE_ATTEND_OWNED,
+        ]);
     }
 }
