@@ -5,12 +5,14 @@ namespace EscolaLms\Courses\Http\Controllers;
 use Error;
 use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Controllers\Swagger\TopicAPISwagger;
+use EscolaLms\Courses\Http\Requests\CloneTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Resources\TopicResource;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -22,9 +24,12 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
     /** @var TopicRepository */
     private $topicRepository;
 
-    public function __construct(TopicRepositoryContract $topicRepo)
+    private TopicServiceContract $topicService;
+
+    public function __construct(TopicRepositoryContract $topicRepo, TopicServiceContract $topicService)
     {
         $this->topicRepository = $topicRepo;
+        $this->topicService = $topicService;
     }
 
     public function index(Request $request)
@@ -109,5 +114,22 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $classes = $this->topicRepository->availableContentClasses();
 
         return $this->sendResponse($classes, 'Topic content available list');
+    }
+
+    public function clone(CloneTopicAPIRequest $request)
+    {
+        $topic = $request->getTopic();
+
+        if (empty($topic)) {
+            return $this->sendError('Topic not found');
+        }
+
+        try {
+            $topic = $this->topicService->cloneTopic($topic);
+        } catch (\Exception $error) {
+            return $this->sendError('Error', 400);
+        }
+
+        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic cloned successfully');
     }
 }

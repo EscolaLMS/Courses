@@ -19,6 +19,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
     Route::get('topics/types', [TopicAPIController::class, 'classes']);
     Route::resource('topics', TopicAPIController::class);
     Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
+    Route::post('topics/{id}/clone', [TopicAPIController::class, 'clone']);
 
     Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list']);
     Route::post('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'upload']);

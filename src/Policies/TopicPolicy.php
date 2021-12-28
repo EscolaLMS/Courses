@@ -30,4 +30,9 @@ class TopicPolicy
     {
         return Gate::check('attend', $topic->lesson);
     }
+
+    public function clone(User $user, Topic $topic): bool
+    {
+        return $user->can('update', $topic->lesson);
+    }
 }
