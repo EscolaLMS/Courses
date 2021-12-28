@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
@@ -30,16 +30,16 @@ class TopicResourceTutorApiTest extends TestCase
         $this->topic = Topic::factory()->create(['lesson_id' => $this->lesson->id]);
     }
 
-    public function test_create_resource()
+    public function testCreateResource()
     {
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            '/api/admin/topics/'.$this->topic->getKey().'/resources',
             [
-                'resource' => $file
+                'resource' => $file,
             ]
         );
 
@@ -47,7 +47,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
 
-        $fullpath = $data->data->path . $data->data->name;
+        $fullpath = $data->data->path.$data->data->name;
 
         Storage::disk('local')->assertExists($fullpath);
 
@@ -57,16 +57,17 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
     }
 
-    public function test_list_resource()
+
+    public function testListResource()
     {
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            '/api/admin/topics/'.$this->topic->getKey().'/resources',
             [
-                'resource' => $file
+                'resource' => $file,
             ]
         );
 
@@ -74,7 +75,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
 
-        $fullpath = $data->data->path . $data->data->name;
+        $fullpath = $data->data->path.$data->data->name;
 
         Storage::disk('local')->assertExists($fullpath);
 
@@ -83,7 +84,7 @@ class TopicResourceTutorApiTest extends TestCase
             'name' => 'test.pdf',
         ]);
 
-        $this->response = $this->actingAs($this->user, 'api')->json('GET', '/api/admin/topics/' . $this->topic->getKey() . '/resources/');
+        $this->response = $this->actingAs($this->user, 'api')->json('GET', '/api/admin/topics/'.$this->topic->getKey().'/resources/');
         $this->response->assertStatus(200);
         $this->response->assertJsonFragment([
             'data' => [
@@ -93,21 +94,21 @@ class TopicResourceTutorApiTest extends TestCase
                     'path' => $data->data->path,
                     'url' => $data->data->url,
                     'topic_id' => $data->data->topic_id,
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 
-    public function test_delete_resource()
+    public function testDeleteResource()
     {
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            '/api/admin/topics/'.$this->topic->getKey().'/resources',
             [
-                'resource' => $file
+                'resource' => $file,
             ]
         );
 
@@ -115,7 +116,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
         $id = $data->data->id;
-        $fullpath = $data->data->path . $data->data->name;
+        $fullpath = $data->data->path.$data->data->name;
 
         Storage::disk('local')->assertExists($fullpath);
         $this->assertDatabaseHas('topic_resources', [
@@ -123,24 +124,24 @@ class TopicResourceTutorApiTest extends TestCase
             'name' => 'test.pdf',
         ]);
 
-        $this->response = $this->actingAs($this->user, 'api')->delete('/api/admin/topics/' . $this->topic->getKey() . '/resources/' . $id);
+        $this->response = $this->actingAs($this->user, 'api')->delete('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id);
         $this->response->assertStatus(200);
         Storage::disk('local')->assertMissing($fullpath);
         $this->assertDatabaseMissing('topic_resources', [
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
-    public function test_rename_resource()
+    public function testRenameResource()
     {
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
 
         $this->response = $this->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            '/api/admin/topics/'.$this->topic->getKey().'/resources',
             [
-                'resource' => $file
+                'resource' => $file,
             ]
         );
 
@@ -148,7 +149,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
         $id = $data->data->id;
-        $fullpath = $data->data->path . $data->data->name;
+        $fullpath = $data->data->path.$data->data->name;
 
         Storage::disk('local')->assertExists($fullpath);
         $this->assertDatabaseHas('topic_resources', [
@@ -156,12 +157,12 @@ class TopicResourceTutorApiTest extends TestCase
             'name' => 'test.pdf',
         ]);
 
-        $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/' . $this->topic->getKey() . '/resources/' . $id, [
-            'name' => 'test-renamed'
+        $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id, [
+            'name' => 'test-renamed',
         ]);
         $this->response->assertStatus(200);
 
-        $newpath = $data->data->path . 'test-renamed.pdf';
+        $newpath = $data->data->path.'test-renamed.pdf';
 
         Storage::disk('local')->assertMissing($fullpath);
         Storage::disk('local')->assertExists($newpath);

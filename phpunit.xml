@@ -8,7 +8,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
-    <testsuite name="Escola LMS Auth">
+    <testsuite name="Escola LMS Courses">
         <directory suffix="Test.php">./tests</directory>
     </testsuite>
     <php>

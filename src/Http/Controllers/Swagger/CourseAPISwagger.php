@@ -10,6 +10,7 @@ use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 interface CourseAPISwagger
@@ -707,4 +708,39 @@ interface CourseAPISwagger
      */
 
     public function sort(SortAPIRequest $request);
+
+    /**
+     * @OA\Get(
+     *      path="/api/tags/uniqueTags",
+     *      summary="Endpoints get unique tags from active courses",
+     *      tags={"Courses"},
+     *      description="Get unique tags",
+     *      security={
+     *         {"passport": {}},
+     *      },
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="text/html"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Course"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function uniqueTags(): JsonResponse;
 }

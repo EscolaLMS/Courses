@@ -6,11 +6,11 @@ use Error;
 use EscolaLms\Courses\Exceptions\TopicException;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Models\Contracts\TopicContentContract;
+use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\TopicTypes\Models\Contracts\TopicContentContract;
-use EscolaLms\TopicTypes\Models\Contracts\TopicFileContentContract;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -97,7 +97,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         if (!isset($this->resourceClasses[$type][$topicTypeClass]) && class_exists($resourceClass) && (is_a($resourceClass, JsonResource::class, true))) {
             $this->resourceClasses[$type][$topicTypeClass] = $resourceClass;
         }
-
         return $this->resourceClasses[$type];
     }
 
@@ -213,7 +212,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             if (!in_array($class, $this->contentClasses)) {
                 throw new Error("Type '$class' is not allowed");
             }
-
             if ($topic->topicable && $class === get_class($topic->topicable) && $request->hasAny(array_keys($class::rules()))) {
                 $this->updateTopicContentModelFromRequest($request, $topic->topicable);
             } else {
@@ -244,7 +242,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         if (!in_array($class, $this->contentClasses)) {
             throw new Error("Type '$class' is not allowed");
         }
-
         $model = new $class();
         assert($model instanceof TopicContentContract);
         assert($model instanceof Model);
@@ -267,11 +264,14 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     }
 
     /**
-     * @return TopicContentContract|TopicFileContentContract|Model
-     *
+     * @param FormRequest $request
+     * @param $topicContent
+     * @return Model
      * @throws TopicException
+     * @throws \Illuminate\Validation\ValidationException
+     *
      */
-    private function updateTopicContentModelFromRequest(FormRequest $request, TopicContentContract $topicContent): Model
+    private function updateTopicContentModelFromRequest(FormRequest $request,TopicContentContract $topicContent): Model
     {
         assert($topicContent instanceof Model);
 
@@ -281,7 +281,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         if ($validator->fails()) {
             throw new TopicException(TopicException::CONTENT_VALIDATION, $validator->errors()->toArray());
         }
-
         $attributes = $validator->validated();
         if ($topicContent instanceof TopicFileContentContract) {
             Arr::forget($attributes, $topicContent->getFileKeyNames());
@@ -296,6 +295,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
     private function getRulesForTopicContentUpdate(FormRequest $request, TopicContentContract $topicContent)
     {
+
         // we want to do partial update, so we add 'sometimes' to all rules
         $partialRules = array_map(fn ($field_rules) => is_array($field_rules) ? array_merge(['sometimes'], $field_rules) : 'sometimes' . $field_rules, $topicContent::rules());
 

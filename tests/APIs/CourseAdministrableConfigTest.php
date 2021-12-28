@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CoursesConstant;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
 use EscolaLms\Settings\Enums\SettingsPermissionsEnum;
@@ -34,17 +35,17 @@ class CourseAdministrableConfigTest extends TestCase
             'GET',
             '/api/config',
         );
-
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses' => ['platform_visibility' => 'public']
+            'escolalms_courses' => [
+                'platform_visibility' => 'public',
+                'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS
+            ]
         ]);
-
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/config',
         );
-
         $this->response->assertOk();
         $this->response->assertJsonFragment([
             'escolalms_courses' => [
@@ -53,6 +54,12 @@ class CourseAdministrableConfigTest extends TestCase
                     'public' => true,
                     'readonly' => false,
                     'value' => 'public',
+                ],
+                'reminder_of_deadline_count_days' => [
+                    'rules' => ['integer', 'min: 1'],
+                    'public' => true,
+                    'readonly' => false,
+                    'value' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 ]
             ]
         ]);

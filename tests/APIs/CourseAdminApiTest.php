@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs;
+namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
@@ -11,6 +11,7 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -554,5 +555,33 @@ class CourseAdminApiTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'poster_path' => $path
         ]);
+    }
+
+    public function test_unique_tags_courses() : void
+    {
+        $courseActive = Course::factory(['active' => true])->create();
+        $courseUnActive = Course::factory(['active' => false])->create();
+        $tagActiveCourse = Tag::factory([
+            'morphable_type' => Course::class,
+            'morphable_id' => $courseActive->getKey()
+        ])->create();
+        $tagUnActiveCourse = Tag::factory([
+            'morphable_type' => Course::class,
+            'morphable_id' => $courseUnActive->getKey()
+        ])->create();
+
+        $response = $this->json('GET', '/api/tags/uniqueTags');
+        $response->assertStatus(200);
+        $this->assertObjectHasAttribute('data', $response->getData());
+        $result = false;
+        foreach ($response->getData()->data as $tag) {
+            if ($tag->title === $tagActiveCourse->title) {
+                $result = true;
+            }
+            if ($tag->title === $tagUnActiveCourse->title) {
+                $result = false;
+            }
+        }
+        $this->assertTrue($result);
     }
 }
