@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
+use EscolaLms\Courses\Http\Requests\CloneTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
@@ -277,4 +278,52 @@ interface TopicAPISwagger
      */
 
     public function classes();
+
+    /**
+     * @param CloneTopicAPIRequest $request
+     * @return Response
+     *
+     * @OA\Post(
+     *      path="/api/admin/topics/{id}/clone",
+     *      summary="Clone topic",
+     *      tags={"Admin Courses"},
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *      description="Clone Topic.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="id of Topic",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Topic cloned successfully",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Topic"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    public function clone(CloneTopicAPIRequest $request);
 }
