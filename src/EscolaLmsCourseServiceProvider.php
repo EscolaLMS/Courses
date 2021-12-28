@@ -44,11 +44,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
-        Relation::morphMap([
-            'EscolaLms\Courses\Models\TopicContent\RichText' => RichText::class,
-        ]);
-
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
