@@ -18,6 +18,8 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -28,13 +30,16 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     /** @var CourseRepository */
     private CourseRepositoryContract $courseRepository;
     private CourseServiceContract $courseServiceContract;
+    private TagRepositoryContract $tagRepositoryContract;
 
     public function __construct(
         CourseRepositoryContract $courseRepo,
-        CourseServiceContract $courseServiceContract
+        CourseServiceContract $courseServiceContract,
+        TagRepositoryContract $tagRepositoryContract
     ) {
         $this->courseRepository = $courseRepo;
         $this->courseServiceContract = $courseServiceContract;
+        $this->tagRepositoryContract = $tagRepositoryContract;
     }
 
     public function index(Request $request)
@@ -129,5 +134,13 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
 
         return $this->sendResponse([], __($request->get('class') . ' sorted successfully'));
+    }
+
+    public function uniqueTags(): JsonResponse
+    {
+        $tags = $this->tagRepositoryContract->uniqueTagsFromActiveCourses();
+        return $tags ?
+            $this->sendResponse($tags, 'Tags unique fetched successfully') :
+            $this->sendError('Tags not found', 404) ;
     }
 }
