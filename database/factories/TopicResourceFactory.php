@@ -33,9 +33,9 @@ class TopicResourceFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($topic) {
             $topic_id = $topic->getKey();
-            $path = "public/topic/{$topic_id}/resources/";
+            $path = "topic/{$topic_id}/resources/";
             $filename = "{$this->faker->word}.pdf";
-            $dest = Storage::path('app/' . $path . $filename);
+            $dest = Storage::disk('public')->path($path . $filename);
             $destDir = dirname($dest);
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0777, true);
