@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Policies;
 
 use EscolaLms\Core\Models\User;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Topic;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Gate;
@@ -13,22 +14,22 @@ class TopicPolicy
 
     public function view(User $user, Topic $topic)
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can(CoursesPermissionsEnum::TOPIC_UPDATE, $topic->lesson);
     }
 
     public function update(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can(CoursesPermissionsEnum::TOPIC_UPDATE, $topic->lesson);
     }
 
     public function delete(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can(CoursesPermissionsEnum::TOPIC_UPDATE, $topic->lesson);
     }
 
     public function attend(?User $user, Topic $topic)
     {
-        return Gate::check('attend', $topic->lesson);
+        return Gate::check(CoursesPermissionsEnum::TOPIC_ATTEND, $topic->lesson);
     }
 
     public function clone(User $user, Topic $topic): bool

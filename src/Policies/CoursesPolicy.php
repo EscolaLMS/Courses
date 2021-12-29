@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Policies;
 
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -21,12 +22,15 @@ class CoursesPolicy
         if ($user->hasRole('admin')) {
             return true;
         }
-        if ($user->can('update course') && $course->author_id === $user->id) {
+        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE)) {
             return true;
-        };
-        if ($user->can('update course') && $course->author_id !== $user->id) {
+        }
+        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED) && $course->author_id === $user->id) {
+            return true;
+        }
+        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED) && $course->author_id !== $user->id) {
             return Response::deny('You do not own this course.');
-        };
+        }
 
         return false;
     }
@@ -40,7 +44,7 @@ class CoursesPolicy
         if ($user->hasRole('admin')) {
             return true;
         }
-        return $user->can('create course');
+        return $user->can(CoursesPermissionsEnum::COURSE_CREATE);
     }
 
     /**
@@ -53,12 +57,15 @@ class CoursesPolicy
         if ($user->hasRole('admin')) {
             return true;
         }
-        if ($user->can('update course') && $course->author_id === $user->id) {
+        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE)) {
             return true;
-        };
-        if ($user->can('update course') && $course->author_id !== $user->id) {
+        }
+        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED) && $course->author_id === $user->id) {
+            return true;
+        }
+        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED) && $course->author_id !== $user->id) {
             return Response::deny('You do not own this course.');
-        };
+        }
 
         return false;
     }
@@ -84,9 +91,12 @@ class CoursesPolicy
             return true;
         }
 
-        if ($user->can('update course') && $course->author_id === $user->id) {
+        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND)) {
             return true;
-        };
+        }
+        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED) && $course->author_id === $user->id) {
+            return true;
+        }
 
         return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
     }
