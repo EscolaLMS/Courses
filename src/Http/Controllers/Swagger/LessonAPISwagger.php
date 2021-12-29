@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
+use EscolaLms\Courses\Http\Requests\CloneLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
@@ -232,4 +233,49 @@ interface LessonAPISwagger
      */
 
     public function destroy($id, DeleteLessonAPIRequest $request);
+
+    /**
+     * @OA\Post(
+     *      path="/api/admin/lessons/{id}/clone",
+     *      summary="Clone Lesson",
+     *      tags={"Admin Courses"},
+     *      description="Clone Lesson with topics",
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Lesson",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Lesson"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    public function clone(CloneLessonAPIRequest $request);
 }

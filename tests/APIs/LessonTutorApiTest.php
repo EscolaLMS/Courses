@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\Models\Lesson;
@@ -105,5 +107,51 @@ class LessonTutorApiTest extends TestCase
         );
 
         $this->response->assertStatus(404);
+    }
+
+    public function test_clone_lesson_not_found()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->getKey(),
+        ]);
+        $lesson->delete();
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/admin/lessons/' . $lesson->getKey() . '/clone');
+
+        $this->response->assertStatus(404);
+    }
+
+    public function test_clone_lesson()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create([
+            'course_id' => $course->getKey(),
+        ]);
+        $topicable = ExampleTopicType::factory()->create();
+        Topic::factory()->create([
+            'lesson_id' => $lesson->getKey(),
+            'topicable_type' => ExampleTopicType::class,
+            'topicable_id' => $topicable->getKey(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/admin/lessons/' . $lesson->getKey() . '/clone');
+
+        $this->response->assertStatus(201);
+
+        $data = json_decode($this->response->getContent());
+        $clonedLessonId = $data->data->id;
+        $this->assertApiResponse(array_diff_key($lesson->toArray(), array_flip(['id', 'course_id'])));
+
+        $this->assertDatabaseHas('lessons', [
+            'id' => $clonedLessonId,
+            'course_id' => $course->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('topics', [
+            'lesson_id' => $clonedLessonId,
+        ]);
     }
 }

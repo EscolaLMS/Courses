@@ -3,13 +3,17 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
+use EscolaLms\Courses\Http\Requests\CloneLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
+use EscolaLms\Courses\Http\Resources\Admin\LessonWithTopicsAdminResource;
 use EscolaLms\Courses\Http\Resources\LessonResource;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\LessonRepository;
+use EscolaLms\Courses\Services\Contracts\LessonServiceContract;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -20,9 +24,12 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
     /** @var LessonRepository */
     private $lessonRepository;
 
-    public function __construct(LessonRepository $lessonRepo)
+    private LessonServiceContract $lessonService;
+
+    public function __construct(LessonRepository $lessonRepo, LessonServiceContract $lessonService)
     {
         $this->lessonRepository = $lessonRepo;
+        $this->lessonService = $lessonService;
     }
 
     public function index(Request $request)
@@ -83,5 +90,22 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         $this->lessonRepository->delete($id);
 
         return $this->sendSuccess('Lesson deleted successfully');
+    }
+
+    public function clone(CloneLessonAPIRequest $request): JsonResponse
+    {
+        $lesson = $request->getLesson();
+
+        if (empty($lesson)) {
+            return $this->sendError('Lesson not found');
+        }
+
+        try {
+            $lesson = $this->lessonService->cloneLesson($lesson);
+        } catch (\Exception $error) {
+            return $this->sendError('Error', 400);
+        }
+
+        return $this->sendResponseForResource(LessonWithTopicsAdminResource::make($lesson), 'Lesson cloned successfully');
     }
 }
