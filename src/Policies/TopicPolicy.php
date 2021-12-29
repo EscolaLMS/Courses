@@ -3,7 +3,7 @@
 namespace EscolaLms\Courses\Policies;
 
 use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enums\CoursesPermissionsEnum;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Topic;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Gate;

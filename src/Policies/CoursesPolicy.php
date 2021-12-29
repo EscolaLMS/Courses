@@ -2,7 +2,7 @@
 
 namespace EscolaLms\Courses\Policies;
 
-use EscolaLms\Courses\Enums\CoursesPermissionsEnum;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;

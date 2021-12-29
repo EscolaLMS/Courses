@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Enums;
+namespace EscolaLms\Courses\Enum;
 
 use EscolaLms\Core\Enums\BasicEnum;
 

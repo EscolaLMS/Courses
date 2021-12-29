@@ -3,7 +3,7 @@
 namespace EscolaLms\Courses\Database\Seeders;
 
 use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Enums\CoursesPermissionsEnum;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
