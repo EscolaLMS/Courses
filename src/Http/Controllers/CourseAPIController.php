@@ -94,9 +94,9 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
     {
-        $player = $this->courseServiceContract->getScormPlayer($id);
+        $data = $this->courseServiceContract->getScormPlayer($id);
 
-        return $player;
+        return view('scorm::player', ['data' => $data]);
     }
 
     public function update($id, UpdateCourseAPIRequest $request)
