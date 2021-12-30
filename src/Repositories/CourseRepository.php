@@ -41,7 +41,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'duration',
         'author_id',
         'active',
-        'scorm_id',
+        'scorm_sco_id',
         'poster_path',
         'findable',
         'purchasable',
