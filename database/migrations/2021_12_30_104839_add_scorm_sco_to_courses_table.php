@@ -14,6 +14,7 @@ class AddScormScoToCoursesTable extends Migration
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
+            $table->dropForeign('courses_scorm_id_foreign');
             $table->dropColumn('scorm_id');
 
             $table->bigInteger('scorm_sco_id')->unsigned()->nullable();
