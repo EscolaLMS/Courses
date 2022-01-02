@@ -6,6 +6,7 @@ use EscolaLms\Core\Enums\BasicEnum;
 
 class CoursesPermissionsEnum extends BasicEnum
 {
+    const COURSE_LIST = 'course_list';
     const COURSE_CREATE = 'course_create';
     const COURSE_UPDATE = 'course_update';
     const COURSE_DELETE = 'course_delete';
