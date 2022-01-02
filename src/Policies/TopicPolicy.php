@@ -31,4 +31,9 @@ class TopicPolicy
     {
         return Gate::check(CoursesPermissionsEnum::TOPIC_ATTEND, $topic->lesson);
     }
+
+    public function clone(User $user, Topic $topic): bool
+    {
+        return $user->can('update', $topic->lesson);
+    }
 }

@@ -31,4 +31,9 @@ class LessonPolicy
     {
         return Gate::check(CoursesPermissionsEnum::LESSON_ATTEND, $lesson->course);
     }
+
+    public function clone(User $user, Lesson $lesson): bool
+    {
+        return $user->can('update', $lesson->course);
+    }
 }

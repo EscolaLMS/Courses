@@ -19,9 +19,13 @@ use EscolaLms\Courses\Repositories\LessonRepository;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Repositories\TopicResourceRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Courses\Services\Contracts\LessonServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
+use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
 use EscolaLms\Courses\Services\CourseService;
+use EscolaLms\Courses\Services\LessonService;
 use EscolaLms\Courses\Services\ProgressService;
+use EscolaLms\Courses\Services\TopicService;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -38,6 +42,8 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         TopicRepositoryContract::class => TopicRepository::class,
         TopicResourceRepositoryContract::class => TopicResourceRepository::class,
         LessonRepositoryContract::class => LessonRepository::class,
+        TopicServiceContract::class => TopicService::class,
+        LessonServiceContract::class => LessonService::class,
     ];
 
     public function boot()
