@@ -10,6 +10,11 @@ class ListCourseAPIRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return isset($user) ? $user->can('list', Course::class) : false;
+        return isset($user) ? $user->can('list', Course::class) : true;
+    }
+
+    public function rules(): array
+    {
+        return [];
     }
 }

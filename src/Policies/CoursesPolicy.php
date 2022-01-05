@@ -37,7 +37,8 @@ class CoursesPolicy
             return true;
         }
         if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED) && $course->author_id !== $user->id) {
-            return Response::deny('You do not own this course.');
+            return false;
+            //return Response::deny('You do not own this course.');
         }
 
         return false;
@@ -72,7 +73,8 @@ class CoursesPolicy
             return true;
         }
         if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED) && $course->author_id !== $user->id) {
-            return Response::deny('You do not own this course.');
+            return false;
+            //return Response::deny('You do not own this course.');
         }
 
         return false;
