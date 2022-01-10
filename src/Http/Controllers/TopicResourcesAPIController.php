@@ -54,5 +54,7 @@ class TopicResourcesAPIController extends AppBaseController implements TopicReso
         if ($this->resourceRepository->renameModel($topicResource, $request->getName())) {
             return $this->sendResponseForResource(TopicResourceResource::make($topicResource->refresh()), 'Topic resource renamed successfully');
         }
+
+        return $this->sendError(__('File already exists'));
     }
 }

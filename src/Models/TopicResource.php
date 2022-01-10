@@ -63,19 +63,26 @@ class TopicResource extends Model
         return \EscolaLms\Courses\Database\Factories\TopicResourceFactory::new();
     }
 
+    protected static function booted()
+    {
+        static::retrieved(function (TopicResource $resource) {
+            $resource->fixAssetPaths();
+        });
+    }
+
+
     public function getUrlAttribute()
     {
-        return Storage::url($this->path.$this->name);
+        return Storage::url($this->path);
     }
 
     private function fixPath($key): array
     {
-        // FIXME of this code relates to https://github.com/EscolaLMS/Courses/issues/159
         $value = $this->$key.$this->name;
         $topic = $this->topic;
-        $course = $topic->lesson->course;
+        $course = $topic->course;
 
-        $destination = sprintf('courses/%d/topic/%d/resources/%s', $course->id, $topic->id, basename($value));
+        $destination = sprintf('courses/%d/topic/%d/resources/%s', $course->id, $topic->id, $this->name);
 
         if (strpos($value, $destination) === false && Storage::exists($value)) {
             $result = [$value, $destination];
