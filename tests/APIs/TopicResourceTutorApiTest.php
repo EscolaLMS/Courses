@@ -153,6 +153,11 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id, [
+            'name' => 'test',
+        ]);
+        $this->response->assertStatus(422);
+
+        $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id, [
             'name' => 'test-renamed',
         ]);
         $this->response->assertStatus(200);

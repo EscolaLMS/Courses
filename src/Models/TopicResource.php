@@ -70,7 +70,6 @@ class TopicResource extends Model
         });
     }
 
-
     public function getUrlAttribute()
     {
         return Storage::url($this->path);
