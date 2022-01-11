@@ -47,7 +47,7 @@ class TopicService implements TopicServiceContract
         $clonedTopic->save();
 
         foreach ($topic->resources as $resource) {
-            if (Storage::exists($resource->path . $resource->name)) {
+            if (Storage::exists($resource->path)) {
                 $this->cloneTopicResource($clonedTopic, $resource);
             }
         }
@@ -57,9 +57,10 @@ class TopicService implements TopicServiceContract
 
     private function cloneTopicResource(Model $clonedTopic, TopicResource $topicResource): Model
     {
-        $pathFrom = $topicResource->path . $topicResource->name;
-        $pathTo = $clonedTopic->getStorageDirectoryAttribute() . 'resources' . DIRECTORY_SEPARATOR;
-        Storage::copy($pathFrom, $pathTo . $topicResource->name);
+        $pathFrom = $topicResource->path;
+        $pathTo = $clonedTopic->getStorageDirectoryAttribute() . 'resources' . DIRECTORY_SEPARATOR . $topicResource->name;
+
+        Storage::copy($pathFrom, $pathTo);
 
         $topicResourceData = $topicResource->replicate()->toArray();
         $topicResourceData['topic_id'] = $clonedTopic->getKey();

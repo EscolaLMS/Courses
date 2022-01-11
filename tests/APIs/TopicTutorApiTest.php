@@ -170,7 +170,7 @@ class TopicTutorApiTest extends TestCase
         foreach ($fileNames as $fileName) {
             TopicResource::factory()->create([
                 'topic_id' => $topic->getKey(),
-                'path' => 'test/resources/',
+                'path' => 'test/resources/' . $fileName,
                 'name' => $fileName,
             ]);
         }
@@ -204,7 +204,7 @@ class TopicTutorApiTest extends TestCase
         }
 
         TopicResource::where('topic_id', $clonedTopicId)->get()->each(function ($resource) {
-            Storage::disk('local')->assertExists($resource->path . $resource->name);
+            Storage::assertExists($resource->path);
         });
 
         $this->assertEquals($exceptedOrder, $data->data->order);
