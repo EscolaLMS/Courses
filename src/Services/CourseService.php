@@ -20,6 +20,7 @@ use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Peopleaps\Scorm\Model\ScormScoModel;
 
 class CourseService implements CourseServiceContract
 {
@@ -85,37 +86,14 @@ class CourseService implements CourseServiceContract
 
     public function getScormPlayer(int $courseId)
     {
-        $course = Course::with(['scorm.scos'])->findOrFail($courseId);
+        $course = Course::with(['scormSco'])->findOrFail($courseId);
 
-        if (empty($course->scorm_id)) {
-            throw new Error("This course does not have SCORM package!");
+        if (empty($course->scorm_sco_id)) {
+            throw new Error("This course does not have SCORM SCO object!");
         }
 
-        $uuid = false;
-        foreach ($course->scorm->scos as $sco) {
-            if (!empty($sco->entry_url)) {
-                $uuid = $sco->uuid;
-                break;
-            }
-        }
-
-        if (!$uuid) {
-            throw new Error("This course does not have SCORM entry_url");
-        }
-
-        //$scormService = App::make(ScormServiceContract::class);
-
-        $data = $this->scormService->getScoByUuid($uuid);
-        $data['entry_url_absolute'] = Storage::url('scorm/' . $data->scorm->version . '/' . $data->scorm->uuid . '/' . $data->entry_url);
-
-        $data['player'] = (object) [
-            'lmsCommitUrl' => '/api/lms',
-            'logLevel' => 1,
-            'autoProgress' => true,
-            'cmi' => [] // cmi is user progress
-        ];
-
-        return view('scorm::player', ['data' => $data]);
+        $sco = ScormScoModel::where('id', $course->scorm_sco_id)->first();
+        return $this->scormService->getScoViewDataByUuid($sco->uuid);
     }
 
     public function addAccessForUsers(Course $course, array $users = []): void
