@@ -362,8 +362,6 @@ class CourseAdminApiTest extends TestCase
         $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => true]);
         $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'active' => false]);
 
-
-
         $this->response = $this->json(
             'GET',
             '/api/courses/?order_by=base_price&order=DESC'

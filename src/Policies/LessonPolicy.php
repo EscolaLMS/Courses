@@ -12,7 +12,7 @@ class LessonPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Lesson $lesson)
+    public function view(User $user, Lesson $lesson): bool
     {
         return $user->can(CoursesPermissionsEnum::LESSON_UPDATE, $lesson->course);
     }
@@ -27,7 +27,7 @@ class LessonPolicy
         return $user->can(CoursesPermissionsEnum::LESSON_UPDATE, $lesson->course);
     }
 
-    public function attend(?User $user, Lesson $lesson)
+    public function attend(?User $user, Lesson $lesson): bool
     {
         return Gate::check(CoursesPermissionsEnum::LESSON_ATTEND, $lesson->course);
     }

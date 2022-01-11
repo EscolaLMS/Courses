@@ -17,6 +17,7 @@ class CoursesPermissionSeeder extends Seeder
         $admin = Role::findOrCreate(UserRole::ADMIN, 'api');
         $tutor = Role::findOrCreate(UserRole::TUTOR, 'api');
 
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_LIST, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_UPDATE, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_CREATE, 'api');
@@ -26,6 +27,7 @@ class CoursesPermissionSeeder extends Seeder
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND_OWNED, 'api');
 
         $admin->givePermissionTo([
+            CoursesPermissionsEnum::COURSE_LIST,
             CoursesPermissionsEnum::COURSE_UPDATE,
             CoursesPermissionsEnum::COURSE_DELETE,
             CoursesPermissionsEnum::COURSE_CREATE,
@@ -35,6 +37,7 @@ class CoursesPermissionSeeder extends Seeder
             CoursesPermissionsEnum::COURSE_ATTEND_OWNED,
         ]);
         $tutor->givePermissionTo([
+            CoursesPermissionsEnum::COURSE_LIST,
             CoursesPermissionsEnum::COURSE_CREATE,
             CoursesPermissionsEnum::COURSE_UPDATE_OWNED,
             CoursesPermissionsEnum::COURSE_DELETE_OWNED,
