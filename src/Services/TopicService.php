@@ -26,7 +26,9 @@ class TopicService implements TopicServiceContract
 
     public function cloneTopic(Topic $topic): Model
     {
-        $clonedTopic = $this->topicRepository->create($topic->replicate()->toArray());
+        $clonedTopicArray = $topic->replicate()->toArray();
+        unset($clonedTopicArray['order']);
+        $clonedTopic = $this->topicRepository->create($clonedTopicArray);
         $clonedTopicable = $topic->topicable->replicate();
 
         if ($clonedTopicable instanceof AbstractTopicFileContent) {

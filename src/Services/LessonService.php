@@ -21,13 +21,15 @@ class LessonService implements LessonServiceContract
 
     public function cloneLesson(Lesson $lesson): Model
     {
-       $clonedLesson = $this->lessonRepository->create($lesson->replicate()->toArray());
+        $clonedLessonArray = $lesson->replicate()->toArray();
+        unset($clonedLessonArray['order']);
+        $clonedLesson = $this->lessonRepository->create($clonedLessonArray);
 
-       foreach ($lesson->topics as $topic) {
-           $topic->lesson_id = $clonedLesson->getKey();
-           $this->topicService->cloneTopic($topic);
-       }
+        foreach ($lesson->topics as $topic) {
+            $topic->lesson_id = $clonedLesson->getKey();
+            $this->topicService->cloneTopic($topic);
+        }
 
-       return $clonedLesson;
+        return $clonedLesson;
     }
 }

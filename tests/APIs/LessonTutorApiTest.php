@@ -136,6 +136,8 @@ class LessonTutorApiTest extends TestCase
             'topicable_id' => $topicable->getKey(),
         ]);
 
+        $exceptedOrder = 1 + (int) $course->lessons->max('order');
+
         $this->response = $this->actingAs($this->user, 'api')
             ->postJson('/api/admin/lessons/' . $lesson->getKey() . '/clone');
 
@@ -143,7 +145,7 @@ class LessonTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
         $clonedLessonId = $data->data->id;
-        $this->assertApiResponse(array_diff_key($lesson->toArray(), array_flip(['id', 'course_id'])));
+        $this->assertApiResponse(array_diff_key($lesson->toArray(), array_flip(['id', 'course_id', 'order'])));
 
         $this->assertDatabaseHas('lessons', [
             'id' => $clonedLessonId,
@@ -153,5 +155,7 @@ class LessonTutorApiTest extends TestCase
         $this->assertDatabaseHas('topics', [
             'lesson_id' => $clonedLessonId,
         ]);
+
+        $this->assertEquals($exceptedOrder, $data->data->order);
     }
 }
