@@ -45,6 +45,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'poster_path',
         'findable',
         'purchasable',
+        'target_group',
     ];
 
     /**

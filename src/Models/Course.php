@@ -153,6 +153,11 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          description="findable",
  *          type="boolean"
  *      ),
+ *      @OA\Property(
+ *          property="target_group",
+ *          description="target group",
+ *          type="string",
+ *      ),
  * )
  *
  * @property bool $active
@@ -186,6 +191,7 @@ class Course extends Model
         'hours_to_complete',
         'purchasable',
         'findable',
+        'target_group',
     ];
 
     /**
@@ -214,6 +220,7 @@ class Course extends Model
         'hours_to_complete' => 'integer',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'string',
     ];
 
     /**
@@ -244,6 +251,7 @@ class Course extends Model
         'hours_to_complete' => 'integer|nullable',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'nullable|string|max:100',
     ];
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
