@@ -45,6 +45,7 @@ class CourseResource extends JsonResource
             'hours_to_complete' => $course->hours_to_complete,
             'purchasable' => $course->purchasable,
             'findable' => $course->findable,
+            'target_group' => $course->target_group,
         ];
     }
 }
