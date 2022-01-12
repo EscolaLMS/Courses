@@ -236,7 +236,7 @@ class Course extends Model
         'language' => 'nullable|string|max:2',
         'description' => 'nullable|string',
         'level' => 'nullable|string|max:100',
-        'scorm_sco_id' => 'nullable|exists:scorm,id',
+        'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
         'poster_path' => 'nullable|string|max:255',
         'poster' => 'file|image',
         'active_from' => 'date|nullable',
