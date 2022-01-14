@@ -28,7 +28,6 @@ use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Services\TopicService;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Settings\Facades\AdministrableConfig;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
@@ -50,6 +49,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
@@ -69,7 +69,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
 
-        if (!app()->bound(EscolaLmsSettingsServiceProvider::class)) {
+        if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
             $this->app->register(EscolaLmsSettingsServiceProvider::class);
         }
 
