@@ -5,10 +5,11 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CoursesConstant;
+use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
-use EscolaLms\Settings\Enums\SettingsPermissionsEnum;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Config;
 
 class CourseAdministrableConfigTest extends TestCase
 {
@@ -27,6 +28,8 @@ class CourseAdministrableConfigTest extends TestCase
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
+
+        Config::set('escola_settings.use_database', true);
     }
 
     public function test_course_administrable_config()
@@ -38,10 +41,11 @@ class CourseAdministrableConfigTest extends TestCase
         $this->response->assertOk();
         $this->response->assertJsonFragment([
             'escolalms_courses' => [
-                'platform_visibility' => 'public',
+                'platform_visibility' => PlatformVisibility::VISIBILITY_PUBLIC,
                 'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS
             ]
         ]);
+
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/config',
@@ -61,6 +65,32 @@ class CourseAdministrableConfigTest extends TestCase
                     'readonly' => false,
                     'value' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 ]
+            ]
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/config',
+            [
+                'config' => [
+                    [
+                        'key' => 'escolalms_courses.platform_visibility',
+                        'value' => PlatformVisibility::VISIBILITY_REGISTERED
+                    ]
+                ]
+            ]
+        );
+        $this->response->assertOk();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/config',
+        );
+        $this->response->assertOk();
+        $this->response->assertJsonFragment([
+            'escolalms_courses' => [
+                'platform_visibility' => PlatformVisibility::VISIBILITY_REGISTERED,
+                'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS
             ]
         ]);
     }
