@@ -11,7 +11,7 @@ class CourseSimpleResource extends JsonResource
 
     public function toArray($request)
     {
-        return [
+        $fields = [
             'id' => $this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -44,5 +44,6 @@ class CourseSimpleResource extends JsonResource
             'video_url' => $this->video_url,
             'poster_url' => $this->poster_url,
         ];
+        return self::apply($fields, $this);
     }
 }
