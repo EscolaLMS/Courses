@@ -95,8 +95,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *      @OA\Parameter(
+     *          name="tag[]",
+     *          description="An array of tags",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="array", @OA\Items(type="string")),
+     *      ),
+     *      @OA\Parameter(
      *          name="ids[]",
-     *          description="A array of IDs",
+     *          description="An array of IDs",
      *          required=false,
      *          in="query",
      *          @OA\Schema(type="array", @OA\Items(type="number")),
