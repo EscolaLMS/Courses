@@ -254,29 +254,56 @@ class CourseAdminApiTest extends TestCase
     public function test_search_course_by_tag()
     {
         $course = Course::factory()->create();
+        $course2 = Course::factory()->create();
 
         $tags = ['LoremLorem Lorem', 'Ipsum', "Bla Bla bla"];
+        $tags2 = ['Asdf1', "Asdf2", "Asdf3"];
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/admin/courses/' . $course->getKey(),
             ['tags' =>  $tags]
         );
+        $this->response->assertStatus(200);
 
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course2->getKey(),
+            ['tags' =>  $tags2]
+        );
         $this->response->assertStatus(200);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/?tag=' . $tags[0],
+            '/api/admin/courses/',
+            [
+                'tag'  => $tags[0]
+            ]
         );
 
         $coursesIds = [];
-
         foreach ($this->response->getData()->data as $course) {
             $coursesIds[] = $course->id;
         }
-
         $this->assertTrue(in_array($course->id,  $coursesIds));
+        $this->assertFalse(in_array($course2->id,  $coursesIds));
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag' => [
+                    $tags[0],
+                    $tags2[0],
+                ]
+            ]
+        );
+        $coursesIds = [];
+        foreach ($this->response->getData()->data as $course) {
+            $coursesIds[] = $course->id;
+        }
+        $this->assertTrue(in_array($course->id,  $coursesIds));
+        $this->assertTrue(in_array($course2->id,  $coursesIds));
     }
 
     /**
