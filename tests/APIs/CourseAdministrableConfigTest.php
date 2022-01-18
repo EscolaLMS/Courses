@@ -84,7 +84,8 @@ class CourseAdministrableConfigTest extends TestCase
                     [
                         'key' => 'escolalms_courses.platform_visibility',
                         'value' => PlatformVisibility::VISIBILITY_REGISTERED
-                    ],                    [
+                    ],
+                    [
                         'key' => 'escolalms_courses.course_visibility',
                         'value' => CourseVisibilityEnum::SHOW_ONLY_MY,
                     ],
