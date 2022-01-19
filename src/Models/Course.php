@@ -256,9 +256,29 @@ class Course extends Model
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
 
-    public function author(): BelongsTo
+    public function authors(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsToMany(User::class);
+    }
+
+    /** Backwards compatibility */
+    public function getAuthorAttribute(): ?User
+    {
+        return $this->authors()->first();
+    }
+
+    public function getAuthorIdAttribute(): ?int
+    {
+        $author = $this->author();
+        if ($author) {
+            return $author->id;
+        }
+        return $this->getOriginal('author_id');
+    }
+
+    public function hasAuthor(User $user): bool
+    {
+        return $this->author_id === $user->id || !is_null($this->authors()->where('id', $user->id)->first());
     }
 
     public function lessons(): HasMany

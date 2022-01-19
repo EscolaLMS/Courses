@@ -2,11 +2,10 @@
 
 namespace EscolaLms\Courses\Policies;
 
+use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
 
 class CoursesPolicy
 {
@@ -33,12 +32,8 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE)) {
             return true;
         }
-        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED) && $course->author_id === $user->id) {
-            return true;
-        }
-        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED) && $course->author_id !== $user->id) {
-            return false;
-            //return Response::deny('You do not own this course.');
+        if ($user->can(CoursesPermissionsEnum::COURSE_UPDATE_OWNED)) {
+            return $course->hasAuthor($user);
         }
 
         return false;
@@ -69,12 +64,8 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_DELETE)) {
             return true;
         }
-        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED) && $course->author_id === $user->id) {
-            return true;
-        }
-        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED) && $course->author_id !== $user->id) {
-            return false;
-            //return Response::deny('You do not own this course.');
+        if ($user->can(CoursesPermissionsEnum::COURSE_DELETE_OWNED)) {
+            return $course->hasAuthor($user);
         }
 
         return false;
@@ -104,8 +95,8 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND)) {
             return true;
         }
-        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED) && $course->author_id === $user->id) {
-            return true;
+        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED)) {
+            return $course->hasAuthor($user);
         }
 
         return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());

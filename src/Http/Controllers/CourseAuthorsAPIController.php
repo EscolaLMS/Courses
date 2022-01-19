@@ -38,4 +38,26 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
 
         return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
     }
+
+    public function assign($id, Request $request): JsonResponse
+    {
+        $tutor = $this->courseRepositoryContract->findTutor($id);
+
+        if (empty($tutor)) {
+            return $this->sendError('Not found', 404);
+        }
+
+        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
+    }
+
+    public function unassign($id, Request $request): JsonResponse
+    {
+        $tutor = $this->courseRepositoryContract->findTutor($id);
+
+        if (empty($tutor)) {
+            return $this->sendError('Not found', 404);
+        }
+
+        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
+    }
 }
