@@ -96,9 +96,21 @@
                         }
                     },
                     {
+                        "name": "tag[]",
+                        "in": "query",
+                        "description": "An array of tags",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
                         "name": "ids[]",
                         "in": "query",
-                        "description": "A array of IDs",
+                        "description": "An array of IDs",
                         "required": false,
                         "schema": {
                             "type": "array",
