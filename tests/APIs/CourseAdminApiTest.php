@@ -287,7 +287,7 @@ class CourseAdminApiTest extends TestCase
             'GET',
             '/api/admin/courses/',
             [
-                'tag'  => $tags[0]
+                'tag'  => $tags[0] // or 'tag' => [$tags[0]]
             ]
         );
         $this->response->assertStatus(200);
