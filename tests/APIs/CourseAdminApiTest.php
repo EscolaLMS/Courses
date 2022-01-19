@@ -255,9 +255,11 @@ class CourseAdminApiTest extends TestCase
     {
         $course = Course::factory()->create();
         $course2 = Course::factory()->create();
+        $course3 = Course::factory()->create();
 
-        $tags = ['LoremLorem Lorem', 'Ipsum', "Bla Bla bla"];
-        $tags2 = ['Asdf1', "Asdf2", "Asdf3"];
+        $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
+        $tags2 = ['Foo', 'Bar', 'FooBar'];
+        $tags3 = ['NotFoo', "NotBar", "NotFooBar"];
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
@@ -274,12 +276,20 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course3->getKey(),
+            ['tags' =>  $tags3]
+        );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/',
             [
                 'tag'  => $tags[0]
             ]
         );
+        $this->response->assertStatus(200);
 
         $coursesIds = [];
         foreach ($this->response->getData()->data as $course) {
@@ -287,6 +297,7 @@ class CourseAdminApiTest extends TestCase
         }
         $this->assertTrue(in_array($course->id,  $coursesIds));
         $this->assertFalse(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course3->id,  $coursesIds));
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -298,12 +309,15 @@ class CourseAdminApiTest extends TestCase
                 ]
             ]
         );
+        $this->response->assertStatus(200);
+
         $coursesIds = [];
         foreach ($this->response->getData()->data as $course) {
             $coursesIds[] = $course->id;
         }
         $this->assertTrue(in_array($course->id,  $coursesIds));
         $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course3->id,  $coursesIds));
     }
 
     /**
