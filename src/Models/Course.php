@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Peopleaps\Scorm\Model\ScormModel;
+use Peopleaps\Scorm\Model\ScormScoModel;
 
 /**
  * @OA\Schema(
@@ -74,8 +74,8 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          type="integer",
  *      ),
  *     @OA\Property(
- *          property="scorm_id",
- *          description="scorm_id",
+ *          property="scorm_sco_id",
+ *          description="scorm_sco_id",
  *          type="integer",
  *      ),
  *      @OA\Property(
@@ -153,8 +153,13 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          description="findable",
  *          type="boolean"
  *      ),
+ *      @OA\Property(
+ *          property="target_group",
+ *          description="target group",
+ *          type="string",
+ *      ),
  * )
- * 
+ *
  * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
@@ -179,13 +184,14 @@ class Course extends Model
         'language',
         'description',
         'level',
-        'scorm_id',
+        'scorm_sco_id',
         'poster_path',
         'active_from',
         'active_to',
         'hours_to_complete',
         'purchasable',
         'findable',
+        'target_group',
     ];
 
     /**
@@ -207,13 +213,14 @@ class Course extends Model
         'language' => 'string',
         'description' => 'string',
         'level' => 'string',
-        'scorm_id' => 'integer',
+        'scorm_sco_id' => 'integer',
         'poster_path' => 'string',
         'active_from' => 'datetime',
         'active_to' => 'datetime',
         'hours_to_complete' => 'integer',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'string',
     ];
 
     /**
@@ -236,7 +243,7 @@ class Course extends Model
         'language' => 'nullable|string|max:2',
         'description' => 'nullable|string',
         'level' => 'nullable|string|max:100',
-        'scorm_id' => 'nullable|exists:scorm,id',
+        'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
         'poster_path' => 'nullable|string|max:255',
         'poster' => 'file|image',
         'active_from' => 'date|nullable',
@@ -244,6 +251,7 @@ class Course extends Model
         'hours_to_complete' => 'integer|nullable',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'nullable|string|max:100',
     ];
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
@@ -312,9 +320,9 @@ class Course extends Model
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
     }
 
-    public function scorm(): BelongsTo
+    public function scormSco(): BelongsTo
     {
-        return $this->belongsTo(ScormModel::class, 'scorm_id');
+        return $this->belongsTo(ScormScoModel::class, 'scorm_sco_id');
     }
 
     public function getIsActiveAttribute(): bool
@@ -343,5 +351,10 @@ class Course extends Model
                 $course->findable = config('escolalms_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
             }
         });
+    }
+
+    public function getMorphClass()
+    {
+        return \EscolaLms\Courses\Models\Course::class;
     }
 }

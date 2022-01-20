@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Resources\Admin;
 
 use EscolaLms\Auth\Traits\ResourceExtandable;
 use EscolaLms\Courses\Http\Resources\ScormResource;
+use EscolaLms\Courses\Http\Resources\ScormScoResource;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -43,8 +44,8 @@ class CourseWithProgramAdminResource extends JsonResource
             'base_price' => $course->base_price,
             'duration' => $course->duration,
             'author_id' => $course->author_id,
-            'scorm_id' => $course->scorm_id,
-            'scorm' => $this->when($course->scorm_id !== null, fn () => ScormResource::make($course->scorm)),
+            'scorm_sco_id' => $course->scorm_sco_id,
+            'scorm_sco' => $this->when($course->scorm_sco_id !== null, fn () => ScormScoResource::make($course->scormSco)),
             'active' => $course->active,
             'subtitle' => $course->subtitle,
             'language' => $course->language,
@@ -58,6 +59,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'hours_to_complete' => $course->hours_to_complete,
             'purchasable' => $course->purchasable,
             'findable' => $course->findable,
+            'target_group' => $course->target_group,
         ];
 
         return self::apply($fields, $this);

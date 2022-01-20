@@ -170,10 +170,11 @@ class TopicTutorApiTest extends TestCase
         foreach ($fileNames as $fileName) {
             TopicResource::factory()->create([
                 'topic_id' => $topic->getKey(),
-                'path' => 'test/resources/',
+                'path' => 'test/resources/' . $fileName,
                 'name' => $fileName,
             ]);
         }
+        $exceptedOrder = 1 + (int) $lesson->topics->max('order');;
 
         $this->response = $this->actingAs($this->user, 'api')
             ->postJson('/api/admin/topics/' . $topic->getKey() . '/clone');
@@ -203,7 +204,9 @@ class TopicTutorApiTest extends TestCase
         }
 
         TopicResource::where('topic_id', $clonedTopicId)->get()->each(function ($resource) {
-            Storage::disk('local')->assertExists($resource->path . $resource->name);
+            Storage::assertExists($resource->path);
         });
+
+        $this->assertEquals($exceptedOrder, $data->data->order);
     }
 }

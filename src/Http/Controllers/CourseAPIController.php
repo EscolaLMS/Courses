@@ -82,7 +82,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function program($id, GetCourseCurriculumAPIRequest $request): JsonResponse
     {
-        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scormSco']);
 
         if (empty($course)) {
             return $this->sendError(__('Course not found'));
@@ -95,9 +95,9 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
     {
-        $player = $this->courseServiceContract->getScormPlayer($id);
+        $data = $this->courseServiceContract->getScormPlayer($id);
 
-        return $player;
+        return view('scorm::player', ['data' => $data]);
     }
 
     public function update($id, UpdateCourseAPIRequest $request): JsonResponse
