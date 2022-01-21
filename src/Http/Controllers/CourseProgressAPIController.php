@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Core\Http\Resources\Status;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
 use EscolaLms\Courses\Http\Resources\ProgressResource;
@@ -41,7 +42,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $course = $this->courseRepositoryContract->getById($course_id);
 
-        if (!$course->active) {
+        if ($course->status !== CourseStatusEnum::PUBLISHED) {
             // We only check $course->active, and not is_active, because if course has deadline we still want to return progress
             return $this->sendError(__('Course is not active'), 403);
         }
@@ -73,7 +74,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
-        if (!$topic->course->active) {
+        if ($topic->course !== CourseStatusEnum::PUBLISHED) {
             return $this->sendError(__('Course is not active'), 403);
         }
         if (!$topic->active) {

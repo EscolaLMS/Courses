@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -33,7 +34,7 @@ class CourseAnonymousApiTest extends TestCase
     public function test_anonymous_read_course()
     {
         $course = Course::factory()->create([
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED
         ]);
 
         $this->response = $this->json(
@@ -123,7 +124,7 @@ class CourseAnonymousApiTest extends TestCase
      */
     public function test_anonymous_read_course_program()
     {
-        $course = Course::factory()->create(['base_price' => 9999, 'active' => true]);
+        $course = Course::factory()->create(['base_price' => 9999, 'status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',
@@ -142,7 +143,7 @@ class CourseAnonymousApiTest extends TestCase
 
     public function test_anonymous_read_free_course_program()
     {
-        $course = Course::factory()->create(['base_price' => 0, 'active' => true]);
+        $course = Course::factory()->create(['base_price' => 0, 'status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',
@@ -164,9 +165,9 @@ class CourseAnonymousApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => true]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => true]);
-        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'active' => false]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',
@@ -190,8 +191,8 @@ class CourseAnonymousApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => false]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => false]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::DRAFT]);
 
         $this->response = $this->json(
             'GET',
@@ -202,7 +203,7 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true);
+            $this->assertEquals( CourseStatusEnum::PUBLISHED, $course->status);
         }
 
         $this->response = $this->json(
@@ -215,7 +216,7 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true);
+            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
         }
     }
 
@@ -223,8 +224,8 @@ class CourseAnonymousApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => true, 'findable' => false]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => false, 'findable' => true]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED, 'findable' => false]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::ARCHIVED, 'findable' => true]);
 
         $this->response = $this->json(
             'GET',
@@ -235,7 +236,7 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active);
+            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
             $this->assertTrue($course->findable);
         }
 
@@ -249,7 +250,7 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active);
+            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
             $this->assertTrue($course->findable);
         }
     }
@@ -259,8 +260,8 @@ class CourseAnonymousApiTest extends TestCase
      */
     public function test_search_courses_by_ids()
     {
-        $firstCourse = Course::factory()->create(['active' => true]);
-        $secondCourse = Course::factory()->create(['active' => true]);
+        $firstCourse = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $secondCourse = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',

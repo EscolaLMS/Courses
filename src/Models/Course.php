@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Models;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Peopleaps\Scorm\Model\ScormScoModel;
 
 /**
@@ -84,9 +86,9 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          type="file"
  *      ),
  *      @OA\Property(
- *          property="active",
- *          description="active",
- *          type="boolean",
+ *          property="status",
+ *          description="status",
+ *          type="string",
  *      ),
  *      @OA\Property(
  *          property="subtitle",
@@ -155,7 +157,6 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *      ),
  * )
  *
- * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
  */
@@ -177,7 +178,7 @@ class Course extends Model
         'base_price',
         'duration',
         'author_id',
-        'active',
+        'status',
         'subtitle',
         'language',
         'description',
@@ -205,7 +206,7 @@ class Course extends Model
         'video_path' => 'string',
         'base_price' => 'integer',
         'duration' => 'string',
-        'active' => 'boolean',
+        'status' => 'string',
         'subtitle' => 'string',
         'language' => 'string',
         'description' => 'string',
@@ -236,7 +237,7 @@ class Course extends Model
         'authors.*' => ['integer'],
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
-        'active' => 'boolean',
+        'status' => ['string'],
         'subtitle' => 'nullable|string|max:255',
         'language' => 'nullable|string|max:2',
         'description' => 'nullable|string',
@@ -361,7 +362,7 @@ class Course extends Model
 
     public function getIsActiveAttribute(): bool
     {
-        return $this->active
+        return $this->status === CourseStatusEnum::PUBLISHED
             && (is_null($this->active_from) || Carbon::now()->greaterThanOrEqualTo($this->active_from))
             && (is_null($this->active_to) || Carbon::now()->lessThanOrEqualTo($this->active_to));
     }
@@ -369,7 +370,7 @@ class Course extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query
-            ->where('courses.active', '=', true)
+            ->where('courses.status', '=', CourseStatusEnum::PUBLISHED)
             ->where(function (Builder $query) {
                 return $query->whereDate('active_from', '>=', Carbon::now())->orWhereNull('active_from');
             })

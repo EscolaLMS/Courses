@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -31,7 +32,7 @@ class CourseTutorApiTest extends TestCase
     public function test_create_course()
     {
         $course = Course::factory()->make([
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED
         ])->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -81,7 +82,7 @@ class CourseTutorApiTest extends TestCase
     public function test_read_course()
     {
         $course = Course::factory()->create([
-            'active' => true,
+            'status' => CourseStatusEnum::PUBLISHED,
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -95,7 +96,7 @@ class CourseTutorApiTest extends TestCase
     public function test_read_owned_inactive_course()
     {
         $course = Course::factory()->create([
-            'active' => false,
+            'status' => CourseStatusEnum::ARCHIVED,
             'author_id' => $this->user->getKey(),
         ]);
 

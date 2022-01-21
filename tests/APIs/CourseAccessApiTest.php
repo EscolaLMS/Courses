@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Auth\Models\Group;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
 use EscolaLms\Courses\Http\Resources\UserGroupResource;
@@ -29,7 +30,7 @@ class CourseAccessApiTest extends TestCase
         $this->user->assignRole('tutor');
         $this->course = Course::factory()->create([
             'base_price' => 1337,
-            'active' => true,
+            'status' => CourseStatusEnum::PUBLISHED,
         ]);
         $this->course->authors()->sync($this->user);
 
@@ -123,7 +124,7 @@ class CourseAccessApiTest extends TestCase
                 'author_id',
                 'scorm_sco_id',
                 'scorm_sco',
-                'active',
+                'status',
                 'subtitle',
                 'language',
                 'description',
