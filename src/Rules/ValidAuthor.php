@@ -17,13 +17,15 @@ class ValidAuthor implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (!is_null($value)) {
-            $user = Auth::user()->find($value);
-            if (is_null($user) || !$user->can('create', Course::class)) {
-                return false;
-            }
+        if (is_null($value)) {
+            return false;
         }
-        return true;
+
+        $user = Auth::user()->find($value);
+
+        if (is_null($user) || !$user->can('create', Course::class)) {
+            return false;
+        }
     }
 
     /**

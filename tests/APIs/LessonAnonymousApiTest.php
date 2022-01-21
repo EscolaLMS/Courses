@@ -2,15 +2,13 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Courses\Tests\TestCase;
-//use Tests\ApiTestTrait;
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LessonAnonymousApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test

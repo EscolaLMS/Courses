@@ -130,8 +130,8 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         /** search by TAG */
-        if (isset($search['tag'])) {
-            $tags = is_array($search['tag']) ? $search['tag'] : array_filter([$search['tag']]);
+        if (array_key_exists('tag', $search)) {
+            $tags = array_filter(is_array($search['tag']) ? $search['tag'] : [$search['tag']]);
 
             if (!empty($tags)) {
                 $query->whereHas('tags', function (Builder $query) use ($tags) {

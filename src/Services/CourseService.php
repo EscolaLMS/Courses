@@ -51,7 +51,7 @@ class CourseService implements CourseServiceContract
             $search,
             $criteria
         )->with(['categories', 'tags', 'authors'])
-            ->withCount(['lessons', 'users', 'topics']);
+            ->withCount(['lessons', 'users', 'topics', 'authors']);
 
         return $query;
     }

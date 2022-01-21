@@ -20,6 +20,7 @@ use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use EscolaLms\Tags\Models\Tag;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Queue;
 class CourseProgressApiTest extends TestCase
 {
     use CreatesUsers, WithFaker, ProgressConfigurable, MakeServices;
+    use DatabaseTransactions;
 
     public function test_show_progress_courses()
     {

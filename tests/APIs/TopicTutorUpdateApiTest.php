@@ -8,11 +8,7 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\TopicTypes\Events\VideoUpdated;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Storage;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
