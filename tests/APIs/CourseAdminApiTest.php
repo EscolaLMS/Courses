@@ -204,6 +204,29 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertInvalid('authors.0');
     }
 
+    public function test_update_course_remove_authors()
+    {
+        $course = Course::factory()->create([
+            'author_id' => $this->user->getKey()
+        ]);
+
+        $this->assertNotEquals([], $course->authors->toArray());
+
+        $editedCourse = Course::factory()->make()->toArray();
+        $editedCourse['authors'] = [];
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            $editedCourse
+        );
+
+        $this->response->assertOk();
+
+        $course->refresh();
+        $this->assertEquals([], $course->authors->toArray());
+    }
+
     /**
      * @test
      */

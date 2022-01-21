@@ -142,6 +142,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $tags = $this->tagRepositoryContract->uniqueTagsFromActiveCourses();
         return $tags ?
             $this->sendResponse($tags, 'Tags unique fetched successfully') :
-            $this->sendError('Tags not found', 404) ;
+            $this->sendError('Tags not found', 404);
     }
 }

@@ -24,7 +24,7 @@ class TopicRepositoryTest extends TestCase
      */
     protected $topicRepo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->topicRepo = \App::make(TopicRepositoryContract::class);
@@ -75,7 +75,9 @@ class TopicRepositoryTest extends TestCase
      */
     public function testReadTopic()
     {
-        $topic = Topic::factory()->create();
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey()]);
 
         $dbTopic = $this->topicRepo->find($topic->id);
 
@@ -172,7 +174,9 @@ class TopicRepositoryTest extends TestCase
      */
     public function testDeleteTopic()
     {
-        $topic = Topic::factory()->create();
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey()]);
 
         $resp = $this->topicRepo->delete($topic->id);
 

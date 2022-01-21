@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TopicTutorApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
