@@ -42,7 +42,7 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->assertApiResponse($topic->toArray());
@@ -68,13 +68,13 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(404);
@@ -94,13 +94,13 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/courses/'.$course->id
+            '/api/admin/courses/' . $course->id
         );
 
         $this->assertApiSuccess();
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(404);
@@ -124,7 +124,7 @@ class TopicTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
-            '/api/admin/topics/'.$topic->id
+            '/api/admin/topics/' . $topic->id
         );
 
         $this->response->assertStatus(403);
@@ -152,7 +152,10 @@ class TopicTutorApiTest extends TestCase
     {
         Storage::fake('local');
 
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => $this->user->id,
+        ]);
+
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey(),
         ]);

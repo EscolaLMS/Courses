@@ -33,6 +33,7 @@ class CourseResource extends JsonResource
             'base_price' =>  $course->base_price,
             'duration' =>  $course->duration,
             'author_id' => $course->author_id,
+            'authors' => $course->authors,
             'scorm_sco_id' => $course->scorm_sco_id,
             'active' =>  $course->active,
             'subtitle' =>  $course->subtitle,

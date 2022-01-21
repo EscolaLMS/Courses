@@ -28,10 +28,10 @@ class CourseAccessApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->course = Course::factory()->create([
-            'author_id' => $this->user->id,
             'base_price' => 1337,
             'active' => true,
         ]);
+        $this->course->authors()->sync($this->user);
 
         Notification::fake();
     }
@@ -157,7 +157,6 @@ class CourseAccessApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->post('/api/admin/courses/' . $this->course->id . '/access/add/', [
             'users' => [$student->getKey()]
         ]);
-
         $this->response->assertOk();
         Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
         $this->assertUserCanReadProgram($student, $this->course);

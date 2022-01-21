@@ -10,6 +10,7 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
 
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Illuminate\Support\Facades\Event;
 
 class LessonTutorApiTest extends TestCase
 {
@@ -125,7 +126,9 @@ class LessonTutorApiTest extends TestCase
 
     public function test_clone_lesson()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => $this->user->getKey(),
+        ]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey(),
         ]);

@@ -77,7 +77,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError(__('Course not found'));
         }
 
-        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'author')->loadCount('users')), __('Course retrieved successfully'));
+        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'authors')->loadCount('users', 'authors')), __('Course retrieved successfully'));
     }
 
     public function program($id, GetCourseCurriculumAPIRequest $request): JsonResponse

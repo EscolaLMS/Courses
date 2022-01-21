@@ -56,18 +56,24 @@ class CourseAdministrableConfigTest extends TestCase
         $this->response->assertJsonFragment([
             'escolalms_courses' => [
                 'platform_visibility' => [
+                    'full_key' => 'escolalms_courses.platform_visibility',
+                    'key' => 'platform_visibility',
                     'rules' => ['required', 'string', 'in:public,registered'],
                     'public' => true,
                     'readonly' => false,
                     'value' => 'public',
                 ],
                 'reminder_of_deadline_count_days' => [
+                    'full_key' => 'escolalms_courses.reminder_of_deadline_count_days',
+                    'key' => 'reminder_of_deadline_count_days',
                     'rules' => ['integer', 'min: 1'],
                     'public' => true,
                     'readonly' => false,
                     'value' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 ],
                 'course_visibility' => [
+                    'full_key' => 'escolalms_courses.course_visibility',
+                    'key' => 'course_visibility',
                     'rules' => ['required', 'string', 'in:' . implode(',', CourseVisibilityEnum::getValues())],
                     'public' => true,
                     'readonly' => false,

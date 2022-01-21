@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
+use EscolaLms\Courses\Http\Requests\AssignAuthorApiRequest;
 use EscolaLms\Courses\Http\Resources\TutorResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Http\JsonResponse;
@@ -39,25 +40,37 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
         return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
     }
 
-    public function assign($id, Request $request): JsonResponse
+    public function assign(AssignAuthorApiRequest $request): JsonResponse
     {
-        $tutor = $this->courseRepositoryContract->findTutor($id);
+        $tutor = $request->getTutor();
+        $course = $request->getCourse();
 
         if (empty($tutor)) {
-            return $this->sendError('Not found', 404);
+            return $this->sendError('Tutor not found', 404);
+        }
+        if (empty($course)) {
+            return $this->sendError('Course not found', 404);
         }
 
-        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
+        $this->courseRepositoryContract->addAuthor($course, $tutor);
+
+        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), 'Tutor assigned');
     }
 
-    public function unassign($id, Request $request): JsonResponse
+    public function unassign(AssignAuthorApiRequest $request): JsonResponse
     {
-        $tutor = $this->courseRepositoryContract->findTutor($id);
+        $tutor = $request->getTutor();
+        $course = $request->getCourse();
 
         if (empty($tutor)) {
-            return $this->sendError('Not found', 404);
+            return $this->sendError('Tutor not found', 404);
+        }
+        if (empty($course)) {
+            return $this->sendError('Course not found', 404);
         }
 
-        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
+        $this->courseRepositoryContract->removeAuthor($course, $tutor);
+
+        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), 'Tutor unassigned');
     }
 }

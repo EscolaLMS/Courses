@@ -35,6 +35,9 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
+
+    Route::post('/tutors/{id}/assign/{course}', [CourseAuthorsAPIController::class, 'assign']);
+    Route::post('/tutors/{id}/unassign/{course}', [CourseAuthorsAPIController::class, 'unassign']);
 });
 
 // user endpoints

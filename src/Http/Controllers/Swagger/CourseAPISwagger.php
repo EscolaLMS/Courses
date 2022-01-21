@@ -79,12 +79,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *     @OA\Parameter(
-     *          name="author_id",
-     *          description="Author ID",
+     *          name="authors",
+     *          description="Authors",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
-     *              type="number",
+     *              type="array",
+     *              @OA\Items(
+     *                 ref="#/components/schemas/User"
+     *              )
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -202,12 +205,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *     @OA\Parameter(
-     *          name="author_id",
-     *          description="Author ID",
+     *          name="authors",
+     *          description="Authors",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
-     *              type="number",
+     *              type="array",
+     *              @OA\Items(
+     *                 ref="#/components/schemas/User"
+     *              )
      *          ),
      *      ),
      *      @OA\Parameter(
