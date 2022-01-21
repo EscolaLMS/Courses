@@ -26,6 +26,8 @@ class ValidAuthor implements Rule
         if (is_null($user) || !$user->can('create', Course::class)) {
             return false;
         }
+
+        return true;
     }
 
     /**
