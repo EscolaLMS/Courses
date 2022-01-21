@@ -6,7 +6,6 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -192,7 +191,7 @@ class CourseAdminApiTest extends TestCase
         $editedCourse = Course::factory()->make()->toArray();
 
         $student = $this->makeStudent();
-        $editedCourse['author_id'] = $student->getKey();
+        $editedCourse['authors'][] = $student->getKey();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
@@ -201,7 +200,7 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->response->assertStatus(422);
-        $this->response->assertInvalid('author_id');
+        $this->response->assertInvalid('authors.0');
     }
 
     /**
@@ -298,9 +297,9 @@ class CourseAdminApiTest extends TestCase
 
     public function test_search_course_by_tag()
     {
-        $course = Course::factory()->create();
-        $course2 = Course::factory()->create();
-        $course3 = Course::factory()->create();
+        $course = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course2 = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course3 = Course::factory()->create(['active' => true, 'findable' => true]);
 
         $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
         $tags2 = ['Foo', 'Bar', 'FooBar'];
@@ -616,7 +615,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    public function test_unique_tags_courses() : void
+    public function test_unique_tags_courses(): void
     {
         $courseActive = Course::factory(['active' => true])->create();
         $courseUnActive = Course::factory(['active' => false])->create();

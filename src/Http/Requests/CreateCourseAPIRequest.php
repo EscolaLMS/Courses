@@ -29,7 +29,7 @@ class CreateCourseAPIRequest extends FormRequest
         $rules = array_merge(Course::$rules, [
             'title' => ['required', 'string', "min:3"],
         ]);
-        $rules['author_id'][] = new ValidAuthor();
+        $rules['authors.*'][] = new ValidAuthor();
         return $rules;
     }
 }

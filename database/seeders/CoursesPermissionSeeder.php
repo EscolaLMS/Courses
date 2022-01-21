@@ -22,6 +22,7 @@ class CoursesPermissionSeeder extends Seeder
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_CREATE, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND, 'api');
+
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_UPDATE_OWNED, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE_OWNED, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND_OWNED, 'api');

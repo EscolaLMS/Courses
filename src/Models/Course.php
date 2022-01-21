@@ -68,11 +68,6 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          description="duration",
  *          type="string"
  *      ),
- *      @OA\Property(
- *          property="author_id",
- *          description="author_id",
- *          type="integer",
- *      ),
  *     @OA\Property(
  *          property="scorm_sco_id",
  *          description="scorm_sco_id",
@@ -171,6 +166,9 @@ class Course extends Model
 
     public $table = 'courses';
 
+    /** Backwards compatibility */
+    protected ?int $author_id = null;
+
     public $fillable = [
         'title',
         'summary',
@@ -207,7 +205,6 @@ class Course extends Model
         'video_path' => 'string',
         'base_price' => 'integer',
         'duration' => 'string',
-        'author_id' => 'integer',
         'active' => 'boolean',
         'subtitle' => 'string',
         'language' => 'string',
@@ -235,7 +232,8 @@ class Course extends Model
         'video_path' => 'nullable|string|max:255',
         'base_price' => 'nullable|integer|min:0',
         'duration' => 'nullable|string|max:255',
-        'author_id' => ['nullable', 'exists:users,id'],
+        'authors' => ['nullable', 'array'],
+        'authors.*' => ['integer'],
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
         'active' => 'boolean',
@@ -256,9 +254,45 @@ class Course extends Model
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
 
-    public function author(): BelongsTo
+    public function authors(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsToMany(User::class, 'course_author', 'course_id', 'author_id')->using(CourseAuthorPivot::class);
+    }
+
+    /** Backwards compatibility */
+    public function getAuthorAttribute(): ?User
+    {
+        return $this->authors()->first();
+    }
+
+    /** Backwards compatibility */
+    public function getAuthorIdAttribute(): ?int
+    {
+        $author = $this->author;
+        if ($author) {
+            return $author->id;
+        }
+        return $this->author_id;
+    }
+
+    /** Backwards compatibility */
+    public function setAuthorAttribute(User $author)
+    {
+        $this->setAuthorIdAttribute($author->getKey());
+    }
+
+    /** Backwards compatibility */
+    public function setAuthorIdAttribute(?int $author_id)
+    {
+        if ($this->exists && !is_null($author_id)) {
+            $this->authors()->syncWithoutDetaching([$author_id]);
+        }
+        $this->author_id = $author_id;
+    }
+
+    public function hasAuthor(User $author): bool
+    {
+        return !is_null($this->authors()->where('author_id', $author->id)->first());
     }
 
     public function lessons(): HasMany
@@ -349,6 +383,12 @@ class Course extends Model
         self::creating(function (Course $course) {
             if (is_null($course->findable)) {
                 $course->findable = config('escolalms_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
+            }
+        });
+        /** Backwards compatibility */
+        self::saved(function (Course $course) {
+            if ($course->author_id) {
+                $course->authors()->syncWithoutDetaching([$course->author_id]);
             }
         });
     }

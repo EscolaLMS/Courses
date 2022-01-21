@@ -91,7 +91,7 @@ class NotificationsTest extends TestCase
     public function testUserAssignedToCourseNotification()
     {
         Notification::fake();
-        Event::fake();
+        Event::fake([EscolaLmsCourseAccessStartedTemplateEvent::class, EscolaLmsCourseAssignedTemplateEvent::class]);
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
@@ -117,7 +117,7 @@ class NotificationsTest extends TestCase
     public function testUserUnassignedFromCourseNotification()
     {
         Notification::fake();
-        Event::fake();
+        Event::fake(EscolaLmsCourseUnassignedTemplateEvent::class);
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,

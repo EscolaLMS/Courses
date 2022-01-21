@@ -6,13 +6,13 @@ use EscolaLms\Auth\Models\Traits\HasGroups;
 use EscolaLms\Auth\Models\Traits\HasOnboardingStatus;
 use EscolaLms\Auth\Models\Traits\UserHasSettings;
 use EscolaLms\Auth\Models\User as AuthUser;
+use EscolaLms\Courses\Models\Traits\HasAuthoredCourses;
 use EscolaLms\Courses\Models\Traits\HasCourses;
 use EscolaLms\Courses\Tests\Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class User extends AuthUser
 {
-    use HasCourses, HasGroups, HasOnboardingStatus, UserHasSettings;
+    use HasCourses, HasAuthoredCourses, HasGroups, HasOnboardingStatus, UserHasSettings;
 
     protected function getTraitOwner(): self
     {

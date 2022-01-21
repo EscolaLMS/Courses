@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseTutorApiTest extends TestCase
 {
+    use CreatesUsers;
     use DatabaseTransactions;
 
     /**
@@ -116,7 +118,6 @@ class CourseTutorApiTest extends TestCase
 
         $editedCourse = Course::factory()->make()->toArray();
 
-
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/admin/courses/' . $course->id,
@@ -193,5 +194,45 @@ class CourseTutorApiTest extends TestCase
         );
 
         $this->response->assertStatus(200);
+    }
+
+    public function test_assign_tutor()
+    {
+        $admin = $this->makeAdmin();
+
+        /** @var Course $course */
+        $course = Course::factory()->create([
+            'author_id' => null
+        ]);
+        $this->assertFalse($course->hasAuthor($this->user));
+
+        $this->response = $this->actingAs($admin, 'api')->json(
+            'POST',
+            '/api/admin/tutors/' . $this->user->id . '/assign/' . $course->id
+        );
+        $this->response->assertOk();
+
+        $course->refresh();
+        $this->assertTrue($course->hasAuthor($this->user));
+    }
+
+    public function test_unassign_tutor()
+    {
+        $admin = $this->makeAdmin();
+
+        /** @var Course $course */
+        $course = Course::factory()->create([
+            'author_id' => $this->user->id
+        ]);
+        $this->assertTrue($course->hasAuthor($this->user));
+
+        $this->response = $this->actingAs($admin, 'api')->json(
+            'POST',
+            '/api/admin/tutors/' . $this->user->id . '/unassign/' . $course->id
+        );
+        $this->response->assertOk();
+
+        $course->refresh();
+        $this->assertFalse($course->hasAuthor($this->user));
     }
 }

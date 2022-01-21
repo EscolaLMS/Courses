@@ -3,19 +3,21 @@
 namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Models\User;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseTutorAssignedEvent;
+use EscolaLms\Courses\Events\EscolaLmsCourseTutorUnassignedEvent;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +41,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'video_path',
         'base_price',
         'duration',
-        'author_id',
         'active',
         'scorm_sco_id',
         'poster_path',
@@ -155,10 +156,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
      */
     public function create(array $input): Model
     {
-        if (!isset($input['author_id']) || !(Auth::user() && Auth::user()->hasRole(UserRole::ADMIN))) {
-            $input['author_id'] = Auth::id();
-        }
-
         $model = $this->model->newInstance($input);
 
         $model->save();
@@ -191,6 +188,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if ($model->is_active && Auth::user()) {
             event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
         }
+
+        $this->syncAuthors($model, $input['authors'] ?? (Auth::user() ? [Auth::id()] : []));
+
         return $model;
     }
 
@@ -206,9 +206,6 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $model = $query->findOrFail($id);
 
         $isActive = $model->is_active;
-        if (isset($input['author_id']) && Auth::user() && !Auth::user()->hasRole(UserRole::ADMIN)) {
-            $input['author_id'] = Auth::id();
-        }
 
         if (isset($input['video'])) {
             /** @var UploadedFile $video */
@@ -250,7 +247,44 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if ($isActive !== $model->is_active && $model->is_active && Auth::user()) {
             event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
         }
+
+        if (isset($input['authors'])) {
+            $this->syncAuthors($model, $input['authors']);
+        }
+
         return $model;
+    }
+
+    public function syncAuthors(Course $course, array $authors = []): void
+    {
+        if (Auth::user() && !Auth::user()->can(CoursesPermissionsEnum::COURSE_UPDATE)) {
+            $authors = array_unique(array_merge($authors, $course->authors()->pluck('author_id')->all(), [Auth::id()])); // only admin can remove other authors?
+        }
+
+        $syncResults = $course->authors()->sync($authors);
+
+        foreach ($syncResults['attached'] as $attached) {
+            event(new EscolaLmsCourseTutorAssignedEvent(User::find($attached), $course));
+        }
+        foreach ($syncResults['detached'] as $detached) {
+            event(new EscolaLmsCourseTutorUnassignedEvent(User::find($detached), $course));
+        }
+    }
+
+    public function addAuthor(Course $course, User $author): void
+    {
+        if (!in_array($author->getKey(), $course->authors()->pluck('author_id')->all())) {
+            $course->authors()->attach($author->getKey());
+            event(new EscolaLmsCourseTutorAssignedEvent($author, $course));
+        }
+    }
+
+    public function removeAuthor(Course $course, User $author): void
+    {
+        if ($course->authors()->detach([$author->getKey()])) {
+            event(new EscolaLmsCourseTutorUnassignedEvent($author, $course));
+            $course->author_id = null;
+        }
     }
 
     public function getById(int $id): Course
@@ -285,14 +319,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return true;
     }
 
-    private function tutors()
+    private function tutors(): Builder
     {
-        return User::whereExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('courses')
-                ->where('active', 1)
-                ->whereColumn('courses.author_id', 'users.id');
-        })->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
+        return User::has('authoredCourses')->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
     }
 
     public function findTutors(): Collection

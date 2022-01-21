@@ -14,7 +14,7 @@ class TutorResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'path_avatar' => $this->path_avatar,
-            'bio' => $this->bio
+            'bio' => $this->bio,
         ];
     }
 }
