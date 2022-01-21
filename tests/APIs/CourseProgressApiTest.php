@@ -164,6 +164,7 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_progress_course()
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $course = Course::factory()->create(['active' => true]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
@@ -172,7 +173,7 @@ class CourseProgressApiTest extends TestCase
             'lesson_id' => $lesson->getKey(),
         ]);
 
-        $user->courses()->sync([$course]);
+        $user->courses()->sync([$course->getKey()]);
 
         $oneTopic = null;
         foreach ($topics as $topic) {
