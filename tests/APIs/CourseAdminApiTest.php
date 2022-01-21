@@ -297,9 +297,9 @@ class CourseAdminApiTest extends TestCase
 
     public function test_search_course_by_tag()
     {
-        $course = Course::factory()->create();
-        $course2 = Course::factory()->create();
-        $course3 = Course::factory()->create();
+        $course = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course2 = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course3 = Course::factory()->create(['active' => true, 'findable' => true]);
 
         $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
         $tags2 = ['Foo', 'Bar', 'FooBar'];
@@ -615,7 +615,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    public function test_unique_tags_courses() : void
+    public function test_unique_tags_courses(): void
     {
         $courseActive = Course::factory(['active' => true])->create();
         $courseUnActive = Course::factory(['active' => false])->create();

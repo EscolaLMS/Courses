@@ -201,7 +201,9 @@ class CourseTutorApiTest extends TestCase
         $admin = $this->makeAdmin();
 
         /** @var Course $course */
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'author_id' => null
+        ]);
         $this->assertFalse($course->hasAuthor($this->user));
 
         $this->response = $this->actingAs($admin, 'api')->json(

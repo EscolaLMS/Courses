@@ -21,7 +21,6 @@ use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Class CourseController.
