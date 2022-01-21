@@ -189,7 +189,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
         }
 
-        $this->syncAuthors($model, $input['authors'] ?? [Auth::id()]);
+        $this->syncAuthors($model, $input['authors'] ?? (Auth::user() ? [Auth::id()] : []));
 
         return $model;
     }
@@ -257,7 +257,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function syncAuthors(Course $course, array $authors = []): void
     {
-        if (!Auth::user()->can(CoursesPermissionsEnum::COURSE_UPDATE)) {
+        if (Auth::user() && !Auth::user()->can(CoursesPermissionsEnum::COURSE_UPDATE)) {
             $authors = array_unique(array_merge($authors, $course->authors()->pluck('author_id')->all(), [Auth::id()])); // only admin can remove other authors?
         }
 
