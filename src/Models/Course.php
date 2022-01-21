@@ -397,4 +397,9 @@ class Course extends Model
     {
         return self::class;
     }
+
+    public function getMorphClass()
+    {
+        return \EscolaLms\Courses\Models\Course::class;
+    }
 }
