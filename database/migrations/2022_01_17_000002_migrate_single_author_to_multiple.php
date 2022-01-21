@@ -20,6 +20,7 @@ class MigrateSingleAuthorToMultiple extends Migration
             }
         }
         Schema::table('courses', function (Blueprint $table) {
+            $table->dropForeign('courses_author_id_foreign');
             $table->dropColumn('author_id');
         });
     }
