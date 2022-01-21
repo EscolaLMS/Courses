@@ -167,7 +167,7 @@ class CourseAnonymousApiTest extends TestCase
         $priceMax = 9999999;
         $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
         $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::PUBLISHED]);
-        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
             'GET',
@@ -191,7 +191,7 @@ class CourseAnonymousApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::ARCHIVED]);
         $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::DRAFT]);
 
         $this->response = $this->json(

@@ -43,7 +43,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         $course = $this->courseRepositoryContract->getById($course_id);
 
         if ($course->status !== CourseStatusEnum::PUBLISHED) {
-            // We only check $course->active, and not is_active, because if course has deadline we still want to return progress
+            // We only check $course->status !== CourseStatusEnum::PUBLISHED, and not is_active, because if course has deadline we still want to return progress
             return $this->sendError(__('Course is not active'), 403);
         }
 
@@ -57,7 +57,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $course = $this->courseRepositoryContract->getById($course_id);
 
-        if (!$course->active) {
+        if ($course->status !== CourseStatusEnum::PUBLISHED) {
             return $this->sendError(__('Course is not active'), 403);
         }
 
@@ -74,7 +74,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
-        if ($topic->course !== CourseStatusEnum::PUBLISHED) {
+        if ($topic->course->status !== CourseStatusEnum::PUBLISHED) {
             return $this->sendError(__('Course is not active'), 403);
         }
         if (!$topic->active) {
