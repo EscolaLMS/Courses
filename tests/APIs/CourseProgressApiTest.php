@@ -165,22 +165,25 @@ class CourseProgressApiTest extends TestCase
     public function test_ping_progress_course()
     {
         $user = User::factory()->create();
-        $courses = Course::factory(5)->create(['active' => true]);
+        $course = Course::factory()->create(['active' => true]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topics = Topic::factory(2)->create([
             'active' => true,
+            'lesson_id' => $lesson->getKey(),
         ]);
+
+        $user->courses()->sync([$course]);
+
         $oneTopic = null;
-        foreach ($courses as $course) {
-            foreach ($topics as $topic) {
-                $oneTopic = $topic;
-                CourseProgress::create([
-                    'user_id' => $user->getKey(),
-                    'topic_id' => $topic->getKey(),
-                    'status' => 0
-                ]);
-            }
-            $user->courses()->save($course);
+        foreach ($topics as $topic) {
+            $oneTopic = $topic;
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => 0
+            ]);
         }
+
         $this->response = $this->actingAs($user, 'api')->json(
             'PUT',
             '/api/courses/progress/' . $oneTopic->getKey() . '/ping'

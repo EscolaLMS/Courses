@@ -41,7 +41,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/'.$this->topic->id,
+            '/api/admin/topics/' . $this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,

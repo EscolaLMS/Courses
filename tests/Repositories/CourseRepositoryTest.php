@@ -16,7 +16,7 @@ class CourseRepositoryTest extends TestCase
      */
     protected $courseRepo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->courseRepo = \App::make(CourseRepository::class);
