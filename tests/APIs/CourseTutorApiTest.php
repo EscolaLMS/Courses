@@ -6,9 +6,11 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
+use EscolaLms\Courses\Events\CourseStatusChanged;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 
 class CourseTutorApiTest extends TestCase
 {
@@ -235,5 +237,32 @@ class CourseTutorApiTest extends TestCase
 
         $course->refresh();
         $this->assertFalse($course->hasAuthor($this->user));
+    }
+
+    public function test_update_course_status()
+    {
+        Event::fake([CourseStatusChanged::class]);
+
+        $course = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'author_id' => $this->user->id,
+        ]);
+
+        $course->title = 'Update course title';
+        $this->response = $this->actingAs($this->user, 'api')->putJson('/api/admin/courses/' . $course->id,
+            $course->toArray(),
+        )->assertOk();
+
+        Event::assertNotDispatched(CourseStatusChanged::class);
+
+        $course->status = CourseStatusEnum::DRAFT;
+        $this->response = $this->actingAs($this->user, 'api')->putJson('/api/admin/courses/' . $course->id,
+            $course->toArray(),
+        )->assertOk();
+
+        Event::assertDispatched(CourseStatusChanged::class, function (CourseStatusChanged $event) {
+            $this->assertEquals(CourseStatusEnum::DRAFT, $event->getCourse()->status);
+            return true;
+        });
     }
 }

@@ -465,10 +465,12 @@ class CourseAdminApiTest extends TestCase
 
     public function test_admin_status_search()
     {
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
+        Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?status='.CourseStatusEnum::PUBLISHED
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::PUBLISHED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
@@ -477,9 +479,8 @@ class CourseAdminApiTest extends TestCase
             $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
         }
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?status='.CourseStatusEnum::ARCHIVED
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::ARCHIVED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
@@ -488,15 +489,24 @@ class CourseAdminApiTest extends TestCase
             $this->assertEquals(CourseStatusEnum::ARCHIVED, $course->status);
         }
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?status='.CourseStatusEnum::DRAFT
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::DRAFT
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
             $this->assertEquals(CourseStatusEnum::DRAFT, $course->status);
+        }
+
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status[]=' . CourseStatusEnum::PUBLISHED . '&&status[]=' . CourseStatusEnum::DRAFT
+        );
+        $this->response->assertStatus(200);
+        $courses = $this->response->getData()->data;
+
+        foreach ($courses as $course) {
+            $this->assertContains($course->status, [CourseStatusEnum::PUBLISHED, CourseStatusEnum::DRAFT]);
         }
     }
 

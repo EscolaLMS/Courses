@@ -7,6 +7,7 @@ use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\PlatformVisibility;
+use EscolaLms\Courses\Events\CourseStatusChanged;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -226,32 +227,35 @@ class Course extends Model
      *
      * @var array
      */
-    public static $rules = [
-        'title' => 'string|max:255',
-        'summary' => 'nullable|string',
-        'image_path' => 'nullable|string|max:255',
-        'video_path' => 'nullable|string|max:255',
-        'base_price' => 'nullable|integer|min:0',
-        'duration' => 'nullable|string|max:255',
-        'authors' => ['nullable', 'array'],
-        'authors.*' => ['integer'],
-        'image' => 'file|image',
-        'video' => 'file|mimes:mp4,ogg,webm',
-        'status' => ['string'],
-        'subtitle' => 'nullable|string|max:255',
-        'language' => 'nullable|string|max:2',
-        'description' => 'nullable|string',
-        'level' => 'nullable|string|max:100',
-        'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
-        'poster_path' => 'nullable|string|max:255',
-        'poster' => 'file|image',
-        'active_from' => 'date|nullable',
-        'active_to' => 'date|nullable',
-        'hours_to_complete' => 'integer|nullable',
-        'purchasable' => 'boolean',
-        'findable' => 'boolean',
-        'target_group' => 'nullable|string|max:100',
-    ];
+    public static function rules(): array
+    {
+        return [
+            'title' => 'string|max:255',
+            'summary' => 'nullable|string',
+            'image_path' => 'nullable|string|max:255',
+            'video_path' => 'nullable|string|max:255',
+            'base_price' => 'nullable|integer|min:0',
+            'duration' => 'nullable|string|max:255',
+            'authors' => ['nullable', 'array'],
+            'authors.*' => ['integer'],
+            'image' => 'file|image',
+            'video' => 'file|mimes:mp4,ogg,webm',
+            'status' => ['string', Rule::in(CourseStatusEnum::getValues())],
+            'subtitle' => 'nullable|string|max:255',
+            'language' => 'nullable|string|max:2',
+            'description' => 'nullable|string',
+            'level' => 'nullable|string|max:100',
+            'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
+            'poster_path' => 'nullable|string|max:255',
+            'poster' => 'file|image',
+            'active_from' => 'date|nullable',
+            'active_to' => 'date|nullable',
+            'hours_to_complete' => 'integer|nullable',
+            'purchasable' => 'boolean',
+            'findable' => 'boolean',
+            'target_group' => 'nullable|string|max:100',
+        ];
+    }
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
 
@@ -390,6 +394,12 @@ class Course extends Model
         self::saved(function (Course $course) {
             if ($course->author_id) {
                 $course->authors()->syncWithoutDetaching([$course->author_id]);
+            }
+        });
+
+        self::updated(function (Course $course) {
+            if ($course->wasChanged('status')) {
+                event(new CourseStatusChanged($course));
             }
         });
     }
