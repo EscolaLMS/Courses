@@ -17,9 +17,11 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
     Route::resource('courses', CourseAPIController::class);
     Route::resource('lessons', LessonAPIController::class);
+    Route::post('lessons/{id}/clone', [LessonAPIController::class, 'clone']);
     Route::get('topics/types', [TopicAPIController::class, 'classes']);
     Route::resource('topics', TopicAPIController::class);
     Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
+    Route::post('topics/{id}/clone', [TopicAPIController::class, 'clone']);
 
     Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list']);
     Route::post('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'upload']);
@@ -33,6 +35,9 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
+
+    Route::post('/tutors/{id}/assign/{course}', [CourseAuthorsAPIController::class, 'assign']);
+    Route::post('/tutors/{id}/unassign/{course}', [CourseAuthorsAPIController::class, 'unassign']);
 });
 
 // user endpoints

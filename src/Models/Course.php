@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Peopleaps\Scorm\Model\ScormModel;
+use Peopleaps\Scorm\Model\ScormScoModel;
 
 /**
  * @OA\Schema(
@@ -68,14 +68,9 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          description="duration",
  *          type="string"
  *      ),
- *      @OA\Property(
- *          property="author_id",
- *          description="author_id",
- *          type="integer",
- *      ),
  *     @OA\Property(
- *          property="scorm_id",
- *          description="scorm_id",
+ *          property="scorm_sco_id",
+ *          description="scorm_sco_id",
  *          type="integer",
  *      ),
  *      @OA\Property(
@@ -153,8 +148,13 @@ use Peopleaps\Scorm\Model\ScormModel;
  *          description="findable",
  *          type="boolean"
  *      ),
+ *      @OA\Property(
+ *          property="target_group",
+ *          description="target group",
+ *          type="string",
+ *      ),
  * )
- * 
+ *
  * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
@@ -165,6 +165,9 @@ class Course extends Model
     use HasFactory;
 
     public $table = 'courses';
+
+    /** Backwards compatibility */
+    protected ?int $author_id = null;
 
     public $fillable = [
         'title',
@@ -179,13 +182,14 @@ class Course extends Model
         'language',
         'description',
         'level',
-        'scorm_id',
+        'scorm_sco_id',
         'poster_path',
         'active_from',
         'active_to',
         'hours_to_complete',
         'purchasable',
         'findable',
+        'target_group',
     ];
 
     /**
@@ -201,19 +205,19 @@ class Course extends Model
         'video_path' => 'string',
         'base_price' => 'integer',
         'duration' => 'string',
-        'author_id' => 'integer',
         'active' => 'boolean',
         'subtitle' => 'string',
         'language' => 'string',
         'description' => 'string',
         'level' => 'string',
-        'scorm_id' => 'integer',
+        'scorm_sco_id' => 'integer',
         'poster_path' => 'string',
         'active_from' => 'datetime',
         'active_to' => 'datetime',
         'hours_to_complete' => 'integer',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'string',
     ];
 
     /**
@@ -228,7 +232,8 @@ class Course extends Model
         'video_path' => 'nullable|string|max:255',
         'base_price' => 'nullable|integer|min:0',
         'duration' => 'nullable|string|max:255',
-        'author_id' => ['nullable', 'exists:users,id'],
+        'authors' => ['nullable', 'array'],
+        'authors.*' => ['integer'],
         'image' => 'file|image',
         'video' => 'file|mimes:mp4,ogg,webm',
         'active' => 'boolean',
@@ -236,7 +241,7 @@ class Course extends Model
         'language' => 'nullable|string|max:2',
         'description' => 'nullable|string',
         'level' => 'nullable|string|max:100',
-        'scorm_id' => 'nullable|exists:scorm,id',
+        'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
         'poster_path' => 'nullable|string|max:255',
         'poster' => 'file|image',
         'active_from' => 'date|nullable',
@@ -244,13 +249,50 @@ class Course extends Model
         'hours_to_complete' => 'integer|nullable',
         'purchasable' => 'boolean',
         'findable' => 'boolean',
+        'target_group' => 'nullable|string|max:100',
     ];
 
     protected $appends = ['image_url', 'video_url', 'poster_url'];
 
-    public function author(): BelongsTo
+    public function authors(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsToMany(User::class, 'course_author', 'course_id', 'author_id')->using(CourseAuthorPivot::class);
+    }
+
+    /** Backwards compatibility */
+    public function getAuthorAttribute(): ?User
+    {
+        return $this->authors()->first();
+    }
+
+    /** Backwards compatibility */
+    public function getAuthorIdAttribute(): ?int
+    {
+        $author = $this->author;
+        if ($author) {
+            return $author->id;
+        }
+        return $this->author_id;
+    }
+
+    /** Backwards compatibility */
+    public function setAuthorAttribute(User $author)
+    {
+        $this->setAuthorIdAttribute($author->getKey());
+    }
+
+    /** Backwards compatibility */
+    public function setAuthorIdAttribute(?int $author_id)
+    {
+        if ($this->exists && !is_null($author_id)) {
+            $this->authors()->syncWithoutDetaching([$author_id]);
+        }
+        $this->author_id = $author_id;
+    }
+
+    public function hasAuthor(User $author): bool
+    {
+        return !is_null($this->authors()->where('author_id', $author->id)->first());
     }
 
     public function lessons(): HasMany
@@ -312,9 +354,9 @@ class Course extends Model
         return $this->hasManyThrough(Topic::class, Lesson::class, 'course_id', 'lesson_id');
     }
 
-    public function scorm(): BelongsTo
+    public function scormSco(): BelongsTo
     {
-        return $this->belongsTo(ScormModel::class, 'scorm_id');
+        return $this->belongsTo(ScormScoModel::class, 'scorm_sco_id');
     }
 
     public function getIsActiveAttribute(): bool
@@ -343,5 +385,16 @@ class Course extends Model
                 $course->findable = config('escolalms_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
             }
         });
+        /** Backwards compatibility */
+        self::saved(function (Course $course) {
+            if ($course->author_id) {
+                $course->authors()->syncWithoutDetaching([$course->author_id]);
+            }
+        });
+    }
+
+    public function getMorphClass()
+    {
+        return \EscolaLms\Courses\Models\Course::class;
     }
 }

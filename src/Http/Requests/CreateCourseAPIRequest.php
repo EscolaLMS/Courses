@@ -13,7 +13,7 @@ class CreateCourseAPIRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         $user = auth()->user();
         return isset($user) ? $user->can('create', Course::class) : false;
@@ -24,12 +24,12 @@ class CreateCourseAPIRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = array_merge(Course::$rules, [
             'title' => ['required', 'string', "min:3"],
         ]);
-        $rules['author_id'][] = new ValidAuthor();
+        $rules['authors.*'][] = new ValidAuthor();
         return $rules;
     }
 }

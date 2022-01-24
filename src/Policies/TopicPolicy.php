@@ -11,23 +11,28 @@ class TopicPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Topic $topic)
+    public function view(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can('update', $topic->lesson); // this calls `update` method from LessonPolicy
     }
 
     public function update(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can('update', $topic->lesson); // this calls `update` method from LessonPolicy
     }
 
     public function delete(User $user, Topic $topic): bool
     {
-        return $user->can('update', $topic->lesson);
+        return $user->can('update', $topic->lesson); // this calls `update` method from LessonPolicy
     }
 
-    public function attend(?User $user, Topic $topic)
+    public function attend(?User $user, Topic $topic): bool
     {
-        return Gate::check('attend', $topic->lesson);
+        return Gate::check('attend', $topic->lesson); // this calls `attend` method from LessonPolicy
+    }
+
+    public function clone(User $user, Topic $topic): bool
+    {
+        return $user->can('update', $topic->lesson); // this calls `update` method from LessonPolicy
     }
 }

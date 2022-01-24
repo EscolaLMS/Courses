@@ -33,7 +33,8 @@ class CourseResource extends JsonResource
             'base_price' =>  $course->base_price,
             'duration' =>  $course->duration,
             'author_id' => $course->author_id,
-            'scorm_id' => $course->scorm_id,
+            'authors' => $course->authors,
+            'scorm_sco_id' => $course->scorm_sco_id,
             'active' =>  $course->active,
             'subtitle' =>  $course->subtitle,
             'language' =>  $course->language,
@@ -45,6 +46,7 @@ class CourseResource extends JsonResource
             'hours_to_complete' => $course->hours_to_complete,
             'purchasable' => $course->purchasable,
             'findable' => $course->findable,
+            'target_group' => $course->target_group,
         ];
     }
 }

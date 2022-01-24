@@ -5,13 +5,12 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseTutorRestrictApiTest extends TestCase
 {
-    use /*ApiTestTrait,*/ DatabaseTransactions;
+    use DatabaseTransactions;
 
     /**
      * @test

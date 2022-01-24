@@ -8,11 +8,7 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\TopicTypes\Events\VideoUpdated;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Storage;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
@@ -45,7 +41,7 @@ class TopicTutorUpdateApiTest extends TestCase
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
         ])->actingAs($this->user, 'api')->post(
-            '/api/admin/topics/'.$this->topic->id,
+            '/api/admin/topics/' . $this->topic->id,
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,

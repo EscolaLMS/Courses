@@ -6,7 +6,6 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Events\CoursedPublished;
-use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -192,7 +191,7 @@ class CourseAdminApiTest extends TestCase
         $editedCourse = Course::factory()->make()->toArray();
 
         $student = $this->makeStudent();
-        $editedCourse['author_id'] = $student->getKey();
+        $editedCourse['authors'][] = $student->getKey();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
@@ -201,7 +200,30 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->response->assertStatus(422);
-        $this->response->assertInvalid('author_id');
+        $this->response->assertInvalid('authors.0');
+    }
+
+    public function test_update_course_remove_authors()
+    {
+        $course = Course::factory()->create([
+            'author_id' => $this->user->getKey()
+        ]);
+
+        $this->assertNotEquals([], $course->authors->toArray());
+
+        $editedCourse = Course::factory()->make()->toArray();
+        $editedCourse['authors'] = [];
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            $editedCourse
+        );
+
+        $this->response->assertOk();
+
+        $course->refresh();
+        $this->assertEquals([], $course->authors->toArray());
     }
 
     /**
@@ -298,30 +320,91 @@ class CourseAdminApiTest extends TestCase
 
     public function test_search_course_by_tag()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course2 = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course3 = Course::factory()->create(['active' => true, 'findable' => true]);
 
-        $tags = ['LoremLorem Lorem', 'Ipsum', "Bla Bla bla"];
+        $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
+        $tags2 = ['Foo', 'Bar', 'FooBar'];
+        $tags3 = ['NotFoo', "NotBar", "NotFooBar"];
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/admin/courses/' . $course->getKey(),
             ['tags' =>  $tags]
         );
-
         $this->response->assertStatus(200);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
-            'GET',
-            '/api/admin/courses/?tag=' . $tags[0],
+            'PUT',
+            '/api/admin/courses/' . $course2->getKey(),
+            ['tags' =>  $tags2]
         );
+        $this->response->assertStatus(200);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course3->getKey(),
+            ['tags' =>  $tags3]
+        );
+        $this->response->assertStatus(200);
+
+        // filter by one tag, showing only courses that have it
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag'  => $tags[0] // or 'tag' => [$tags[0]]
+            ]
+        );
+        $this->response->assertStatus(200);
 
         $coursesIds = [];
-
         foreach ($this->response->getData()->data as $course) {
             $coursesIds[] = $course->id;
         }
-
         $this->assertTrue(in_array($course->id,  $coursesIds));
+        $this->assertFalse(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course3->id,  $coursesIds));
+
+        // filter by two tags, showing courses with either first or second tag
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag' => [
+                    $tags[0],
+                    $tags2[0],
+                ]
+            ]
+        );
+        $this->response->assertStatus(200);
+
+        $coursesIds = [];
+        foreach ($this->response->getData()->data as $course) {
+            $coursesIds[] = $course->id;
+        }
+        $this->assertTrue(in_array($course->id,  $coursesIds));
+        $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course3->id,  $coursesIds));
+
+        // ignore filtering by tag if tags are empty/null
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag' => null
+            ]
+        );
+        $this->response->assertStatus(200);
+
+        $coursesIds = [];
+        foreach ($this->response->getData()->data as $course) {
+            $coursesIds[] = $course->id;
+        }
+        $this->assertTrue(in_array($course->id,  $coursesIds));
+        $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertTrue(in_array($course3->id,  $coursesIds));
     }
 
     /**
@@ -361,8 +444,6 @@ class CourseAdminApiTest extends TestCase
         $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => true]);
         $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => true]);
         $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'active' => false]);
-
-
 
         $this->response = $this->json(
             'GET',
@@ -557,7 +638,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    public function test_unique_tags_courses() : void
+    public function test_unique_tags_courses(): void
     {
         $courseActive = Course::factory(['active' => true])->create();
         $courseUnActive = Course::factory(['active' => false])->create();

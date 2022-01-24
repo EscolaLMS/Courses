@@ -2,8 +2,9 @@
 
 namespace EscolaLms\Courses;
 
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Policies\CoursesPolicy;

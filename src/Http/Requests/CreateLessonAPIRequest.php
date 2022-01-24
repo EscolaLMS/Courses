@@ -13,7 +13,7 @@ class CreateLessonAPIRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         $user = auth()->user();
         $course = Course::find($this->input('course_id'));
@@ -25,7 +25,7 @@ class CreateLessonAPIRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return Lesson::$rules;
     }

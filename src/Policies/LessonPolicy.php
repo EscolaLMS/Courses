@@ -11,23 +11,28 @@ class LessonPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Lesson $lesson)
+    public function view(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course);
+        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 
     public function update(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course);
+        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 
     public function delete(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course);
+        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 
-    public function attend(?User $user, Lesson $lesson)
+    public function attend(?User $user, Lesson $lesson): bool
     {
-        return Gate::check('attend', $lesson->course);
+        return Gate::check('attend', $lesson->course); // this calls `attend` method from CoursePolicy
+    }
+
+    public function clone(User $user, Lesson $lesson): bool
+    {
+        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 }
