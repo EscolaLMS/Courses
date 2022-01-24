@@ -5,8 +5,8 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
+use EscolaLms\Courses\Events\CoursedPublished;
+use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -70,7 +70,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(201);
 
         $this->assertApiResponse($course);
-        Event::assertDispatched(EscolaLmsCoursedPublishedTemplateEvent::class);
+        Event::assertDispatched(CoursedPublished::class);
     }
 
 
@@ -159,7 +159,7 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
-        Event::assertDispatched(EscolaLmsCoursedPublishedTemplateEvent::class);
+        Event::assertDispatched(CoursedPublished::class);
     }
 
     /**

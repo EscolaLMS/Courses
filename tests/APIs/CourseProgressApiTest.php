@@ -4,11 +4,11 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsTopicFinishedTemplateEvent;
+use EscolaLms\Courses\Events\CourseAccessFinished;
+use EscolaLms\Courses\Events\CourseAccessStarted;
+use EscolaLms\Courses\Events\CourseFinished;
+use EscolaLms\Courses\Events\CourseStarted;
+use EscolaLms\Courses\Events\TopicFinished;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Group;
@@ -122,9 +122,9 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        Event::assertDispatched(EscolaLmsTopicFinishedTemplateEvent::class);
-        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
-        Event::assertDispatched(EscolaLmsCourseFinishedTemplateEvent::class);
+        Event::assertDispatched(TopicFinished::class);
+        Event::assertDispatched(CourseAccessFinished::class);
+        Event::assertDispatched(CourseFinished::class);
     }
 
     public function test_verify_course_started(): void
@@ -152,8 +152,8 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        Event::assertDispatched(EscolaLmsCourseStartedTemplateEvent::class);
-        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
+        Event::assertDispatched(CourseStarted::class);
+        Event::assertDispatched(CourseAccessStarted::class);
     }
 
     public function test_ping_progress_course()
@@ -222,7 +222,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
-        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
+        Event::assertDispatched(CourseAccessFinished::class);
 
         $lesson = $course->lessons->get(0);
         $topics = Topic::factory(2)->create([

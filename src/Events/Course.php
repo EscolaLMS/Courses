@@ -2,22 +2,22 @@
 
 namespace EscolaLms\Courses\Events;
 
-use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Core\Models\User;
+use EscolaLms\Courses\Models\Course as CourseModel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class EscolaLmsTopicFinishedTemplateEvent
+abstract class Course
 {
     use Dispatchable, SerializesModels;
 
     private User $user;
-    private Topic $topic;
+    private CourseModel $course;
 
-    public function __construct(User $user, Topic $topic)
+    public function __construct(User $user, CourseModel $course)
     {
         $this->user = $user;
-        $this->topic = $topic;
+        $this->course = $course;
     }
 
     public function getUser(): User
@@ -25,8 +25,8 @@ class EscolaLmsTopicFinishedTemplateEvent
         return $this->user;
     }
 
-    public function getTopic(): Topic
+    public function getCourse(): CourseModel
     {
-        return $this->topic;
+        return $this->course;
     }
 }

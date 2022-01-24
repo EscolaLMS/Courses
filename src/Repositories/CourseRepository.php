@@ -5,7 +5,7 @@ namespace EscolaLms\Courses\Repositories;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
+use EscolaLms\Courses\Events\CoursedPublished;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
@@ -180,7 +180,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         if ($model->is_active && Auth::user()) {
-            event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
+            event(new CoursedPublished(Auth::user(), $model));
         }
         return $model;
     }
@@ -239,7 +239,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         $model->save();
         if ($isActive !== $model->is_active && $model->is_active && Auth::user()) {
-            event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
+            event(new CoursedPublished(Auth::user(), $model));
         }
         return $model;
     }
