@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CoursedPublished;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
@@ -51,11 +52,11 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-    public function test_create_course_active()
+    public function test_create_course_published()
     {
         Event::fake();
         $course = Course::factory([
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED,
         ])->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -76,7 +77,7 @@ class CourseAdminApiTest extends TestCase
     public function test_create_and_update_course_with_deadline()
     {
         $course = Course::factory()->make([
-            'active' => true,
+            'status' => CourseStatusEnum::PUBLISHED,
             'active_from' => Carbon::now()->subDay(1),
             'active_to' => Carbon::now()->addDay(1),
             'hours_to_complete' => 24,
@@ -145,10 +146,10 @@ class CourseAdminApiTest extends TestCase
     {
         Event::fake();
         $course = Course::factory([
-            'active' => false
+            'status' => CourseStatusEnum::ARCHIVED,
         ])->create();
         $editedCourse = Course::factory([
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED,
         ])->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -320,9 +321,9 @@ class CourseAdminApiTest extends TestCase
 
     public function test_search_course_by_tag()
     {
-        $course = Course::factory()->create(['active' => true, 'findable' => true]);
-        $course2 = Course::factory()->create(['active' => true, 'findable' => true]);
-        $course3 = Course::factory()->create(['active' => true, 'findable' => true]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true]);
+        $course2 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true]);
+        $course3 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true]);
 
         $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
         $tags2 = ['Foo', 'Bar', 'FooBar'];
@@ -441,9 +442,9 @@ class CourseAdminApiTest extends TestCase
     {
         $priceMin = 0;
         $priceMax = 999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'active' => true]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'active' => true]);
-        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'active' => false]);
+        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
             'GET',
@@ -462,29 +463,50 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
     }
 
-    public function test_admin_active_search()
+    public function test_admin_status_search()
     {
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
+        Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?active=true'
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::PUBLISHED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, true);
+            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
         }
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?active=false'
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::ARCHIVED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertTrue($course->active, false);
+            $this->assertEquals(CourseStatusEnum::ARCHIVED, $course->status);
+        }
+
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status='.CourseStatusEnum::DRAFT
+        );
+        $this->response->assertStatus(200);
+        $courses = $this->response->getData()->data;
+
+        foreach ($courses as $course) {
+            $this->assertEquals(CourseStatusEnum::DRAFT, $course->status);
+        }
+
+        $this->response = $this->actingAs($this->user, 'api')->getJson(
+            '/api/admin/courses?status[]=' . CourseStatusEnum::PUBLISHED . '&&status[]=' . CourseStatusEnum::DRAFT
+        );
+        $this->response->assertStatus(200);
+        $courses = $this->response->getData()->data;
+
+        foreach ($courses as $course) {
+            $this->assertContains($course->status, [CourseStatusEnum::PUBLISHED, CourseStatusEnum::DRAFT]);
         }
     }
 
@@ -640,15 +662,15 @@ class CourseAdminApiTest extends TestCase
 
     public function test_unique_tags_courses(): void
     {
-        $courseActive = Course::factory(['active' => true])->create();
-        $courseUnActive = Course::factory(['active' => false])->create();
-        $tagActiveCourse = Tag::factory([
+        $coursePublished = Course::factory(['status' => CourseStatusEnum::PUBLISHED])->create();
+        $courseArchived = Course::factory(['status' => CourseStatusEnum::ARCHIVED])->create();
+        $tagPublishedCourse = Tag::factory([
             'morphable_type' => Course::class,
-            'morphable_id' => $courseActive->getKey()
+            'morphable_id' => $coursePublished->getKey()
         ])->create();
-        $tagUnActiveCourse = Tag::factory([
+        $tagArchivedCourse = Tag::factory([
             'morphable_type' => Course::class,
-            'morphable_id' => $courseUnActive->getKey()
+            'morphable_id' => $courseArchived->getKey()
         ])->create();
 
         $response = $this->json('GET', '/api/tags/uniqueTags');
@@ -656,10 +678,10 @@ class CourseAdminApiTest extends TestCase
         $this->assertObjectHasAttribute('data', $response->getData());
         $result = false;
         foreach ($response->getData()->data as $tag) {
-            if ($tag->title === $tagActiveCourse->title) {
+            if ($tag->title === $tagPublishedCourse->title) {
                 $result = true;
             }
-            if ($tag->title === $tagUnActiveCourse->title) {
+            if ($tag->title === $tagArchivedCourse->title) {
                 $result = false;
             }
         }

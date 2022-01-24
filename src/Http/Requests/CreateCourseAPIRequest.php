@@ -26,7 +26,7 @@ class CreateCourseAPIRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = array_merge(Course::$rules, [
+        $rules = array_merge(Course::rules(), [
             'title' => ['required', 'string', "min:3"],
         ]);
         $rules['authors.*'][] = new ValidAuthor();

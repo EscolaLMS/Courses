@@ -35,7 +35,7 @@ class CourseResource extends JsonResource
             'author_id' => $course->author_id,
             'authors' => $course->authors,
             'scorm_sco_id' => $course->scorm_sco_id,
-            'active' =>  $course->active,
+            'status' =>  $course->status,
             'subtitle' =>  $course->subtitle,
             'language' =>  $course->language,
             'description' =>  $course->description,

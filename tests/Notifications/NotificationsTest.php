@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Tests\Notifications;
 
 use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Events\CourseAccessFinished;
@@ -44,7 +45,7 @@ class NotificationsTest extends TestCase
         Event::fake();
 
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true, 'active_to' => Carbon::now()->addDays(config('escolalms_courses.reminder_of_deadline_count_days'))]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addDays(config('escolalms_courses.reminder_of_deadline_count_days'))]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);
@@ -69,7 +70,7 @@ class NotificationsTest extends TestCase
         Event::fake();
 
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true, 'active_to' => Carbon::now()->addHour()]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addHour()]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);
@@ -96,7 +97,7 @@ class NotificationsTest extends TestCase
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
             'base_price' => 1337,
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED,
         ]);
 
         $student = User::factory()->create();
@@ -122,7 +123,7 @@ class NotificationsTest extends TestCase
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
             'base_price' => 1337,
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED
         ]);
         $student = User::factory()->create();
         $student->courses()->save($course);
@@ -144,7 +145,7 @@ class NotificationsTest extends TestCase
         Notification::fake();
         Event::fake();
 
-        $course = Course::factory()->create(['active' => true]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory([
             'course_id' => $course->getKey()
         ])->create();

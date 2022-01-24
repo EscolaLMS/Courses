@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -49,7 +50,7 @@ class CourseTutorRestrictApiTest extends TestCase
     public function test_read_course()
     {
         $course = Course::factory()->create([
-            'active' => true
+            'status' => CourseStatusEnum::PUBLISHED,
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
