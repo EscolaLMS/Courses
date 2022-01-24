@@ -148,7 +148,7 @@ class CourseService implements CourseServiceContract
         foreach ($users as $attached) {
             /** @var User $user */
             $user = is_int($attached) ? User::find($attached) : $attached;
-            if ($user && !$course->userH) {
+            if ($user) {
                 event(new EscolaLmsCourseAssignedTemplateEvent($user, $course));
                 event(new EscolaLmsCourseAccessStartedTemplateEvent($user, $course));
             }
