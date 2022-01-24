@@ -47,7 +47,7 @@ interface CoursesAccessAPISwagger
      *                      @OA\Property(
      *                          property="groups",
      *                          type="array",
-     *                          @OA\Items(ref="#/components/schemas/UserGroup")
+     *                          @OA\Items(ref="#/components/schemas/Group")
      *                      ),
      *                      @OA\Property(
      *                          property="users",
@@ -122,7 +122,7 @@ interface CoursesAccessAPISwagger
      *                      @OA\Property(
      *                          property="groups",
      *                          type="array",
-     *                          @OA\Items(ref="#/components/schemas/UserGroup")
+     *                          @OA\Items(ref="#/components/schemas/Group")
      *                      ),
      *                      @OA\Property(
      *                          property="users",
@@ -197,7 +197,7 @@ interface CoursesAccessAPISwagger
      *                      @OA\Property(
      *                          property="groups",
      *                          type="array",
-     *                          @OA\Items(ref="#/components/schemas/UserGroup")
+     *                          @OA\Items(ref="#/components/schemas/Group")
      *                      ),
      *                      @OA\Property(
      *                          property="users",
@@ -272,7 +272,7 @@ interface CoursesAccessAPISwagger
      *                      @OA\Property(
      *                          property="groups",
      *                          type="array",
-     *                          @OA\Items(ref="#/components/schemas/UserGroup")
+     *                          @OA\Items(ref="#/components/schemas/Group")
      *                      ),
      *                      @OA\Property(
      *                          property="users",

@@ -438,12 +438,12 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
     }
 
-    public function test_inactive_for_admins()
+    public function test_public_endpoint_displays_draft_and_archived_for_admins()
     {
         $priceMin = 0;
         $priceMax = 999999;
         $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::DRAFT]);
         $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
@@ -451,16 +451,18 @@ class CourseAdminApiTest extends TestCase
             '/api/courses/?order_by=base_price&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax);
         $this->response->assertStatus(200);
+        $this->response->assertJsonCount(1, 'data');
+        $this->assertEquals($this->response->json()['data'][0]['base_price'], $priceMin);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/courses/?order_by=base_price&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax + 1);
         $this->response->assertStatus(200);
+        $this->response->assertJsonCount(3, 'data');
+        $this->assertEquals($this->response->json()['data'][0]['base_price'], $priceMax + 1);
     }
 
     public function test_admin_status_search()
@@ -470,7 +472,7 @@ class CourseAdminApiTest extends TestCase
         Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->actingAs($this->user, 'api')->getJson(
-            '/api/admin/courses?status='.CourseStatusEnum::PUBLISHED
+            '/api/admin/courses?status=' . CourseStatusEnum::PUBLISHED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
@@ -480,7 +482,7 @@ class CourseAdminApiTest extends TestCase
         }
 
         $this->response = $this->actingAs($this->user, 'api')->getJson(
-            '/api/admin/courses?status='.CourseStatusEnum::ARCHIVED
+            '/api/admin/courses?status=' . CourseStatusEnum::ARCHIVED
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
@@ -490,7 +492,7 @@ class CourseAdminApiTest extends TestCase
         }
 
         $this->response = $this->actingAs($this->user, 'api')->getJson(
-            '/api/admin/courses?status='.CourseStatusEnum::DRAFT
+            '/api/admin/courses?status=' . CourseStatusEnum::DRAFT
         );
         $this->response->assertStatus(200);
         $courses = $this->response->getData()->data;
