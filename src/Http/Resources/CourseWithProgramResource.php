@@ -46,7 +46,7 @@ class CourseWithProgramResource extends JsonResource
             'authors' => $course->authors,
             'scorm_sco_id' => $course->scorm_sco_id,
             'scorm_sco' => $this->when($course->scorm_sco_id !== null, fn () => ScormScoResource::make($course->scormSco)),
-            'active' =>  $course->active,
+            'status' =>  $course->status,
             'subtitle' =>  $course->subtitle,
             'language' =>  $course->language,
             'description' => $course->description,

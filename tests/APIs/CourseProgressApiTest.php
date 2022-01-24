@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 
 use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
@@ -36,7 +37,7 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_courses()
     {
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topics = Topic::factory(2)->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         foreach ($topics as $topic) {
@@ -71,7 +72,7 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_course_from_group()
     {
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
         $group = Group::factory()->create();
@@ -101,7 +102,7 @@ class CourseProgressApiTest extends TestCase
         Queue::fake();
         Event::fake();
 
-        $courses = Course::factory(5)->create(['active' => true]);
+        $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         foreach ($courses as $course) {
             $lesson = Lesson::factory([
                 'course_id' => $course->getKey()
@@ -140,7 +141,7 @@ class CourseProgressApiTest extends TestCase
         Queue::fake();
         Event::fake();
 
-        $courses = Course::factory(5)->create(['active' => true]);
+        $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         $course = $courses->get(0);
 
         $student = User::factory([
@@ -166,7 +167,7 @@ class CourseProgressApiTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topics = Topic::factory(2)->create([
             'active' => true,
@@ -205,7 +206,7 @@ class CourseProgressApiTest extends TestCase
         Queue::fake();
         Event::fake();
 
-        $courses = Course::factory(5)->create(['active' => true]);
+        $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         foreach ($courses as $course) {
             $lesson = Lesson::factory([
                 'course_id' => $course->getKey()
@@ -248,7 +249,7 @@ class CourseProgressApiTest extends TestCase
     public function test_active_to()
     {
         $user = User::factory()->create();
-        $course = Course::factory()->create(['active' => true, 'active_to' => Carbon::now()->subDay()]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->subDay()]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);
@@ -297,7 +298,7 @@ class CourseProgressApiTest extends TestCase
         $now = CarbonImmutable::now()->roundSeconds();
         $hours = rand(1, 10);
 
-        $course = Course::factory()->create(['active' => true, 'hours_to_complete' => $hours]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'hours_to_complete' => $hours]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);

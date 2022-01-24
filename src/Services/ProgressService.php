@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Services;
 
 use EscolaLms\Core\Models\User;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
 use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
@@ -34,7 +35,7 @@ class ProgressService implements ProgressServiceContract
             $user = CoursesUser::find($user->getKey());
         }
         /** @var CoursesUser $user */
-        foreach ($user->courses->where('active', true) as $course) {
+        foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
         foreach ($user->groups as $group) {
@@ -42,7 +43,7 @@ class ProgressService implements ProgressServiceContract
                 $group = Group::find($group->getKey());
             }
             /** @var Group $group */
-            foreach ($group->courses->where('active', true) as $course) {
+            foreach ($group->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
                 if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }

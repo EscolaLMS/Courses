@@ -24,7 +24,7 @@ class CourseSimpleResource extends JsonResource
             'author_id' => $this->author_id,
             'author' => $this->author,
             'authors' => $this->authors,
-            'active' => $this->active,
+            'status' => $this->status,
             'subtitle' => $this->subtitle,
             'language' => $this->language,
             'description' => $this->description,

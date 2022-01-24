@@ -27,7 +27,7 @@ class UpdateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = Course::$rules;
+        $rules = Course::rules();
         $rules['authors.*'][] = new ValidAuthor();
         return $rules;
     }

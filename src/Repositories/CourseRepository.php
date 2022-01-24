@@ -41,7 +41,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'video_path',
         'base_price',
         'duration',
-        'active',
+        'status',
         'scorm_sco_id',
         'poster_path',
         'findable',

@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Database\Factories;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +38,7 @@ class CourseFactory extends Factory
             'base_price' => $this->faker->randomElement([1000, 1999, 0]),
             'duration' => rand(2, 10) . " hours",
             'author_id' => empty($tutor) ? null : $tutor->id,
-            'active' => $this->faker->boolean,
+            'status' => $this->faker->randomElement(CourseStatusEnum::getValues()),
             'subtitle' => $this->faker->sentence,
             'language' => $this->faker->randomElement(['en', 'pl']),
             'description' => $this->faker->markdown,

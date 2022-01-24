@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Scorm\Database\Seeders\DatabaseSeeder;
@@ -26,7 +27,11 @@ class CourseScormApiTest extends TestCase
     {
         $scorm = ScormModel::with('scos')->firstOrFail();
         $sco = $scorm->scos->first();
-        $course = Course::factory()->create(['base_price' => 0, 'scorm_sco_id' => $sco->id, 'active' => true]);
+        $course = Course::factory()->create([
+            'base_price' => 0,
+            'scorm_sco_id' => $sco->id,
+            'status' => CourseStatusEnum::PUBLISHED]
+        );
 
         $this->response = $this->get(
             '/api/courses/' . $course->id . '/scorm'

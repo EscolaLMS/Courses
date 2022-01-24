@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Enums\UserRole;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
@@ -48,7 +49,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         $user = $request->user();
         if (!isset($user) || !$user->hasRole([UserRole::ADMIN, UserRole::TUTOR])) {
-            $search['active'] = true;
+            $search['status'] = CourseStatusEnum::PUBLISHED;
             $search['findable'] = true;
         }
 
