@@ -8,4 +8,5 @@ class CoursesConstant extends BasicEnum
 {
     // constant is expressed in days
     public const REMINDER_OF_DEADLINE_COUNT_DAYS = 7;
+    public const VISIBLE_ONLY_ACCESS_COURSES = false;
 }

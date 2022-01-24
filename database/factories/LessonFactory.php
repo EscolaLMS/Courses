@@ -27,7 +27,7 @@ class LessonFactory extends Factory
         $course = Course::inRandomOrder()->first();
         return [
             'title' => $this->faker->word,
-            'duration' => rand(10, 50) . " minutes",
+            'duration' => random_int(10, 50) . " minutes",
             'order' => $this->faker->randomDigitNotNull,
             'active' => $this->faker->boolean,
             'course_id' => $course ? $course->id : null,

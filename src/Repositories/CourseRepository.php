@@ -4,9 +4,9 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Events\EscolaLmsCoursedPublishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseTutorAssignedEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseTutorUnassignedEvent;
+use EscolaLms\Courses\Events\CoursedPublished;
+use EscolaLms\Courses\Events\CourseTutorAssigned;
+use EscolaLms\Courses\Events\CourseTutorUnassigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
@@ -186,7 +186,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         }
 
         if ($model->is_active && Auth::user()) {
-            event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
+            event(new CoursedPublished(Auth::user(), $model));
         }
 
         $this->syncAuthors($model, $input['authors'] ?? (Auth::user() ? [Auth::id()] : []));
@@ -245,7 +245,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
         $model->save();
         if ($isActive !== $model->is_active && $model->is_active && Auth::user()) {
-            event(new EscolaLmsCoursedPublishedTemplateEvent(Auth::user(), $model));
+            event(new CoursedPublished(Auth::user(), $model));
         }
 
         if (isset($input['authors'])) {
@@ -264,10 +264,10 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $syncResults = $course->authors()->sync($authors);
 
         foreach ($syncResults['attached'] as $attached) {
-            event(new EscolaLmsCourseTutorAssignedEvent(User::find($attached), $course));
+            event(new CourseTutorAssigned(User::find($attached), $course));
         }
         foreach ($syncResults['detached'] as $detached) {
-            event(new EscolaLmsCourseTutorUnassignedEvent(User::find($detached), $course));
+            event(new CourseTutorUnassigned(User::find($detached), $course));
         }
     }
 
@@ -275,14 +275,14 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     {
         if (!in_array($author->getKey(), $course->authors()->pluck('author_id')->all())) {
             $course->authors()->attach($author->getKey());
-            event(new EscolaLmsCourseTutorAssignedEvent($author, $course));
+            event(new CourseTutorAssigned($author, $course));
         }
     }
 
     public function removeAuthor(Course $course, User $author): void
     {
         if ($course->authors()->detach([$author->getKey()])) {
-            event(new EscolaLmsCourseTutorUnassignedEvent($author, $course));
+            event(new CourseTutorUnassigned($author, $course));
             $course->author_id = null;
         }
     }

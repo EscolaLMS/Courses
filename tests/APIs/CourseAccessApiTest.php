@@ -5,8 +5,8 @@ namespace EscolaLms\Courses\Tests\APIs;
 use EscolaLms\Auth\Models\Group;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
+use EscolaLms\Courses\Events\CourseAccessStarted;
+use EscolaLms\Courses\Events\CourseFinished;
 use EscolaLms\Courses\Http\Resources\UserGroupResource;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\Models\User;
@@ -159,7 +159,7 @@ class CourseAccessApiTest extends TestCase
             'users' => [$student->getKey()]
         ]);
         $this->response->assertOk();
-        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
+        Event::assertDispatched(CourseAccessStarted::class);
         $this->assertUserCanReadProgram($student, $this->course);
     }
 
@@ -176,7 +176,7 @@ class CourseAccessApiTest extends TestCase
         ]);
 
         $this->response->assertOk();
-        Event::assertDispatched(EscolaLmsCourseFinishedTemplateEvent::class);
+        Event::assertDispatched(CourseFinished::class);
         $this->assertUserCanNotReadProgram($student, $this->course);
     }
 

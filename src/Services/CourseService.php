@@ -7,10 +7,10 @@ use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseFinishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseUnassignedTemplateEvent;
+use EscolaLms\Courses\Events\CourseAccessStarted;
+use EscolaLms\Courses\Events\CourseAssigned;
+use EscolaLms\Courses\Events\CourseFinished;
+use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -148,9 +148,9 @@ class CourseService implements CourseServiceContract
         foreach ($users as $attached) {
             /** @var User $user */
             $user = is_int($attached) ? User::find($attached) : $attached;
-            if ($user) {
-                event(new EscolaLmsCourseAssignedTemplateEvent($user, $course));
-                event(new EscolaLmsCourseAccessStartedTemplateEvent($user, $course));
+            if ($user && !$course->userH) {
+                event(new CourseAssigned($user, $course));
+                event(new CourseAccessStarted($user, $course));
             }
         }
     }
@@ -161,8 +161,8 @@ class CourseService implements CourseServiceContract
             /** @var User $user */
             $user = is_int($detached) ? User::find($detached) : $detached;
             if ($user) {
-                event(new EscolaLmsCourseUnassignedTemplateEvent($user, $course));
-                event(new EscolaLmsCourseFinishedTemplateEvent($user, $course));
+                event(new CourseUnassigned($user, $course));
+                event(new CourseFinished($user, $course));
             }
         }
     }

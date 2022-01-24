@@ -5,12 +5,12 @@ namespace EscolaLms\Courses\Tests\Notifications;
 use EscolaLms\Core\Models\User as ModelsUser;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseAssignedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseAccessFinishedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseStartedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseUnassignedTemplateEvent;
-use EscolaLms\Courses\Events\EscolaLmsCourseDeadlineSoonTemplateEvent;
+use EscolaLms\Courses\Events\CourseAccessStarted;
+use EscolaLms\Courses\Events\CourseAssigned;
+use EscolaLms\Courses\Events\CourseAccessFinished;
+use EscolaLms\Courses\Events\CourseStarted;
+use EscolaLms\Courses\Events\CourseUnassigned;
+use EscolaLms\Courses\Events\CourseDeadlineSoon;
 use EscolaLms\Courses\Jobs\CheckForDeadlines;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
@@ -59,7 +59,7 @@ class NotificationsTest extends TestCase
         $checkForDealines = new CheckForDeadlines();
         $checkForDealines->handle();
 
-        Event::assertDispatched(EscolaLmsCourseDeadlineSoonTemplateEvent::class, function (EscolaLmsCourseDeadlineSoonTemplateEvent $event) use ($user, $course) {
+        Event::assertDispatched(CourseDeadlineSoon::class, function (CourseDeadlineSoon $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
@@ -84,7 +84,7 @@ class NotificationsTest extends TestCase
         $checkForDealines = new CheckForDeadlines();
         $checkForDealines->handle();
 
-        Event::assertNotDispatched(EscolaLmsCourseDeadlineSoonTemplateEvent::class, function (EscolaLmsCourseDeadlineSoonTemplateEvent $event) use ($user, $course) {
+        Event::assertNotDispatched(CourseDeadlineSoon::class, function (CourseDeadlineSoon $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
@@ -92,7 +92,7 @@ class NotificationsTest extends TestCase
     public function testUserAssignedToCourseNotification()
     {
         Notification::fake();
-        Event::fake([EscolaLmsCourseAccessStartedTemplateEvent::class, EscolaLmsCourseAssignedTemplateEvent::class]);
+        Event::fake([CourseAccessStarted::class, CourseAssigned::class]);
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
@@ -107,10 +107,10 @@ class NotificationsTest extends TestCase
         ]);
 
         $this->response->assertOk();
-        Event::assertDispatched(EscolaLmsCourseAccessStartedTemplateEvent::class);
+        Event::assertDispatched(CourseAccessStarted::class);
 
         $user = ModelsUser::find($student->getKey());
-        Event::assertDispatched(EscolaLmsCourseAssignedTemplateEvent::class, function (EscolaLmsCourseAssignedTemplateEvent $event) use ($user, $course) {
+        Event::assertDispatched(CourseAssigned::class, function (CourseAssigned $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
@@ -118,7 +118,7 @@ class NotificationsTest extends TestCase
     public function testUserUnassignedFromCourseNotification()
     {
         Notification::fake();
-        Event::fake(EscolaLmsCourseUnassignedTemplateEvent::class);
+        Event::fake(CourseUnassigned::class);
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
@@ -135,7 +135,7 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
 
         $user = ModelsUser::find($student->getKey());
-        Event::assertDispatched(EscolaLmsCourseUnassignedTemplateEvent::class, function (EscolaLmsCourseUnassignedTemplateEvent $event) use ($user, $course) {
+        Event::assertDispatched(CourseUnassigned::class, function (CourseUnassigned $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
@@ -170,10 +170,10 @@ class NotificationsTest extends TestCase
         $this->response->assertOk();
         $this->assertTrue($courseProgress->isFinished());
 
-        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class);
+        Event::assertDispatched(CourseAccessFinished::class);
 
         $user = ModelsUser::find($student->getKey());
-        Event::assertDispatched(EscolaLmsCourseAccessFinishedTemplateEvent::class, function (EscolaLmsCourseAccessFinishedTemplateEvent $event) use ($user, $course) {
+        Event::assertDispatched(CourseAccessFinished::class, function (CourseAccessFinished $event) use ($user, $course) {
             return $event->getCourse()->getKey() === $course->getKey() && $event->getUser()->getKey() === $user->getKey();
         });
     }
