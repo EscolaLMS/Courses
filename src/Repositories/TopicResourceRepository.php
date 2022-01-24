@@ -39,14 +39,10 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
 
     public function storeUploadedResourceForTopic(Topic $topic, UploadedFile $file): TopicResource
     {
-        $path = "/public/topic/{$topic->getKey()}/resources/";
+        $course = $topic->lesson->course;
         $name = $file->getClientOriginalName();
-
-        $success = $file->storeAs($path, $name);
-
-        if (!$success) {
-            throw new Exception("Failed to store uploaded file");
-        }
+        $destination = sprintf('courses/%d/topic/%d/resources', $course->getKey(), $topic->getKey());
+        $path = Storage::putFileAs($destination, $file, $name);
 
         return $this->create([
             'topic_id' => $topic->getKey(),
@@ -58,11 +54,12 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
     public function delete(int $id): ?bool
     {
         $topicResource = $this->model->query()->findOrFail($id);
+        $path = $topicResource->path;
 
-        $fullpath = $topicResource->path . $topicResource->name;
-        if (Storage::exists($fullpath)) {
-            Storage::delete($fullpath);
+        if (Storage::exists($path)) {
+            Storage::delete($path);
         }
+
         return $topicResource->delete();
     }
 
@@ -79,14 +76,18 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
             $oldExtension = Str::afterLast($model->name, '.');
             $name = $name . '.' . $oldExtension;
         }
-        $oldPath = $model->path . $model->name;
-        $newPath = $model->path . $name;
-        if (Storage::exists($oldPath)) {
+
+        $oldPath = $model->path;
+        $newPath = Str::replace($model->name, $name, $model->path);
+
+        if (Storage::exists($oldPath) && !Storage::exists($newPath)) {
             Storage::move($oldPath, $newPath); // will throw FileExistsException if file at newPath exists
             $model->name = $name;
+            $model->path = $newPath;
             $model->save();
             return true;
         }
+
         return false;
     }
 }

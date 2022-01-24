@@ -10,4 +10,9 @@ class DeleteTopicResourceAPIRequest extends TopicResourceAPIRequest
     {
         return $this->route('resource_id');
     }
+
+    public function rules(): array
+    {
+        return [];
+    }
 }

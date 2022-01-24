@@ -10,6 +10,7 @@ use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TopicResourceTutorApiTest extends TestCase
 {
@@ -47,9 +48,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
 
-        $fullpath = $data->data->path.$data->data->name;
-
-        Storage::disk('local')->assertExists($fullpath);
+        Storage::disk('local')->assertExists($data->data->path);
 
         $this->assertDatabaseHas('topic_resources', [
             'id' => $data->data->id,
@@ -75,9 +74,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
 
-        $fullpath = $data->data->path.$data->data->name;
-
-        Storage::disk('local')->assertExists($fullpath);
+        Storage::disk('local')->assertExists($data->data->path);
 
         $this->assertDatabaseHas('topic_resources', [
             'id' => $data->data->id,
@@ -116,9 +113,8 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
         $id = $data->data->id;
-        $fullpath = $data->data->path.$data->data->name;
 
-        Storage::disk('local')->assertExists($fullpath);
+        Storage::disk('local')->assertExists($data->data->path);
         $this->assertDatabaseHas('topic_resources', [
             'id' => $id,
             'name' => 'test.pdf',
@@ -126,7 +122,7 @@ class TopicResourceTutorApiTest extends TestCase
 
         $this->response = $this->actingAs($this->user, 'api')->delete('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id);
         $this->response->assertStatus(200);
-        Storage::disk('local')->assertMissing($fullpath);
+        Storage::disk('local')->assertMissing($data->data->path);
         $this->assertDatabaseMissing('topic_resources', [
             'id' => $id,
         ]);
@@ -149,22 +145,26 @@ class TopicResourceTutorApiTest extends TestCase
 
         $data = json_decode($this->response->getContent());
         $id = $data->data->id;
-        $fullpath = $data->data->path.$data->data->name;
 
-        Storage::disk('local')->assertExists($fullpath);
+        Storage::disk('local')->assertExists($data->data->path);
         $this->assertDatabaseHas('topic_resources', [
             'id' => $id,
             'name' => 'test.pdf',
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id, [
+            'name' => 'test',
+        ]);
+        $this->response->assertStatus(422);
+
+        $this->response = $this->actingAs($this->user, 'api')->patch('/api/admin/topics/'.$this->topic->getKey().'/resources/'.$id, [
             'name' => 'test-renamed',
         ]);
         $this->response->assertStatus(200);
 
-        $newpath = $data->data->path.'test-renamed.pdf';
+        $newpath = Str::replace('test', 'test-renamed', $data->data->path);
 
-        Storage::disk('local')->assertMissing($fullpath);
+        Storage::disk('local')->assertMissing($data->data->path);
         Storage::disk('local')->assertExists($newpath);
 
         $this->assertDatabaseMissing('topic_resources', [

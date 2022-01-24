@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Tests\Repositories;
 
+use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\LessonRepository;
 use EscolaLms\Courses\Tests\TestCase;
@@ -16,10 +17,11 @@ class LessonRepositoryTest extends TestCase
      */
     protected $lessonRepo;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->lessonRepo = \App::make(LessonRepository::class);
+        Course::factory()->create(); // Lesson factory requires at least one Course existing in DB
     }
 
     /**

@@ -19,6 +19,8 @@ use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\ProgressConfigurable;
 use EscolaLms\Courses\Tests\TestCase;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use EscolaLms\Tags\Models\Tag;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -29,8 +31,9 @@ use Illuminate\Support\Facades\Queue;
 class CourseProgressApiTest extends TestCase
 {
     use CreatesUsers, WithFaker, ProgressConfigurable, MakeServices;
+    use DatabaseTransactions;
 
-    public function test_show_progress_course()
+    public function test_show_progress_courses()
     {
         $user = User::factory()->create();
         $course = Course::factory()->create(['active' => true]);
@@ -43,6 +46,8 @@ class CourseProgressApiTest extends TestCase
                 'status' => 1
             ]);
         }
+        $tag = new Tag(['title' => 'tag']);
+        $course->tags()->save($tag);
         $user->courses()->save($course);
 
         $this->response = $this->actingAs($user, 'api')->json(
@@ -56,6 +61,7 @@ class CourseProgressApiTest extends TestCase
                     'course',
                     'progress',
                     'categories',
+                    'tags',
                     'finish_date',
                 ]
             ]
@@ -158,23 +164,27 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_progress_course()
     {
+        /** @var User $user */
         $user = User::factory()->create();
-        $courses = Course::factory(5)->create(['active' => true]);
+        $course = Course::factory()->create(['active' => true]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
         $topics = Topic::factory(2)->create([
             'active' => true,
+            'lesson_id' => $lesson->getKey(),
         ]);
+
+        $user->courses()->sync([$course->getKey()]);
+
         $oneTopic = null;
-        foreach ($courses as $course) {
-            foreach ($topics as $topic) {
-                $oneTopic = $topic;
-                CourseProgress::create([
-                    'user_id' => $user->getKey(),
-                    'topic_id' => $topic->getKey(),
-                    'status' => 0
-                ]);
-            }
-            $user->courses()->save($course);
+        foreach ($topics as $topic) {
+            $oneTopic = $topic;
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => 0
+            ]);
         }
+
         $this->response = $this->actingAs($user, 'api')->json(
             'PUT',
             '/api/courses/progress/' . $oneTopic->getKey() . '/ping'

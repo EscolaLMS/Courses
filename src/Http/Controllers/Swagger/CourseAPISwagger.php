@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
@@ -78,12 +79,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *     @OA\Parameter(
-     *          name="author_id",
-     *          description="Author ID",
+     *          name="authors",
+     *          description="Authors",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
-     *              type="number",
+     *              type="array",
+     *              @OA\Items(
+     *                 ref="#/components/schemas/User"
+     *              )
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -96,8 +100,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *      @OA\Parameter(
+     *          name="tag[]",
+     *          description="An array of tags",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="array", @OA\Items(type="string")),
+     *      ),
+     *      @OA\Parameter(
      *          name="ids[]",
-     *          description="A array of IDs",
+     *          description="An array of IDs",
      *          required=false,
      *          in="query",
      *          @OA\Schema(type="array", @OA\Items(type="number")),
@@ -201,12 +212,15 @@ interface CourseAPISwagger
      *          ),
      *      ),
      *     @OA\Parameter(
-     *          name="author_id",
-     *          description="Author ID",
+     *          name="authors",
+     *          description="Authors",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
-     *              type="number",
+     *              type="array",
+     *              @OA\Items(
+     *                 ref="#/components/schemas/User"
+     *              )
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -251,7 +265,7 @@ interface CourseAPISwagger
      * )
      */
 
-    public function index(Request $request);
+    public function index(ListCourseAPIRequest $request);
 
     /**
      * @OA\Post(

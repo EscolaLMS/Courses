@@ -9,6 +9,7 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Resources\Admin\CourseWithProgramAdminResource;
@@ -20,7 +21,6 @@ use EscolaLms\Courses\Repositories\CourseRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Class CourseController.
@@ -42,7 +42,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $this->tagRepositoryContract = $tagRepositoryContract;
     }
 
-    public function index(Request $request)
+    public function index(ListCourseAPIRequest $request): JsonResponse
     {
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
 
@@ -59,7 +59,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponseForResource(CourseSimpleResource::collection($courses), __('Courses retrieved successfully'));
     }
 
-    public function store(CreateCourseAPIRequest $request)
+    public function store(CreateCourseAPIRequest $request): JsonResponse
     {
         $input = $request->all();
 
@@ -68,7 +68,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponseForResource(CourseSimpleResource::make($course), __('Course saved successfully'));
     }
 
-    public function show($id, GetCourseAPIRequest $request)
+    public function show($id, GetCourseAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
 
@@ -76,12 +76,12 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError(__('Course not found'));
         }
 
-        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'author')->loadCount('users')), __('Course retrieved successfully'));
+        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'authors')->loadCount('users', 'authors')), __('Course retrieved successfully'));
     }
 
-    public function program($id, GetCourseCurriculumAPIRequest $request)
+    public function program($id, GetCourseCurriculumAPIRequest $request): JsonResponse
     {
-        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scorm.scos']);
+        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scormSco']);
 
         if (empty($course)) {
             return $this->sendError(__('Course not found'));
@@ -94,12 +94,12 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function scorm($id, GetCourseCurriculumAPIRequest $request)
     {
-        $player = $this->courseServiceContract->getScormPlayer($id);
+        $data = $this->courseServiceContract->getScormPlayer($id);
 
-        return $player;
+        return view('scorm::player', ['data' => $data]);
     }
 
-    public function update($id, UpdateCourseAPIRequest $request)
+    public function update($id, UpdateCourseAPIRequest $request): JsonResponse
     {
         $input = $request->all();
 
@@ -116,7 +116,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponseForResource(CourseSimpleResource::make($course), __('Course updated successfully'));
     }
 
-    public function destroy($id, DeleteCourseAPIRequest $request)
+    public function destroy($id, DeleteCourseAPIRequest $request): JsonResponse
     {
         $course = $request->getCourse();
 
@@ -129,7 +129,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendSuccess(__('Course deleted successfully'));
     }
 
-    public function sort(SortAPIRequest $request)
+    public function sort(SortAPIRequest $request): JsonResponse
     {
         $this->courseServiceContract->sort($request->get('class'), $request->get('orders'));
 
@@ -141,6 +141,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $tags = $this->tagRepositoryContract->uniqueTagsFromActiveCourses();
         return $tags ?
             $this->sendResponse($tags, 'Tags unique fetched successfully') :
-            $this->sendError('Tags not found', 404) ;
+            $this->sendError('Tags not found', 404);
     }
 }

@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Models;
 use EscolaLms\Courses\Database\Factories\TopicFactory;
 use EscolaLms\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -188,10 +189,10 @@ class Topic extends Model
     public function getStorageDirectoryAttribute(): string
     {
         if ($this->lesson && $this->lesson->course_id) {
-            return 'course/'.$this->lesson->course_id.'/topic/'.$this->getKey().'/';
+            return 'course/' . $this->lesson->course_id . '/topic/' . $this->getKey() . '/';
         }
 
-        return 'topic/'.$this->getKey().'/';
+        return 'topic/' . $this->getKey() . '/';
     }
 
     protected static function booted()
