@@ -33,7 +33,7 @@ class CourseResource extends JsonResource
             'base_price' =>  $course->base_price,
             'duration' =>  $course->duration,
             'author_id' => $course->author_id,
-            'authors' => $course->authors,
+            'authors' => $course->authors ? TutorResource::collection($course->authors) : [],
             'scorm_sco_id' => $course->scorm_sco_id,
             'status' =>  $course->status,
             'subtitle' =>  $course->subtitle,
