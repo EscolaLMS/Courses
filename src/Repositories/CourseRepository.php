@@ -321,7 +321,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     private function tutors(): Builder
     {
-        return User::has('authoredCourses')->select(['id', 'first_name', 'last_name', 'email', 'path_avatar', 'bio']);
+        return User::has('authoredCourses')->select(['id', 'first_name', 'last_name', 'email', 'path_avatar']);
     }
 
     public function findTutors(): Collection

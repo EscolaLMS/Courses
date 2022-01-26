@@ -8,7 +8,9 @@ use EscolaLms\Auth\Models\Traits\UserHasSettings;
 use EscolaLms\Auth\Models\User as AuthUser;
 use EscolaLms\Courses\Models\Traits\HasAuthoredCourses;
 use EscolaLms\Courses\Models\Traits\HasCourses;
+use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Tests\Database\Factories\UserFactory;
+use Illuminate\Support\Facades\Config;
 
 class User extends AuthUser
 {
@@ -22,5 +24,15 @@ class User extends AuthUser
     public static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    public function getBioAttribute(): ?string
+    {
+        $additionalBioKey = Config::get('escolalms_courses.tutor_bio_field', 'bio');
+        if ($bio = $this->settings->where('key', 'additional_field:' . $additionalBioKey)->first()) {
+            return $bio->value;
+        }
+
+        return null;
     }
 }

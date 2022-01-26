@@ -67,21 +67,5 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
-
-        UserResource::extend(fn ($thisObj) => [
-            'bio' => $thisObj->bio,
-        ]);
-
-        UserUpdateDto::extendConstructor([
-            'bio' => fn ($request) => $request->input('bio'),
-        ]);
-
-        UserUpdateDto::extendToArray([
-            'bio' => fn ($thisObj) => $thisObj->bio,
-        ]);
-
-        ProfileUpdateRequest::extendRules([
-            'bio' => ['string'],
-        ]);
     }
 }

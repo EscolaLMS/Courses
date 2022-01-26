@@ -45,6 +45,7 @@ class CourseAdministrableConfigTest extends TestCase
                 'platform_visibility' => PlatformVisibility::VISIBILITY_PUBLIC,
                 'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 'course_visibility' => CourseVisibilityEnum::SHOW_ALL,
+                'tutor_bio_field' => 'bio',
             ]
         ]);
 
@@ -79,6 +80,14 @@ class CourseAdministrableConfigTest extends TestCase
                     'readonly' => false,
                     'value' => 'show_all',
                 ],
+                'tutor_bio_field' => [
+                    'full_key' => 'escolalms_courses.tutor_bio_field',
+                    'key' => 'tutor_bio_field',
+                    'rules' => ['required', 'string'],
+                    'public' => true,
+                    'readonly' => false,
+                    'value' => 'bio',
+                ],
             ]
         ]);
 
@@ -95,6 +104,10 @@ class CourseAdministrableConfigTest extends TestCase
                         'key' => 'escolalms_courses.course_visibility',
                         'value' => CourseVisibilityEnum::SHOW_ONLY_MY,
                     ],
+                    [
+                        'key' => 'escolalms_courses.tutor_bio_field',
+                        'value' => 'bio2',
+                    ],
                 ]
             ]
         );
@@ -110,6 +123,7 @@ class CourseAdministrableConfigTest extends TestCase
                 'platform_visibility' => PlatformVisibility::VISIBILITY_REGISTERED,
                 'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 'course_visibility' => CourseVisibilityEnum::SHOW_ONLY_MY,
+                'tutor_bio_field' => 'bio2',
             ]
         ]);
     }

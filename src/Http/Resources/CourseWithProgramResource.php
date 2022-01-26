@@ -43,7 +43,7 @@ class CourseWithProgramResource extends JsonResource
             'base_price' =>  $course->base_price,
             'duration' =>  $course->duration,
             'author_id' => $course->author_id,
-            'authors' => $course->authors,
+            'authors' => $course->authors ? TutorResource::collection($course->authors) : [],
             'scorm_sco_id' => $course->scorm_sco_id,
             'scorm_sco' => $this->when($course->scorm_sco_id !== null, fn () => ScormScoResource::make($course->scormSco)),
             'status' =>  $course->status,
