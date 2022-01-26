@@ -7,11 +7,12 @@ use EscolaLms\Courses\Models\CourseUserPivot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
 {
@@ -37,6 +38,9 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
         /** @var Collection $futureDeadlines */
         $finishDate = Carbon::now()->modify('+ ' . config('escolalms_courses.reminder_of_deadline_count_days') . ' days')->format('Y-m-d');
         $futureDeadlines = CourseUserPivot::whereDate('deadline', '>=', Carbon::now())->whereDate('deadline', '=', $finishDate)->get();
+
+        Log::debug('Checking for deadlines');
+
         foreach ($futureDeadlines as $courseUserPivot) {
             event(new CourseDeadlineSoon($courseUserPivot->user, $courseUserPivot->course));
         }
