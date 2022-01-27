@@ -195,6 +195,15 @@ class Topic extends Model
         return 'topic/' . $this->getKey() . '/';
     }
 
+    protected static function booted()
+    {
+        static::creating(function (Topic $topic) {
+            if ($topic->lesson_id && !$topic->order) {
+                $topic->order = 1 + (int) Topic::where('lesson_id', $topic->lesson_id)->max('order');
+            }
+        });
+    }
+
     public function getCourseAttribute(): ?Course
     {
         return $this->lesson ? $this->lesson->course : null;

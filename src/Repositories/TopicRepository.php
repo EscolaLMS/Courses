@@ -11,6 +11,7 @@ use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use EscolaLms\TopicTypes\Events\TopicTypeChanged;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -259,6 +260,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $model->fill($attributes);
         $model->save();
         $model->topic()->save($topic);
+
+        event(new TopicTypeChanged($request->user(), $model));
 
         return $model;
     }
