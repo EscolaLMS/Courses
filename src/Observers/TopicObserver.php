@@ -2,8 +2,8 @@
 
 namespace EscolaLms\Courses\Observers;
 
-use EscolaLms\Courses\Events\VideoUpdated;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\TopicTypes\Events\VideoUpdated;
 
 class TopicObserver
 {
