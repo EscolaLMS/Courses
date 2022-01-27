@@ -5,6 +5,7 @@ namespace EscolaLms\Courses;
 use EscolaLms\Auth\Dtos\UserUpdateDto;
 use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
 use EscolaLms\Auth\Http\Resources\UserResource;
+use EscolaLms\Courses\Providers\EventServiceProvider;
 use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
@@ -67,5 +68,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
     }
 }
