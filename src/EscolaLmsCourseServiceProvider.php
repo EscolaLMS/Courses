@@ -2,9 +2,6 @@
 
 namespace EscolaLms\Courses;
 
-use EscolaLms\Auth\Dtos\UserUpdateDto;
-use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserResource;
 use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
