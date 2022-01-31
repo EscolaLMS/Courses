@@ -25,14 +25,4 @@ class User extends AuthUser
     {
         return UserFactory::new();
     }
-
-    public function getBioAttribute(): ?string
-    {
-        $additionalBioKey = Config::get('escolalms_courses.tutor_bio_field', 'bio');
-        if ($bio = $this->settings->where('key', 'additional_field:' . $additionalBioKey)->first()) {
-            return $bio->value;
-        }
-
-        return null;
-    }
 }

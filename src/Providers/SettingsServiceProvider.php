@@ -20,7 +20,6 @@ class SettingsServiceProvider extends ServiceProvider
             AdministrableConfig::registerConfig('escolalms_courses.platform_visibility', ['required', 'string', 'in:' . implode(',', PlatformVisibility::getValues())]);
             AdministrableConfig::registerConfig('escolalms_courses.reminder_of_deadline_count_days', ['integer', 'min: 1']);
             AdministrableConfig::registerConfig('escolalms_courses.course_visibility', ['required', 'string', 'in:' . implode(',', CourseVisibilityEnum::getValues())]);
-            AdministrableConfig::registerConfig('escolalms_courses.tutor_bio_field', ['required', 'string']);
         }
     }
 }
