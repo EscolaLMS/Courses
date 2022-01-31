@@ -263,7 +263,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $model->topic()->save($topic);
 
         if (class_exists(TopicTypeChanged::class) && $model instanceof AbstractTopicContent) {
-            event(new TopicTypeChanged($request->user(), $model));
+            event(new TopicTypeChanged(auth()->user(), $model));
         }
 
         return $model;
