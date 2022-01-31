@@ -259,7 +259,7 @@ class CourseAdminApiTest extends TestCase
 
         $tags = ['Lorem', 'Ipsum', "LoremIpsum"];
         $tags2 = ['Foo', 'Bar', 'FooBar'];
-        $tags3 = ['NotFoo', "NotBar", "NotFooBar"];
+        $tags3 = ['Foo', "NotBar", "NotFooBar"];
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
@@ -293,14 +293,55 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
 
         $coursesIds = [];
-        foreach ($this->response->getData()->data as $course) {
-            $coursesIds[] = $course->id;
+        foreach ($this->response->getData()->data as $foundCourse) {
+            $coursesIds[] = $foundCourse->id;
         }
         $this->assertTrue(in_array($course->id,  $coursesIds));
         $this->assertFalse(in_array($course2->id,  $coursesIds));
         $this->assertFalse(in_array($course3->id,  $coursesIds));
 
-        // filter by two tags, showing courses with either first or second tag
+        // filter by two tags, showing course(s) with both
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag' => [
+                    $tags2[0],
+                    $tags2[1],
+                ]
+            ]
+        );
+        $this->response->assertStatus(200);
+
+        $coursesIds = [];
+        foreach ($this->response->getData()->data as $foundCourse) {
+            $coursesIds[] = $foundCourse->id;
+        }
+        $this->assertFalse(in_array($course->id,  $coursesIds));
+        $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course3->id,  $coursesIds));
+
+        // filter by tag that two Courses share, returning both
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/',
+            [
+                'tag' => [
+                    $tags2[0],
+                ]
+            ]
+        );
+        $this->response->assertStatus(200);
+
+        $coursesIds = [];
+        foreach ($this->response->getData()->data as $foundCourse) {
+            $coursesIds[] = $foundCourse->id;
+        }
+        $this->assertFalse(in_array($course->id,  $coursesIds));
+        $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertTrue(in_array($course3->id,  $coursesIds));
+
+        // filter by two tags, returning no results (as no Course has both)
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/',
@@ -314,11 +355,11 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
 
         $coursesIds = [];
-        foreach ($this->response->getData()->data as $course) {
-            $coursesIds[] = $course->id;
+        foreach ($this->response->getData()->data as $foundCourse) {
+            $coursesIds[] = $foundCourse->id;
         }
-        $this->assertTrue(in_array($course->id,  $coursesIds));
-        $this->assertTrue(in_array($course2->id,  $coursesIds));
+        $this->assertFalse(in_array($course->id,  $coursesIds));
+        $this->assertFalse(in_array($course2->id,  $coursesIds));
         $this->assertFalse(in_array($course3->id,  $coursesIds));
 
         // ignore filtering by tag if tags are empty/null
@@ -332,8 +373,8 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
 
         $coursesIds = [];
-        foreach ($this->response->getData()->data as $course) {
-            $coursesIds[] = $course->id;
+        foreach ($this->response->getData()->data as $foundCourse) {
+            $coursesIds[] = $foundCourse->id;
         }
         $this->assertTrue(in_array($course->id,  $coursesIds));
         $this->assertTrue(in_array($course2->id,  $coursesIds));
