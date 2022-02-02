@@ -189,6 +189,28 @@ class CourseAccessApiTest extends TestCase
         $this->assertUserCanReadProgram($student, $this->course);
     }
 
+    public function testAddChildGroupAccess()
+    {
+        $student = User::factory()->create();
+        $group = Group::factory()->create();
+        $group->users()->sync([$student->getKey()]);
+        $groupChild = Group::factory()->create(['parent_id' => $group->getKey()]);
+
+        // Test for infinite loop in retrieving parent groups
+        $group->parent_id = $groupChild->getKey();
+        $group->save();
+
+        $this->assertUserCanNotReadProgram($student, $this->course);
+
+        $this->response = $this->actingAs($this->user, 'api')->post('/api/admin/courses/' . $this->course->id . '/access/add/', [
+            'groups' => [$groupChild->getKey()]
+        ]);
+
+        $this->response->assertOk();
+
+        $this->assertUserCanReadProgram($student, $this->course);
+    }
+
     public function testRemoveGroupAccess()
     {
         $student = User::factory()->create();

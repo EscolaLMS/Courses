@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Policies;
 
+use EscolaLms\Auth\Models\Group;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -88,7 +89,7 @@ class CoursesPolicy
             return true;
         };
 
-        return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
+        return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groupsWithParents()->contains(fn (Group $group) => $group->users->contains('id', $user->getKey())));
     }
 
     public function view(?User $user, Course $course)

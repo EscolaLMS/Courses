@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Model\ScormModel;
 
@@ -305,6 +306,24 @@ class Course extends Model
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class);
+    }
+
+    public function groupsWithParents(): Collection
+    {
+        $groups = [];
+        foreach ($this->groups as $group) {
+            $groups[$group->getKey()] = $group;
+        }
+        foreach ($groups as $group) {
+            while ($group = $group->parent) {
+                if (!array_key_exists($group->getKey(), $groups)) {
+                    $groups[$group->getKey()] = $group;
+                } else {
+                    break;
+                }
+            }
+        }
+        return new Collection($groups);
     }
 
     public function topics(): HasManyThrough
