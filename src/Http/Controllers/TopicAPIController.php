@@ -10,6 +10,7 @@ use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
+use EscolaLms\Courses\Http\Resources\Admin\TopicAdminResource;
 use EscolaLms\Courses\Http\Resources\TopicResource;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
@@ -55,7 +56,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic saved successfully');
+        return $this->sendResponseForResource(TopicAdminResource::make($topic), 'Topic saved successfully');
     }
 
     public function show($id, GetTopicAPIRequest $request)
@@ -85,7 +86,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic updated successfully');
+        return $this->sendResponseForResource(TopicAdminResource::make($topic), 'Topic updated successfully');
     }
 
     public function destroy($id, DeleteTopicAPIRequest $request)
