@@ -31,7 +31,7 @@ class UpdateCourseAPIRequest extends FormRequest
         $prefixPath = 'course/' . $this->route('course');
 
         $rules = Course::rules();
-        $rules['authors.*'][] = new ValidAuthor();
+        $rules['authors.*'][] = ['integer', new ValidAuthor()];
         $rules['image'] = new FileOrStringRule(['image'], $prefixPath);
         $rules['video'] = new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath);
         $rules['poster'] = new FileOrStringRule(['image'], $prefixPath);
