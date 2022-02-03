@@ -30,12 +30,12 @@ class UpdateCourseAPIRequest extends FormRequest
     {
         $prefixPath = 'course/' . $this->route('course');
 
-        $rules = Course::rules();
-        $rules['authors.*'][] = ['integer', new ValidAuthor()];
-        $rules['image'] = new FileOrStringRule(['image'], $prefixPath);
-        $rules['video'] = new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath);
-        $rules['poster'] = new FileOrStringRule(['image'], $prefixPath);
-
-        return $rules;
+        return array_merge(Course::rules(),
+            [
+            'authors.*' => ['numeric', new ValidAuthor()],
+            'image' => [new FileOrStringRule(['image'], $prefixPath)],
+            'video' => [new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath)],
+            'poster' => [new FileOrStringRule(['image'], $prefixPath)],
+        ]);
     }
 }
