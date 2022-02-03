@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Rules\ValidAuthor;
+use EscolaLms\Files\Rules\FileOrStringRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCourseAPIRequest extends FormRequest
@@ -27,8 +28,14 @@ class UpdateCourseAPIRequest extends FormRequest
      */
     public function rules()
     {
+        $prefixPath = 'course/' . $this->route('course');
+
         $rules = Course::rules();
         $rules['authors.*'][] = new ValidAuthor();
+        $rules['image'] = new FileOrStringRule(['image'], $prefixPath);
+        $rules['video'] = new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath);
+        $rules['poster'] = new FileOrStringRule(['image'], $prefixPath);
+
         return $rules;
     }
 }

@@ -689,4 +689,59 @@ class CourseAdminApiTest extends TestCase
         }
         $this->assertTrue($result);
     }
+
+    public function test_update_course_with_reusable_files(): void
+    {
+        Storage::fake();
+
+        $course = Course::factory()->create([
+            'author_id' => $this->user->id
+        ])->toArray();
+
+        $courseId = $course['id'];
+
+        Storage::makeDirectory("course/wrong-path");
+        copy(__DIR__ . '/../mocks/poster.jpg', Storage::path("course/wrong-path/poster.jpg"));
+
+        $course['image'] = 'image.png';
+        $course['video'] = 'course/wrong-path/poster.jpg';
+        $course['poster'] = 'poster.jpg';
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/courses/' . $courseId,
+            $course
+        )->assertStatus(422);
+
+        $this->response->assertJsonStructure([
+            'message',
+            'errors' => [
+                'image',
+                'video',
+                'poster',
+            ],
+        ]);
+
+        $imagePath = "course/$courseId/reusable/image.jpg";
+        $videoPath = "course/$courseId/reusable/video.mp4";
+        $posterPath = "course/$courseId/reusable/poster.jpg";
+
+        Storage::makeDirectory("course/$courseId/reusable");
+        copy(__DIR__ . '/../mocks/image.jpg', Storage::path($imagePath));
+        copy(__DIR__ . '/../mocks/video.mp4', Storage::path($videoPath));
+        copy(__DIR__ . '/../mocks/poster.jpg', Storage::path($posterPath));
+
+        $course['image'] = $imagePath;
+        $course['video'] = $videoPath;
+        $course['poster'] = $posterPath;
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/courses/' . $courseId,
+            $course
+        )->assertOk();
+
+        $data = $this->response->getData()->data;
+        Storage::assertExists($data->image_path);
+        Storage::assertExists($data->video_path);
+        Storage::assertExists($data->poster_path);
+    }
 }
