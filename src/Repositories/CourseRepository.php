@@ -11,11 +11,11 @@ use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
+use EscolaLms\Files\Helpers\FileHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -208,21 +208,15 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $isActive = $model->is_active;
 
         if (isset($input['video'])) {
-            /** @var UploadedFile $video */
-            $video = $input['video'];
-            $input['video_path'] = $video->storePublicly("course/$id/videos");
+            $input['video_path'] = FileHelper::getFilePath($input['video'], "course/$id/videos");
         }
 
         if (isset($input['image'])) {
-            /** @var UploadedFile $image */
-            $image = $input['image'];
-            $input['image_path'] = $image->storePublicly("course/$id/images");
+            $input['image_path'] = FileHelper::getFilePath($input['image'], "course/$id/images");
         }
 
         if (isset($input['poster'])) {
-            /** @var UploadedFile $poster */
-            $poster = $input['poster'];
-            $input['poster_path'] = $poster->storePublicly("course/$id/posters");
+            $input['poster_path'] = FileHelper::getFilePath($input['poster'], "course/$id/posters");
         }
 
         if (isset($input['categories']) && is_array($input['categories'])) {

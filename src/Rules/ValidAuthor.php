@@ -17,7 +17,7 @@ class ValidAuthor implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (is_null($value)) {
+        if (!is_numeric($value)) {
             return false;
         }
 
