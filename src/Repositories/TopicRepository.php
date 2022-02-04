@@ -11,6 +11,8 @@ use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use EscolaLms\Files\Helpers\FileHelper;
+use EscolaLms\Files\Rules\FileOrStringRule;
 use EscolaLms\TopicTypes\Events\TopicTypeChanged;
 use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicContent;
 use Illuminate\Database\Eloquent\Model;
@@ -248,7 +250,15 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         assert($model instanceof TopicContentContract);
         assert($model instanceof Model);
 
-        $validator = Validator::make($request->all(), $model::rules());
+        $modelRules = $model::rules();
+
+        if ($model instanceof TopicFileContentContract) {
+            foreach ($model->getFileKeyNames() as $fileKey) {
+                $modelRules[$fileKey] = new FileOrStringRule([$modelRules[$fileKey]], "course/{$topic->course->getKey()}");
+            }
+        }
+
+        $validator = Validator::make($request->all(), $modelRules);
         if ($validator->fails()) {
             throw new TopicException(TopicException::CONTENT_VALIDATION, $validator->errors()->toArray());
         }
@@ -308,8 +318,11 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         // don't try to validate file keys in request if they don't contain file during topic / topic content update
         if ($topicContent instanceof TopicFileContentContract) {
             foreach ($topicContent->getFileKeyNames() as $fileKeyName) {
-                if (!$request->hasFile($fileKeyName)) {
+                if (!$request->has($fileKeyName)) {
                     unset($partialRules[$fileKeyName]);
+                } else {
+                    $prefixPath = 'course/' . $topicContent->topic->course->getKey();
+                    $partialRules[$fileKeyName] = new FileOrStringRule($partialRules[$fileKeyName], $prefixPath);
                 }
             }
         }
