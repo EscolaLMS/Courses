@@ -6,6 +6,7 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicResource;
 use EscolaLms\Courses\Repositories\BaseRepository;
 use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
+use EscolaLms\Files\Helpers\FileHelper;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Http\UploadedFile;
@@ -37,17 +38,16 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
         return TopicResource::class;
     }
 
-    public function storeUploadedResourceForTopic(Topic $topic, UploadedFile $file): TopicResource
+    public function storeUploadedResourceForTopic(Topic $topic, $file): TopicResource
     {
         $course = $topic->lesson->course;
-        $name = $file->getClientOriginalName();
-        $destination = sprintf('courses/%d/topic/%d/resources', $course->getKey(), $topic->getKey());
-        $path = Storage::putFileAs($destination, $file, $name);
+        $destination = sprintf('course/%d/topic/%d/resources', $course->getKey(), $topic->getKey());
+        $path = FileHelper::getFilePath($file, $destination);
 
         return $this->create([
             'topic_id' => $topic->getKey(),
             'path' => $path,
-            'name' => $name,
+            'name' => basename($path),
         ]);
     }
 

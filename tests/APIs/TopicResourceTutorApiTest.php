@@ -56,7 +56,6 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
     }
 
-
     public function testListResource()
     {
         Storage::fake('local');
@@ -174,6 +173,61 @@ class TopicResourceTutorApiTest extends TestCase
         $this->assertDatabaseHas('topic_resources', [
             'id' => $id,
             'name' => 'test-renamed.pdf',
+        ]);
+    }
+
+    public function testCreateResourceFileAsPathNotExist()
+    {
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            [
+                'resource' => 'file.pdf',
+            ]
+        )->assertStatus(422);
+    }
+
+    public function testCreateResourceFileAsWrongPath()
+    {
+        Storage::fake('local');
+
+        $newCourse = Course::factory()->create([
+            'author_id' => $this->user->id
+        ]);
+
+        $pdfPath = "course/{$newCourse->getKey()}/topic/1/resources/document.pdf";
+        Storage::makeDirectory("course/{$newCourse->getKey()}/topic/1/resources");
+        copy(__DIR__ . '/../mocks/document.pdf', Storage::path($pdfPath));
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            [
+                'resource' => 'file.pdf',
+            ]
+        )->assertStatus(422);
+    }
+
+    public function testCreateResourceFileAsPath()
+    {
+        Storage::fake('local');
+
+        $pdfPath = "course/{$this->course->getKey()}/topic/1/resources/document.pdf";
+        Storage::makeDirectory("course/{$this->course->getKey()}/topic/1/resources");
+        copy(__DIR__ . '/../mocks/document.pdf', Storage::path($pdfPath));
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            [
+                'resource' => $pdfPath,
+            ]
+        )->assertStatus(201);
+
+        $data = json_decode($this->response->getContent());
+
+        Storage::assertExists($data->data->path);
+
+        $this->assertDatabaseHas('topic_resources', [
+            'id' => $data->data->id,
+            'name' => 'document.pdf',
         ]);
     }
 }
