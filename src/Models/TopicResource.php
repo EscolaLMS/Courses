@@ -81,7 +81,7 @@ class TopicResource extends Model
         $topic = $this->topic;
         $course = $topic->course;
 
-        $destination = sprintf('courses/%d/topic/%d/resources/%s', $course->id, $topic->id, $this->name);
+        $destination = sprintf('course/%d/topic/%d/resources/%s', $course->id, $topic->id, $this->name);
 
         if (strpos($value, $destination) === false && Storage::exists($value)) {
             $result = [$value, $destination];

@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 
 interface TopicResourceRepositoryContract extends BaseRepositoryContract
 {
-    public function storeUploadedResourceForTopic(Topic $topic, UploadedFile $file): TopicResource;
+    public function storeUploadedResourceForTopic(Topic $topic, $file): TopicResource;
 
     public function rename(int $id, string $name): bool;
     public function renameModel(TopicResource $model, string $name): bool;
