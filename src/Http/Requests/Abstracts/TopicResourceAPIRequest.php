@@ -20,7 +20,7 @@ abstract class TopicResourceAPIRequest extends FormRequest
 
     public function getTopic(): Topic
     {
-        return Topic::find($this->route('topic_id'));
+        return Topic::findOrFail($this->route('topic_id'));
     }
 
     public function rules(): array
