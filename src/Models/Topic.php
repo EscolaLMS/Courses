@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Courses\Database\Factories\TopicFactory;
 use EscolaLms\Courses\Facades\Topic as TopicFacade;
+use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -94,7 +95,7 @@ use Illuminate\Validation\Rule;
  */
 class Topic extends Model
 {
-    use HasFactory;
+    use HasFactory, ClearsResponseCache;
 
     public $table = 'topics';
 

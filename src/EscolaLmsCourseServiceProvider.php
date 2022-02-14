@@ -24,6 +24,8 @@ use EscolaLms\Courses\Services\LessonService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Services\TopicService;
 use Illuminate\Support\ServiceProvider;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Spatie\ResponseCache\ResponseCacheServiceProvider;
 
 class EscolaLmsCourseServiceProvider extends ServiceProvider
 {
@@ -48,6 +50,9 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
+
+        $router = $this->app->get('router');
+        $router->aliasMiddleware('cacheResponse', CacheResponse::class);
     }
 
     protected function bootForConsole(): void
@@ -60,6 +65,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_courses');
+        $this->mergeConfigFrom(__DIR__ . '/../config/responsecache.php', 'responsecache');
 
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);

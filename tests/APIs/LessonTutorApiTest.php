@@ -9,6 +9,8 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
+use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class LessonTutorApiTest extends TestCase
 {
@@ -29,6 +31,7 @@ class LessonTutorApiTest extends TestCase
      */
     public function test_create_lesson()
     {
+        Event::fake(ClearedResponseCache::class);
         $course = Course::factory()->create([
             'author_id' => $this->user->id
         ]);
@@ -41,6 +44,8 @@ class LessonTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($lesson);
+
+        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     /**
@@ -68,6 +73,8 @@ class LessonTutorApiTest extends TestCase
      */
     public function test_update_lesson()
     {
+        Event::fake(ClearedResponseCache::class);
+
         $course = Course::factory()->create([
             'author_id' => $this->user->id
         ]);
@@ -82,6 +89,7 @@ class LessonTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedLesson);
+        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     /**
@@ -89,6 +97,8 @@ class LessonTutorApiTest extends TestCase
      */
     public function test_delete_lesson()
     {
+        Event::fake(ClearedResponseCache::class);
+
         $course = Course::factory()->create([
             'author_id' => $this->user->id
         ]);
@@ -106,6 +116,7 @@ class LessonTutorApiTest extends TestCase
         );
 
         $this->response->assertStatus(404);
+        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function test_clone_lesson_not_found()

@@ -8,6 +8,8 @@ use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
+use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class TopicTutorCreateApiTest extends TestCase
 {
@@ -29,6 +31,7 @@ class TopicTutorCreateApiTest extends TestCase
 
     public function testCreateTopicExample()
     {
+        Event::fake(ClearedResponseCache::class);
         $this->response = $this->actingAs($this->user, 'api')->withHeaders([
             'Accept' => 'application/json',
         ])->post(
@@ -50,6 +53,8 @@ class TopicTutorCreateApiTest extends TestCase
         $this->assertDatabaseHas('topic_example', [
             'value' => $path,
         ]);
+
+        Event::assertDispatched(ClearedResponseCache::class);
     }
 
 }
