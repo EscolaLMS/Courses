@@ -165,7 +165,7 @@ class CourseAccessApiTest extends TestCase
 
     public function testRemoveUserAccess()
     {
-        Event::fake();
+        Event::fake([CourseFinished::class]);
         $student = User::factory()->create();
         $this->course->users()->sync([$student->getKey()]);
 

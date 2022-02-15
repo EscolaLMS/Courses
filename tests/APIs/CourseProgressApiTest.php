@@ -101,7 +101,7 @@ class CourseProgressApiTest extends TestCase
         Mail::fake();
         Notification::fake();
         Queue::fake();
-        Event::fake();
+        Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class, ClearedResponseCache::class]);
 
         $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         foreach ($courses as $course) {
