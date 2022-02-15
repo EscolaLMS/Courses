@@ -9,10 +9,11 @@ use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
 use EscolaLms\Tags\Http\Controllers\TagsAPIController;
 use Illuminate\Support\Facades\Route;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
 
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
-    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']);
+    Route::get('courses/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
     Route::post('courses/sort', [CourseAPIController::class, "sort"]);
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
     Route::resource('courses', CourseAPIController::class);
@@ -23,7 +24,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
     Route::post('topics/{topic}', [TopicAPIController::class, "update"]);
     Route::post('topics/{id}/clone', [TopicAPIController::class, 'clone']);
 
-    Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list']);
+    Route::get('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'list'])->middleware('cacheResponse');
     Route::post('topics/{topic_id}/resources/', [TopicResourcesAPIController::class, 'upload']);
     Route::patch('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'rename']);
     Route::delete('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'delete']);
@@ -43,7 +44,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 // user endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
     Route::group(['prefix' => '/courses/progress'], function () {
-        Route::get('/', [CourseProgressAPIController::class, 'index']);
+        Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
         Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
         Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
 
@@ -54,10 +55,10 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
 
 // public routes
 Route::group(['prefix' => 'api'], function () {
-    Route::get('courses/{course}/program', [CourseAPIController::class, 'program']); // when course is free, it doesnt need token
+    Route::get('courses/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse'); // when course is free, it doesnt need token
     Route::get('courses/{course}/scorm', [CourseAPIController::class, 'scorm']); // when course is free, it doesnt need token
-    Route::get('/courses', [CourseAPIController::class, 'index']);
-    Route::get('/courses/{course}', [CourseAPIController::class, 'show']);
+    Route::get('/courses', [CourseAPIController::class, 'index'])->middleware('cacheResponse');
+    Route::get('/courses/{course}', [CourseAPIController::class, 'show'])->middleware('cacheResponse');
     Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);
     Route::get('/tutors/{id}', [CourseAuthorsAPIController::class, 'show']);
 

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class CourseProgressApiTest extends TestCase
 {
@@ -100,7 +101,7 @@ class CourseProgressApiTest extends TestCase
         Mail::fake();
         Notification::fake();
         Queue::fake();
-        Event::fake();
+        Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class, ClearedResponseCache::class]);
 
         $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         foreach ($courses as $course) {
@@ -132,6 +133,7 @@ class CourseProgressApiTest extends TestCase
         Event::assertDispatched(TopicFinished::class);
         Event::assertDispatched(CourseAccessFinished::class);
         Event::assertDispatched(CourseFinished::class);
+        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function test_verify_course_started(): void

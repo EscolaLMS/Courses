@@ -20,6 +20,7 @@ use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
+use Spatie\ResponseCache\ResponseCacheServiceProvider;
 
 class TestCase extends \EscolaLms\Core\Tests\TestCase
 {
@@ -51,6 +52,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsSettingsServiceProvider::class,
             EscolaLmsTopicTypeTestServiceProvider::class,
             EscolaLmsFilesServiceProvider::class,
+            ResponseCacheServiceProvider::class,
         ];
     }
 
