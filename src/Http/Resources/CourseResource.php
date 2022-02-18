@@ -47,6 +47,7 @@ class CourseResource extends JsonResource
             'purchasable' => $course->purchasable,
             'findable' => $course->findable,
             'target_group' => $course->target_group,
+            'teaser_url' => $course->teaser_url,
         ];
     }
 }
