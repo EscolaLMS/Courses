@@ -70,5 +70,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ScheduleServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
+        $this->app->register(\Spatie\ResponseCache\ResponseCacheServiceProvider::class);
     }
 }
