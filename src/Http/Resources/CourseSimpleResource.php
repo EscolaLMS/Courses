@@ -44,6 +44,7 @@ class CourseSimpleResource extends JsonResource
             'image_url' => $this->image_url,
             'video_url' => $this->video_url,
             'poster_url' => $this->poster_url,
+            'teaser_url' => $this->teaser_url,
         ];
         return self::apply($fields, $this);
     }

@@ -157,6 +157,11 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          description="target group",
  *          type="string",
  *      ),
+ *     @OA\Property(
+ *          property="teaser_url",
+ *          description="teaser url",
+ *          type="string",
+ *      ),
  * )
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
@@ -193,6 +198,7 @@ class Course extends Model
         'purchasable',
         'findable',
         'target_group',
+        'teaser_url',
     ];
 
     /**
@@ -221,6 +227,7 @@ class Course extends Model
         'purchasable' => 'boolean',
         'findable' => 'boolean',
         'target_group' => 'string',
+        'teaser_url' => 'string',
     ];
 
     /**
@@ -255,6 +262,7 @@ class Course extends Model
             'purchasable' => 'boolean',
             'findable' => 'boolean',
             'target_group' => 'nullable|string|max:100',
+            'teaser_url' => 'nullable|string',
         ];
     }
 

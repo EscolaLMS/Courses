@@ -49,7 +49,8 @@ class CourseFactory extends Factory
             'active_from' => null,
             'active_to' => null,
             'hours_to_complete' => null,
-            'target_group' => $this->faker->randomElement(['top-level managers', 'mid-level managers', 'workers'])
+            'target_group' => $this->faker->randomElement(['top-level managers', 'mid-level managers', 'workers']),
+            'teaser_url' => null,
         ];
     }
 

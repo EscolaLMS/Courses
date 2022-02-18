@@ -47,6 +47,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'findable',
         'purchasable',
         'target_group',
+        'teaser_url',
     ];
 
     /**
