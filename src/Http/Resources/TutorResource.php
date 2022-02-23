@@ -14,6 +14,7 @@ class TutorResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'path_avatar' => $this->path_avatar,
+            'interests' => TutorInterestResource::collection($this->interests),
         ];
 
         $this->settings->each(function ($setting) use (&$fields) {
