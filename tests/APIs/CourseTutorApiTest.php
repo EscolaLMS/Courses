@@ -265,4 +265,32 @@ class CourseTutorApiTest extends TestCase
             return true;
         });
     }
+
+    public function test_read_tutors_interests(): void
+    {
+        $tutor = $this->makeInstructor();
+        $tutor2 = $this->makeInstructor();
+        $category = Category::factory()->create();
+        $tutor->interests()->sync($category->getKey());
+        $course = Course::factory()->create();
+        $course->authors()->sync([$tutor->getKey(), $tutor2->getKey()]);
+
+        $this->response = $this->getJson('/api/tutors')
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+            ]);
+
+        $this->response = $this->getJson('/api/tutors/' . $tutor->getKey())
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+            ]);
+
+        $this->response = $this->getJson('/api/tutors/' . $tutor2->getKey())
+            ->assertOk()
+            ->assertJsonFragment(['interests' => []]);
+    }
 }
