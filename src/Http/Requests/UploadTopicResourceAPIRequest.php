@@ -3,16 +3,14 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
-use EscolaLms\Files\Rules\FileOrStringRule;
+use EscolaLms\Courses\Rules\TopicResourceRule;
 
 class UploadTopicResourceAPIRequest extends TopicResourceAPIRequest
 {
     public function rules(): array
     {
-        $prefixPath = 'course/' . $this->getTopic()->course->getKey();
-
         return array_merge(parent::rules(), [
-            'resource' => ['required', new FileOrStringRule(['file'], $prefixPath)],
+            'resource' => ['required', new TopicResourceRule($this->route('topic_id'))],
         ]);
     }
 
