@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Tests\APIs;
 
+use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
@@ -9,6 +10,7 @@ use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CourseStatusChanged;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 
@@ -292,5 +294,27 @@ class CourseTutorApiTest extends TestCase
         $this->response = $this->getJson('/api/tutors/' . $tutor2->getKey())
             ->assertOk()
             ->assertJsonFragment(['interests' => []]);
+    }
+
+    public function test_read_tutor_additional_field(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            User::class,
+            'additional_field_a',
+            'varchar',
+        );
+
+        $tutor = $this->makeInstructor([
+            'additional_field_a' => 'public string',
+        ]);
+        $course = Course::factory()->create();
+        $course->authors()->sync([$tutor->getKey()]);
+
+        $this->response = $this->getJson('/api/tutors/' . $tutor->getKey())
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $tutor->getKey(),
+                'additional_field_a' => 'public string',
+                ]);
     }
 }

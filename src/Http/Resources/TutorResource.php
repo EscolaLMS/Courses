@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Resources;
 
+use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TutorResource extends JsonResource
@@ -17,12 +19,9 @@ class TutorResource extends JsonResource
             'interests' => TutorInterestResource::collection($this->interests),
         ];
 
-        $this->settings->each(function ($setting) use (&$fields) {
-            if (str_starts_with($setting->key, 'additional_field:')) {
-                $fields[str_replace('additional_field:', '', $setting->key)] = $setting->value;
-            }
-        });
-
-        return $fields;
+        return array_merge(
+            $fields,
+            ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
+        );
     }
 }
