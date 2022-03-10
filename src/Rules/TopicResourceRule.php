@@ -7,8 +7,11 @@ use EscolaLms\Files\Rules\FileOrStringRule;
 
 class TopicResourceRule extends FileOrStringRule
 {
-    public function __construct(int $topicId)
+    public function __construct(int $topicId = null)
     {
+        if (is_null($topicId)) {
+            return false;
+        }
         $topic = Topic::findOrFail($topicId);
         $prefixPath = 'course/' . $topic->course->getKey();
 
