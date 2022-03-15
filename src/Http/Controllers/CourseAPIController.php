@@ -55,7 +55,8 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         $orderDto = OrderDto::instantiateFromRequest($request);
 
-        $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)->paginate($request->get('per_page') ?? 15);
+        $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)
+            ->paginate($request->get('per_page') ?? 15);
 
         return $this->sendResponseForResource(CourseSimpleResource::collection($courses), __('Courses retrieved successfully'));
     }
