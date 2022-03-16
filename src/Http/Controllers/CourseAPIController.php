@@ -55,7 +55,8 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         $orderDto = OrderDto::instantiateFromRequest($request);
 
-        $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)->paginate($request->get('per_page') ?? 15);
+        $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)
+            ->paginate($request->get('per_page') ?? 15);
 
         return $this->sendResponseForResource(CourseSimpleResource::collection($courses), __('Courses retrieved successfully'));
     }
@@ -77,12 +78,23 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError(__('Course not found'));
         }
 
-        return $this->sendResponseForResource(CourseSimpleResource::make($course->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'categories', 'tags', 'authors')->loadCount('users', 'authors')), __('Course retrieved successfully'));
+        return $this->sendResponseForResource(
+            CourseSimpleResource::make(
+                $course
+                    ->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'lessons.topics.resources', 'categories', 'tags', 'authors')
+                    ->loadCount('users', 'authors')
+            ),
+            __('Course retrieved successfully')
+        );
     }
 
     public function program($id, GetCourseCurriculumAPIRequest $request): JsonResponse
     {
-        $course = $this->courseRepository->findWith($id, ['*'], ['lessons.topics.topicable', 'scormSco']);
+        $course = $this->courseRepository->findWith(
+            $id,
+            ['*'],
+            ['lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources', 'scormSco']
+        );
 
         if (empty($course)) {
             return $this->sendError(__('Course not found'));

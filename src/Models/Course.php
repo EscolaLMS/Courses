@@ -276,7 +276,7 @@ class Course extends Model
     /** Backwards compatibility */
     public function getAuthorAttribute(): ?User
     {
-        return $this->authors()->first();
+        return $this->authors->first();
     }
 
     /** Backwards compatibility */

@@ -55,7 +55,18 @@ class CourseService implements CourseServiceContract
         $query = $this->courseRepository->allQueryBuilder(
             $search,
             $criteria
-        )->with(['categories', 'tags', 'authors'])
+        )
+            ->with([
+                'categories',
+                'tags',
+                'authors',
+                'authors.interests',
+                'lessons',
+                'lessons.topics',
+                'lessons.topics.topicable',
+                'lessons.topics.topicable.topic',
+                'lessons.topics.resources'
+            ])
             ->withCount(['lessons', 'users', 'topics', 'authors']);
 
         return $query;

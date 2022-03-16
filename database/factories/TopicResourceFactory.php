@@ -35,7 +35,7 @@ class TopicResourceFactory extends Factory
             $topic_id = $topic->getKey();
             $course_id = $topic->course->getKey();
             $filename = "{$this->faker->word}.pdf";
-            $path = "courses/{$course_id}/topic/{$topic_id}/resources/{$filename}";
+            $path = "course/{$course_id}/topic/{$topic_id}/resources/{$filename}";
             $dest = Storage::disk('public')->path($path);
             $destDir = dirname($dest);
             if (!is_dir($destDir)) {

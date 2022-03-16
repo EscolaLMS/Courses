@@ -67,7 +67,9 @@ class TopicResource extends Model
     protected static function booted()
     {
         static::retrieved(function (TopicResource $resource) {
-            $resource->fixAssetPaths();
+            if (!(preg_match('/^course\/([0-9]+)\/topic\/([0-9]+)\/resources?/', $resource->path))) {
+                $resource->fixAssetPaths();
+            }
         });
     }
 
