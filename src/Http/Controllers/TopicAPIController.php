@@ -39,7 +39,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             $request->except(['skip', 'limit']),
             $request->get('skip'),
             $request->get('limit')
-        );
+        )->load('topicable', 'resources', 'topicable.topic');
 
         return $this->sendResponseForResource(TopicResource::collection($topics), 'Topics retrieved successfully');
     }

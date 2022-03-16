@@ -7,7 +7,6 @@ use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
-use EscolaLms\Tags\Http\Controllers\TagsAPIController;
 use Illuminate\Support\Facades\Route;
 use Spatie\ResponseCache\Middlewares\CacheResponse;
 
