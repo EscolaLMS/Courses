@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Courses;
 
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Observers\TopicObserver;
 use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
@@ -53,6 +55,8 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
 
         $router = $this->app->get('router');
         $router->aliasMiddleware('cacheResponse', CacheResponse::class);
+
+        Topic::observe(TopicObserver::class);
     }
 
     protected function bootForConsole(): void

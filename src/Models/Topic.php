@@ -6,7 +6,6 @@ use EscolaLms\Courses\Database\Factories\TopicFactory;
 use EscolaLms\Courses\Facades\Topic as TopicFacade;
 use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -194,15 +193,6 @@ class Topic extends Model
         }
 
         return 'topic/' . $this->getKey() . '/';
-    }
-
-    protected static function booted()
-    {
-        static::creating(function (Topic $topic) {
-            if ($topic->lesson_id && !$topic->order) {
-                $topic->order = 1 + (int) Topic::where('lesson_id', $topic->lesson_id)->max('order');
-            }
-        });
     }
 
     public function getCourseAttribute(): ?Course
