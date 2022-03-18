@@ -14,6 +14,7 @@ use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Resources\Admin\CourseWithProgramAdminResource;
+use EscolaLms\Courses\Http\Resources\CourseListResource;
 use EscolaLms\Courses\Http\Resources\CourseSimpleResource;
 use EscolaLms\Courses\Http\Resources\CourseWithProgramResource;
 use EscolaLms\Courses\Models\Course;
@@ -58,7 +59,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $courses = $this->courseServiceContract->getCoursesListWithOrdering($orderDto, $search)
             ->paginate($request->get('per_page') ?? 15);
 
-        return $this->sendResponseForResource(CourseSimpleResource::collection($courses), __('Courses retrieved successfully'));
+        return $this->sendResponseForResource(CourseListResource::collection($courses), __('Courses retrieved successfully'));
     }
 
     public function store(CreateCourseAPIRequest $request): JsonResponse
