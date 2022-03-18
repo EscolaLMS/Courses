@@ -80,10 +80,6 @@ class CoursesPolicy
      */
     public function attend(?User $user, Course $course): bool
     {
-        if (intval($course->base_price) === 0 && $this->buy($user, $course)) {
-            return true;
-        }
-
         if (empty($user)) {
             return false;
         }
@@ -109,10 +105,5 @@ class CoursesPolicy
         }
 
         return $this->attend($user, $course);
-    }
-
-    public function buy(?User $user, Course $course): bool
-    {
-        return $course->is_active && $course->purchasable;
     }
 }

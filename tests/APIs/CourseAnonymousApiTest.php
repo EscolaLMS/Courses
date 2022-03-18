@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Tests\TestCase;
@@ -10,7 +11,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseAnonymousApiTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, CreatesUsers;
 
     /**
      * @test
@@ -124,7 +125,7 @@ class CourseAnonymousApiTest extends TestCase
      */
     public function test_anonymous_read_course_program()
     {
-        $course = Course::factory()->create(['base_price' => 9999, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',
@@ -133,17 +134,17 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response->assertStatus(401);
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/' . $course->id . '/program'
-        );
+        $user = $this->makeStudent();
+        $this->response = $this
+            ->actingAs($user, 'api')
+            ->json('GET', '/api/courses/' . $course->id . '/program');
 
         $this->response->assertStatus(403);
     }
 
     public function test_anonymous_read_free_course_program()
     {
-        $course = Course::factory()->create(['base_price' => 0, 'status' => CourseStatusEnum::PUBLISHED]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->json(
             'GET',
@@ -152,10 +153,11 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response->assertStatus(401);
 
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/' . $course->id . '/program'
-        );
+        $user = $this->makeStudent();
+        $course->users()->attach($user);
+        $this->response = $this
+            ->actingAs($user, 'api')
+            ->json('GET', '/api/courses/' . $course->id . '/program');
 
         $this->response->assertStatus(200);
         $this->assertApiResponse($course->toArray());
@@ -163,54 +165,38 @@ class CourseAnonymousApiTest extends TestCase
 
     public function test_anonymous_sorting()
     {
-        $priceMin = 0;
-        $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::PUBLISHED]);
-        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::ARCHIVED]);
+        $course1 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $course2 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $course3 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $course4 = Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=ASC'
+            '/api/courses/?order_by=id&order=ASC'
         );
 
-        $this->assertEquals($this->response->getData()->data[0]->base_price, 0);
+        $this->assertEquals($this->response->getData()->data[0]->id, $course1->getKey());
         $this->response->assertStatus(200);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=DESC'
+            '/api/courses/?order_by=id&order=DESC'
         );
 
-        $this->assertEquals($this->response->getData()->data[0]->base_price, $priceMax);
+        $this->assertEquals($this->response->getData()->data[0]->id, $course3->getKey());
         $this->response->assertStatus(200);
     }
 
 
     public function test_anonymous_only_active()
     {
-        $priceMin = 0;
-        $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::ARCHIVED]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::DRAFT]);
+        Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
+        Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=ASC'
+            '/api/courses'
         );
-        $this->response->assertStatus(200);
-
-        $courses = $this->response->getData()->data;
-
-        foreach ($courses as $course) {
-            $this->assertEquals( CourseStatusEnum::PUBLISHED, $course->status);
-        }
-
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?order_by=base_price&order=DESC'
-        );
-
         $this->response->assertStatus(200);
 
         $courses = $this->response->getData()->data;
@@ -222,29 +208,13 @@ class CourseAnonymousApiTest extends TestCase
 
     public function test_anonymous_only_findable()
     {
-        $priceMin = 0;
-        $priceMax = 9999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED, 'findable' => false]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::ARCHIVED, 'findable' => true]);
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => false]);
+        Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED, 'findable' => true]);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=ASC'
+            '/api/courses'
         );
-        $this->response->assertStatus(200);
-
-        $courses = $this->response->getData()->data;
-
-        foreach ($courses as $course) {
-            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
-            $this->assertTrue($course->findable);
-        }
-
-        $this->response = $this->json(
-            'GET',
-            '/api/courses/?order_by=base_price&order=DESC'
-        );
-
         $this->response->assertStatus(200);
 
         $courses = $this->response->getData()->data;

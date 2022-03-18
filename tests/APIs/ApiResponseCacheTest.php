@@ -27,7 +27,6 @@ class ApiResponseCacheTest extends TestCase
         parent::setUp();
         $this->seed(CoursesPermissionSeeder::class);
         $this->course = Course::factory()->create([
-            'base_price' => 1337,
             'status' => CourseStatusEnum::PUBLISHED,
         ]);
 
@@ -70,7 +69,7 @@ class ApiResponseCacheTest extends TestCase
     public function testCacheCoursesList(): void
     {
         Event::fake([CacheMissed::class, ResponseCacheHit::class]);
-        Course::factory(2)->create(['base_price' => 0, 'status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory(2)->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->getJson('/api/courses')
             ->assertStatus(200);

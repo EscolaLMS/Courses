@@ -41,8 +41,11 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 });
 
 // user endpoints
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
-    Route::group(['prefix' => '/courses/progress'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/courses'], function () {
+    Route::get('/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
+    Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);
+
+    Route::group(['prefix' => '/progress'], function () {
         Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
         Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
         Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
@@ -54,8 +57,6 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api'], function () {
 
 // public routes
 Route::group(['prefix' => 'api'], function () {
-    Route::get('courses/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse'); // when course is free, it doesnt need token
-    Route::get('courses/{course}/scorm', [CourseAPIController::class, 'scorm']); // when course is free, it doesnt need token
     Route::get('/courses', [CourseAPIController::class, 'index'])->middleware('cacheResponse');
     Route::get('/courses/{course}', [CourseAPIController::class, 'show'])->middleware('cacheResponse');
     Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);

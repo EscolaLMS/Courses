@@ -426,7 +426,7 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_read_course_program()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -441,7 +441,7 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_read_course_program_scorm()
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -453,29 +453,25 @@ class CourseAdminApiTest extends TestCase
 
     public function test_public_endpoint_displays_draft_and_archived_for_admins()
     {
-        $priceMin = 0;
-        $priceMax = 999999;
-        $course1 = Course::factory()->create(['base_price' => $priceMin, 'status' => CourseStatusEnum::PUBLISHED]);
-        $course2 = Course::factory()->create(['base_price' => $priceMax, 'status' => CourseStatusEnum::DRAFT]);
-        $course3 = Course::factory()->create(['base_price' => $priceMax + 1, 'status' => CourseStatusEnum::ARCHIVED]);
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
+        Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=DESC'
+            '/api/courses'
         );
 
         $this->response->assertStatus(200);
         $this->response->assertJsonCount(1, 'data');
-        $this->assertEquals($this->response->json()['data'][0]['base_price'], $priceMin);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/courses/?order_by=base_price&order=DESC'
+            '/api/courses'
         );
 
         $this->response->assertStatus(200);
         $this->response->assertJsonCount(3, 'data');
-        $this->assertEquals($this->response->json()['data'][0]['base_price'], $priceMax + 1);
     }
 
     public function test_admin_status_search()
