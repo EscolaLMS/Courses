@@ -29,7 +29,6 @@ class CourseAccessApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->course = Course::factory()->create([
-            'base_price' => 1337,
             'status' => CourseStatusEnum::PUBLISHED,
         ]);
         $this->course->authors()->sync($this->user);
@@ -103,7 +102,7 @@ class CourseAccessApiTest extends TestCase
     private function assertUserCanReadProgram(User $user, Course $course)
     {
         /** @var TestResponse $response */
-        $response = $this->actingAs($user)->json(
+        $response = $this->actingAs($user, 'api')->json(
             'GET',
             '/api/courses/' . $course->id . '/program'
         );
@@ -119,7 +118,6 @@ class CourseAccessApiTest extends TestCase
                 'image_url',
                 'video_path',
                 'video_url',
-                'base_price',
                 'duration',
                 'author_id',
                 'scorm_sco_id',
@@ -140,7 +138,7 @@ class CourseAccessApiTest extends TestCase
     private function assertUserCanNotReadProgram(User $user, Course $course)
     {
         /** @var TestResponse $response */
-        $response = $this->actingAs($user)->json(
+        $response = $this->actingAs($user, 'api')->json(
             'GET',
             '/api/courses/' . $course->id . '/program'
         );

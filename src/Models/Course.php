@@ -63,11 +63,6 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="base_price",
- *          description="base_price",
- *          type="integer"
- *      ),
- *      @OA\Property(
  *          property="duration",
  *          description="duration",
  *          type="string"
@@ -143,11 +138,6 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          type="integer"
  *      ),
  *      @OA\Property(
- *          property="purchasable",
- *          description="purchasable",
- *          type="boolean"
- *      ),
- *      @OA\Property(
  *          property="findable",
  *          description="findable",
  *          type="boolean"
@@ -182,7 +172,6 @@ class Course extends Model
         'summary',
         'image_path',
         'video_path',
-        'base_price',
         'duration',
         'author_id',
         'status',
@@ -195,7 +184,6 @@ class Course extends Model
         'active_from',
         'active_to',
         'hours_to_complete',
-        'purchasable',
         'findable',
         'target_group',
         'teaser_url',
@@ -212,7 +200,6 @@ class Course extends Model
         'summary' => 'string',
         'image_path' => 'string',
         'video_path' => 'string',
-        'base_price' => 'integer',
         'duration' => 'string',
         'status' => 'string',
         'subtitle' => 'string',
@@ -224,7 +211,6 @@ class Course extends Model
         'active_from' => 'datetime',
         'active_to' => 'datetime',
         'hours_to_complete' => 'integer',
-        'purchasable' => 'boolean',
         'findable' => 'boolean',
         'target_group' => 'string',
         'teaser_url' => 'string',
@@ -242,7 +228,6 @@ class Course extends Model
             'summary' => 'nullable|string',
             'image_path' => 'nullable|string|max:255',
             'video_path' => 'nullable|string|max:255',
-            'base_price' => 'nullable|integer|min:0',
             'duration' => 'nullable|string|max:255',
             'authors' => ['nullable', 'array'],
             'authors.*' => ['integer'],
@@ -259,7 +244,6 @@ class Course extends Model
             'active_from' => 'date|nullable',
             'active_to' => 'date|nullable',
             'hours_to_complete' => 'integer|nullable',
-            'purchasable' => 'boolean',
             'findable' => 'boolean',
             'target_group' => 'nullable|string|max:100',
             'teaser_url' => 'nullable|string',

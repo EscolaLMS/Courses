@@ -43,10 +43,6 @@ class CourseService implements CourseServiceContract
             $criteria[] = new CourseSearch($search['title']);
             unset($search['title']);
         }
-        if (isset($search['free']) && $search['free']) {
-            $criteria[] = new EqualCriterion('base_price', 0);
-            unset($search['free']);
-        }
         if (isset($search['status']) && is_array($search['status'])) {
             $criteria[] = new InCriterion('status', $search['status']);
             unset($search['status']);

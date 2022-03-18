@@ -28,7 +28,7 @@ interface CourseAPISwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              enum={"created_at","title","base_price","duration"}
+     *              enum={"created_at","title","duration"}
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -161,7 +161,7 @@ interface CourseAPISwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              enum={"created_at","title","base_price","duration"}
+     *              enum={"created_at","title","duration"}
      *          ),
      *      ),
      *      @OA\Parameter(

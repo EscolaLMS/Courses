@@ -39,13 +39,11 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         'summary',
         'image_path',
         'video_path',
-        'base_price',
         'duration',
         'status',
         'scorm_sco_id',
         'poster_path',
         'findable',
-        'purchasable',
         'target_group',
         'teaser_url',
     ];

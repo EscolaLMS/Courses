@@ -8,7 +8,6 @@ use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Events\CourseAccessFinished;
-use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Events\CourseDeadlineSoon;
 use EscolaLms\Courses\Jobs\CheckForDeadlines;
@@ -96,7 +95,6 @@ class NotificationsTest extends TestCase
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
-            'base_price' => 1337,
             'status' => CourseStatusEnum::PUBLISHED,
         ]);
 
@@ -122,7 +120,6 @@ class NotificationsTest extends TestCase
 
         $course = Course::factory()->create([
             'author_id' => $this->user->id,
-            'base_price' => 1337,
             'status' => CourseStatusEnum::PUBLISHED
         ]);
         $student = User::factory()->create();
