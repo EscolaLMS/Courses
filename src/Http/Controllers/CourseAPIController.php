@@ -94,7 +94,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $course = $this->courseRepository->findWith(
             $id,
             ['*'],
-            ['lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources', 'scormSco']
+            ['lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources']
         );
 
         if (empty($course)) {
