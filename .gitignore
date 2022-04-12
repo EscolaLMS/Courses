@@ -5,3 +5,4 @@ composer.lock
 openapi.json
 .env
 scorm
+.DS_Store
