@@ -65,7 +65,6 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     public function store(CreateCourseAPIRequest $request): JsonResponse
     {
         $input = $request->all();
-
         $course = $this->courseRepository->create($input);
 
         return $this->sendResponseForResource(CourseSimpleResource::make($course), __('Course saved successfully'));
