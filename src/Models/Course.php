@@ -316,10 +316,13 @@ class Course extends Model
     public function getImageUrlAttribute(): ?string
     {
         if ($this->attributes['image_path'] ?? null) {
-            $value = Storage::url(trim($this->attributes['image_path'], '/'));
-            return preg_match('/^(http|https):.*$/', $value, $oa) ?
-                $value :
-                url($value);
+            $path = trim(trim($this->attributes['image_path'], '/'));
+            if ($path) {
+                $value = Storage::url($path);
+                return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                    $value :
+                    url($value);
+            }
         }
         return null;
     }
@@ -327,10 +330,13 @@ class Course extends Model
     public function getVideoUrlAttribute(): ?string
     {
         if ($this->attributes['video_path'] ?? null) {
-            $value = Storage::url(trim($this->attributes['video_path'], '/'));
-            return preg_match('/^(http|https):.*$/', $value, $oa) ?
-                $value :
-                url($value);
+            $path = trim(trim($this->attributes['video_path'], '/'));
+            if ($path) {
+                $value = Storage::url($path);
+                return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                    $value :
+                    url($value);
+            }
         }
         return null;
     }
@@ -338,10 +344,13 @@ class Course extends Model
     public function getPosterUrlAttribute(): ?string
     {
         if ($this->attributes['poster_path'] ?? null) {
-            $value = Storage::url(trim($this->attributes['poster_path'], '/'));
-            return preg_match('/^(http|https):.*$/', $value, $oa) ?
-                $value :
-                url($value);
+            $path = trim(trim($this->attributes['poster_path'], '/'));
+            if ($path) {
+                $value = Storage::url($path);
+                return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                    $value :
+                    url($value);
+            }
         }
         return null;
     }

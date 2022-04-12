@@ -42,12 +42,16 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
     public function getUrlAttribute(): string
     {
         if ($this->value ?? null) {
-            $value = Storage::url(trim($this->value, '/'));
-            return preg_match('/^(http|https):.*$/', $value, $oa) ?
-                $value :
-                url($value);
+            $path = trim(trim($this->attributes['poster_path'], '/'));
+            if ($path) {
+                $value = Storage::url($path);
+                return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                    $value :
+                    url($value);
+            }
         }
         return '';
+
     }
 
     public function storeUploadsFromRequest(FormRequest $request, ?string $path = null): self
