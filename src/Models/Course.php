@@ -357,6 +357,11 @@ class Course extends Model
         return $this->belongsTo(ScormScoModel::class, 'scorm_sco_id');
     }
 
+    public function getIsPublishedAttribute(): bool
+    {
+        return in_array($this->status, [CourseStatusEnum::PUBLISHED, CourseStatusEnum::PUBLISHED_UNACTIVATED]);
+    }
+
     public function getIsActiveAttribute(): bool
     {
         return $this->status === CourseStatusEnum::PUBLISHED
@@ -374,6 +379,11 @@ class Course extends Model
             ->where(function (Builder $query) {
                 return $query->whereDate('active_to', '<=', Carbon::now())->orWhereNull('active_to');
             });
+    }
+
+    public function hasUser($user): bool
+    {
+        return $this->users()->where('users.id', $user->getKey())->exists() || $this->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists();
     }
 
     protected static function booted()

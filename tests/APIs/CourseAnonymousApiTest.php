@@ -32,24 +32,35 @@ class CourseAnonymousApiTest extends TestCase
     /**
      * @test
      */
-    public function test_anonymous_read_course()
+    public function test_anonymous_read_published_course()
     {
-        $course = Course::factory()->create([
+        $publishedCourse = Course::factory()->create([
             'status' => CourseStatusEnum::PUBLISHED
         ]);
 
         $this->response = $this->json(
             'GET',
-            '/api/admin/courses/' . $course->id
+            '/api/admin/courses/' . $publishedCourse->id
         );
         $this->response->assertStatus(401);
 
         $this->response = $this->json(
             'GET',
-            '/api/courses/' . $course->id
+            '/api/courses/' . $publishedCourse->id
         );
 
-        $this->assertApiResponse($course->toArray());
+        $this->assertApiResponse($publishedCourse->toArray());
+
+        $unactivatedCourse = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED_UNACTIVATED
+        ]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/' . $unactivatedCourse->id
+        );
+
+        $this->assertApiResponse($unactivatedCourse->toArray());
     }
 
     /**
@@ -167,7 +178,7 @@ class CourseAnonymousApiTest extends TestCase
     {
         $course1 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $course2 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
-        $course3 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $course3 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED_UNACTIVATED]);
         $course4 = Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
 
         $this->response = $this->json(
@@ -188,8 +199,10 @@ class CourseAnonymousApiTest extends TestCase
     }
 
 
-    public function test_anonymous_only_active()
+    public function test_anonymous_only_published()
     {
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED_UNACTIVATED]);
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED]);
         Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
 
@@ -202,13 +215,14 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
+            $this->assertContains($course->status, [CourseStatusEnum::PUBLISHED, CourseStatusEnum::PUBLISHED_UNACTIVATED]);
         }
     }
 
     public function test_anonymous_only_findable()
     {
         Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => false]);
+        Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED_UNACTIVATED, 'findable' => false]);
         Course::factory()->create(['status' => CourseStatusEnum::ARCHIVED, 'findable' => true]);
 
         $this->response = $this->json(
@@ -220,7 +234,7 @@ class CourseAnonymousApiTest extends TestCase
         $courses = $this->response->getData()->data;
 
         foreach ($courses as $course) {
-            $this->assertEquals(CourseStatusEnum::PUBLISHED, $course->status);
+            $this->assertContains($course->status, [CourseStatusEnum::PUBLISHED, CourseStatusEnum::PUBLISHED_UNACTIVATED]);
             $this->assertTrue($course->findable);
         }
     }

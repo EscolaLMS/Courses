@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Policies;
 
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -95,12 +96,12 @@ class CoursesPolicy
             return $course->hasAuthor($user);
         }
 
-        return $course->is_active && ($course->users()->where('users.id', $user->getKey())->exists() || $course->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists());
+        return $course->is_published && $course->hasUser($user);
     }
 
     public function view(?User $user, Course $course): bool
     {
-        if ($course->is_active && $course->findable) {
+        if ($course->is_published && $course->findable) {
             return true;
         }
 

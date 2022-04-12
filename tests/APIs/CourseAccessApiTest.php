@@ -212,4 +212,45 @@ class CourseAccessApiTest extends TestCase
 
         $this->assertUserCanNotReadProgram($student, $this->course);
     }
+
+    public function testAccessToPublishedCourse(): void
+    {
+        $student = User::factory()->create();
+
+        $unactivatedCourse = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED_UNACTIVATED
+        ]);
+
+        $unactivatedCourse->users()->sync($student->getKey());
+
+        $this->actingAs($student, 'api')->json(
+            'GET',
+            '/api/courses/' . $unactivatedCourse->getKey() . '/program'
+        )->assertJson([
+            'success' => false,
+            'message' => __('Course is not activated yet.')
+        ]);
+
+        $unactivatedCourse2 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'active_from' => now()->addHour(),
+            'active_to' => now()->addDay(),
+        ]);
+
+        $unactivatedCourse2->users()->sync($student->getKey());
+
+        $this->actingAs($student, 'api')->json(
+            'GET',
+            '/api/courses/' . $unactivatedCourse2->getKey() . '/program'
+        )->assertJson([
+            'success' => false,
+            'message' => __('Course is not activated yet.')
+        ]);
+
+        $unactivatedCourse2->update([
+            'active_from' => now()->subHour(),
+            'active_to' => now()->addDay(),
+        ]);
+        $this->assertUserCanReadProgram($student, $unactivatedCourse2);
+    }
 }

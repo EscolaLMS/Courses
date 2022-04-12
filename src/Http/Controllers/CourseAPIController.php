@@ -50,7 +50,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         $user = $request->user();
         if (!isset($user) || !$user->hasRole([UserRole::ADMIN, UserRole::TUTOR])) {
-            $search['status'] = CourseStatusEnum::PUBLISHED;
+            $search['status'] = [CourseStatusEnum::PUBLISHED, CourseStatusEnum::PUBLISHED_UNACTIVATED];
             $search['findable'] = true;
         }
 
@@ -101,7 +101,13 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             return $this->sendError(__('Course not found'));
         }
 
-        $resource = ($request->user() && $request->user()->can('update', $course)) ? CourseWithProgramAdminResource::make($course) : CourseWithProgramResource::make($course);
+        if (!$course->is_active && $course->hasUser($request->user())) {
+            return $this->sendError(__('Course is not activated yet.'));
+        }
+
+        $resource = ($request->user() && $request->user()->can('update', $course))
+            ? CourseWithProgramAdminResource::make($course)
+            : CourseWithProgramResource::make($course);
 
         return $this->sendResponseForResource($resource, __('Course retrieved successfully'));
     }
