@@ -114,7 +114,7 @@ class CourseAdminApiTest extends TestCase
 
         $dbCourse->refresh();
         $this->assertFalse($dbCourse->is_active);
-        Event::assertDispatchedTimes(ClearedResponseCache::class, 2);
+        Event::assertDispatchedTimes(ClearedResponseCache::class, 3);
     }
 
     /**

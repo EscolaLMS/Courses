@@ -315,24 +315,33 @@ class Course extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        if (isset($this->attributes['image_path'])) {
-            return url(Storage::url($this->attributes['image_path']));
+        if ($this->attributes['image_path'] ?? null) {
+            $value = Storage::url(trim($this->attributes['image_path'], '/'));
+            return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                $value :
+                url($value);
         }
         return null;
     }
 
     public function getVideoUrlAttribute(): ?string
     {
-        if (isset($this->attributes['video_path'])) {
-            return url(Storage::url($this->attributes['video_path']));
+        if ($this->attributes['video_path'] ?? null) {
+            $value = Storage::url(trim($this->attributes['video_path'], '/'));
+            return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                $value :
+                url($value);
         }
         return null;
     }
 
     public function getPosterUrlAttribute(): ?string
     {
-        if (isset($this->attributes['poster_path'])) {
-            return url(Storage::url($this->attributes['poster_path']));
+        if ($this->attributes['poster_path'] ?? null) {
+            $value = Storage::url(trim($this->attributes['poster_path'], '/'));
+            return preg_match('/^(http|https):.*$/', $value, $oa) ?
+                $value :
+                url($value);
         }
         return null;
     }
