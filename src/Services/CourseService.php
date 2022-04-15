@@ -48,7 +48,7 @@ class CourseService implements CourseServiceContract
             $criteria[] = new InCriterion('status', $search['status']);
             unset($search['status']);
         }
-        if (isset($search['only_with_categories']) && $search['only_with_categories']) {
+        if (isset($search['only_with_categories']) && $search['only_with_categories'] === 'true') {
             $criteria[] = new HasCriterion('categories', null);
             unset($search['only_with_categories']);
         }
