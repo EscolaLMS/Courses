@@ -6,6 +6,7 @@ use Error;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseAssigned;
@@ -46,6 +47,10 @@ class CourseService implements CourseServiceContract
         if (isset($search['status']) && is_array($search['status'])) {
             $criteria[] = new InCriterion('status', $search['status']);
             unset($search['status']);
+        }
+        if (isset($search['only_with_categories']) && $search['only_with_categories']) {
+            $criteria[] = new HasCriterion('categories', null);
+            unset($search['only_with_categories']);
         }
 
         $query = $this->courseRepository->allQueryBuilder(
