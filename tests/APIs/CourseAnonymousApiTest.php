@@ -187,6 +187,29 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertStatus(200);
     }
 
+    public function test_anonymous_only_with_categories()
+    {
+        $course1 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses/?only_with_categories=true'
+        );
+        $responseCourseIds = collect(json_decode($this->response->content(), true)['data'])->pluck('id')->toArray();
+
+        $this->assertTrue(!in_array($course1->getKey(), $responseCourseIds));
+        $this->response->assertOk();
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses'
+        );
+        $responseCourseIds = collect(json_decode($this->response->content(), true)['data'])->pluck('id')->toArray();
+
+        $this->assertTrue(in_array($course1->getKey(), $responseCourseIds));
+        $this->response->assertOk();
+    }
+
 
     public function test_anonymous_only_active()
     {
