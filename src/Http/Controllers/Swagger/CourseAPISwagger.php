@@ -28,7 +28,7 @@ interface CourseAPISwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              enum={"created_at","title","duration"}
+     *              enum={"created_at","title","duration","only_with_categories"}
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -38,6 +38,15 @@ interface CourseAPISwagger
      *          @OA\Schema(
      *              type="string",
      *              enum={"ASC", "DESC"}
+     *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="only_with_categories",
+     *          description="Consultation has categories",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="boolean",
      *          ),
      *      ),
      *      @OA\Parameter(
