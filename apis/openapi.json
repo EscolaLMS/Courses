@@ -22,7 +22,8 @@
                             "enum": [
                                 "created_at",
                                 "title",
-                                "duration"
+                                "duration",
+                                "only_with_categories"
                             ]
                         }
                     },
@@ -36,6 +37,15 @@
                                 "ASC",
                                 "DESC"
                             ]
+                        }
+                    },
+                    {
+                        "name": "only_with_categories",
+                        "in": "query",
+                        "description": "Consultation has categories",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
                         }
                     },
                     {
