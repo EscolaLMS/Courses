@@ -210,6 +210,32 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertOk();
     }
 
+    public function test_admin_only_with_categories()
+    {
+        $course1 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+
+        $user = config('auth.providers.users.model')::factory()->create();
+        $user->guard_name = 'api';
+        $user->assignRole('admin');
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/admin/courses/?only_with_categories=true'
+        );
+        $responseCourseIds = collect(json_decode($this->response->content(), true)['data'])->pluck('id')->toArray();
+
+        $this->assertTrue(!in_array($course1->getKey(), $responseCourseIds));
+        $this->response->assertOk();
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses'
+        );
+        $responseCourseIds = collect(json_decode($this->response->content(), true)['data'])->pluck('id')->toArray();
+
+        $this->assertTrue(in_array($course1->getKey(), $responseCourseIds));
+        $this->response->assertOk();
+    }
+
 
     public function test_anonymous_only_active()
     {
