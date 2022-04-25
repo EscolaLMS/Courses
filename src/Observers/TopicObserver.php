@@ -12,11 +12,9 @@ class TopicObserver
         if ($topic->lesson_id && !$topic->order) {
             $topic->order = 1 + (int) Topic::where('lesson_id', $topic->lesson_id)->max('order');
         }
-
-        ResponseCache::clear();
     }
 
-    public function updated(Topic $topic)
+    public function saved(Topic $topic)
     {
         ResponseCache::clear();
     }
