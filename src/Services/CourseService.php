@@ -2,12 +2,15 @@
 
 namespace EscolaLms\Courses\Services;
 
+use Carbon\Carbon;
 use Error;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
+use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseAssigned;
 use EscolaLms\Courses\Events\CourseFinished;
@@ -21,7 +24,6 @@ use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
 use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Model\ScormScoModel;
 
 class CourseService implements CourseServiceContract
@@ -148,6 +150,21 @@ class CourseService implements CourseServiceContract
     public function setAccessForGroups(Course $course, array $groups = []): void
     {
         $course->groups()->sync($groups);
+    }
+
+    public function activatePublishedCourses(): void
+    {
+        $criteria = [
+            new EqualCriterion('status', CourseStatusEnum::PUBLISHED_UNACTIVATED),
+            new DateCriterion('active_from', Carbon::now(), '<='),
+            new DateCriterion('active_to', Carbon::now(), '>')
+        ];
+
+        $unactivatedCourses = $this->courseRepository->searchByCriteria($criteria);
+
+        $unactivatedCourses->each(function (Course $course) {
+           $this->courseRepository->update(['status' => CourseStatusEnum::PUBLISHED], $course->getKey());
+        });
     }
 
     private function dispatchEventForUsersAttachedToCourse(Course $course, array $users = []): void

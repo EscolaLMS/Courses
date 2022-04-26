@@ -13,6 +13,7 @@ class TopicSimpleResource extends TopicResource
         $response = parent::toArray($request);
         if (!$this->preview) {
             unset($response['topicable']);
+            unset($response['resources']);
         }
 
         return $response;
