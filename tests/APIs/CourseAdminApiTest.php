@@ -7,7 +7,6 @@ use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CoursedPublished;
-use EscolaLms\Courses\Events\ImageChanged;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -652,7 +651,6 @@ class CourseAdminApiTest extends TestCase
         Storage::fake('local');
         $course = Course::factory()->create();
         $poster = UploadedFile::fake()->image('poster.jpg');
-        Event::fake([ImageChanged::class]);
 
         $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/admin/courses/' . $course->id,
@@ -670,11 +668,6 @@ class CourseAdminApiTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'poster_path' => $path
         ]);
-
-        Event::assertDispatched(function (ImageChanged $imageChanged) use ($course){
-            $this->assertEquals($course->poster_path, $imageChanged->getPath());
-            return true;
-        });
     }
 
     public function test_update_admin_course_image()
@@ -682,7 +675,6 @@ class CourseAdminApiTest extends TestCase
         Storage::fake();
         $course = Course::factory()->create();
         $image = UploadedFile::fake()->image('image.jpg');
-        Event::fake([ImageChanged::class]);
 
         $this->response = $this->actingAs($this->user, 'api')->post(
             '/api/admin/courses/' . $course->id,
@@ -700,11 +692,6 @@ class CourseAdminApiTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'image_path' => $path
         ]);
-
-        Event::assertDispatched(function (ImageChanged $imageChanged) use ($course){
-            $this->assertEquals($course->image_path, $imageChanged->getPath());
-            return true;
-        });
     }
 
     public function test_unique_tags_courses(): void

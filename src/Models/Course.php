@@ -3,7 +3,6 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Events\ImageChanged;
 use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
@@ -421,14 +420,6 @@ class Course extends Model
         self::updated(function (Course $course) {
             if ($course->wasChanged('status')) {
                 event(new CourseStatusChanged($course));
-            }
-
-            if ($course->wasChanged('image_path') && is_string($course->getOriginal('image_path'))) {
-                event(new ImageChanged($course->getOriginal('image_path')));
-            }
-
-            if ($course->wasChanged('poster_path') && is_string($course->getOriginal('poster_path'))) {
-                event(new ImageChanged($course->getOriginal('poster_path')));
             }
         });
     }
