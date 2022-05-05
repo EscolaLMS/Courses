@@ -10,7 +10,7 @@ use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
 use EscolaLms\Core\Http\Facades\Route;
 
 // admin endpoints
-Route::group(['middleware' => Route::apply(['auth:api']), 'prefix' => 'api/admin'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::get('courses/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
     Route::post('courses/sort', [CourseAPIController::class, "sort"]);
     Route::post('courses/{course}', [CourseAPIController::class, 'update']);
@@ -40,7 +40,7 @@ Route::group(['middleware' => Route::apply(['auth:api']), 'prefix' => 'api/admin
 });
 
 // user endpoints
-Route::group(['middleware' => Route::apply(['auth:api']), 'prefix' => 'api/courses'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/courses'], function () {
     Route::get('/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
     Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);
 
