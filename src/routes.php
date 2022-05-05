@@ -7,7 +7,7 @@ use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
 use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
