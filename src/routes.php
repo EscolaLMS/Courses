@@ -8,7 +8,6 @@ use EscolaLms\Courses\Http\Controllers\LessonAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicAPIController;
 use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
 use Illuminate\Support\Facades\Route;
-use Spatie\ResponseCache\Middlewares\CacheResponse;
 
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
