@@ -10,6 +10,64 @@ Courses and content package
 [![downloads](https://img.shields.io/packagist/l/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0c9e2593fb30e2048f95/maintainability)](https://codeclimate.com/github/EscolaLMS/Courses/maintainability)
 
+## What does it do
+
+This package is used for creating Course for EscolaLms.
+
+## Installing
+
+- `composer require escolalms/courses`
+- `php artisan migrate`
+- `php artisan db:seed --class="EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder"`
+
+## Schedule
+
+- Schedules are available in ScheduleServiceProvider
+  - `$schedule->job(CheckForDeadlines::class)->hourly()` - executed every hours
+  - `$schedule->job(ActivateCourseJob::class)->daily()` - executed every days
+
+## Endpoints
+
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Courses/)
+
+## Tests
+
+Run `./vendor/bin/phpunit  --filter 'EscolaLms\\Courses\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
+
+## Events
+
+- `EscolaLms\Courses\Events\CourseAccessFinished` => Event is dispatched when users lost access to course.
+- `EscolaLms\Courses\Events\CourseAccessStarted` => Event is dispatched when users received access to course.
+- `EscolaLms\Courses\Events\CourseAssigned` => Event is dispatched when admin assigned access user.
+- `EscolaLms\Courses\Events\CourseDeadlineSoon` => Event is dispatched when course deadline is coming out.
+- `EscolaLms\Courses\Events\CoursedPublished` => Event is dispatched when course is published.
+- `EscolaLms\Courses\Events\CourseFinished` => Event is dispatched when course is ended.
+- `EscolaLms\Courses\Events\CourseStarted` => Event is dispatched when course is started.
+- `EscolaLms\Courses\Events\CourseStatusChanged` => Event is dispatched when course has a status change.
+- `EscolaLms\Courses\Events\CourseTutorAssigned` => Event is dispatched when tutor is assigned to course.
+- `EscolaLms\Courses\Events\CourseTutorUnassigned` => Event is dispatched when tutor is unassigned to course.
+- `EscolaLms\Courses\Events\CourseUnassigned` => Event is dispatched when user is unassigned to course.
+- `EscolaLms\Courses\Events\TopicFinished` => Event is dispatched when course topic is finished.
+
+### Admin panel
+
+**Left menu**
+
+![Menu](doc/menu_course.png "Menu")
+
+**List of courses**
+
+![List of courses](doc/list_courses.png "List of courses")
+
+**Creating/editing course**
+
+![Creating/editing course](doc/create_course.png "Creating or editing course")
+
+## Permissions
+
+Permissions are defined in [seeder](vendor/escolalms/courses/database/seeders/CoursesPermissionSeeder.php)
+
+
 ## Model relation
 
 The model user must be extended with the class HasCourses :
@@ -78,18 +136,6 @@ class CustomServiceProvider extends ServiceProvider
 ```
 
 see [EscolaLmsCourseServiceProvider.php](src/EscolaLmsCourseServiceProvider.php) as reference as well as [Models/TopicContent](package2/src/Models/TopicContent)
-
-## Seeder
-
-### Passport roles & permissions
-
-Package comes with seeder that populate the permissions for to access administration endpoints.
-
-```php
-php artisan db:seed --class="\EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder"
-```
-
-Above defined some roles and permissions. See the [seeder](database/seeders/CoursesPermissionSeeder.php) and [policy](src/Policies/CoursesPolicy.php).
 
 ### Content
 
