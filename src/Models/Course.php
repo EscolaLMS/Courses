@@ -424,4 +424,8 @@ class Course extends Model
         });
     }
 
+    public function getMorphClass()
+    {
+        return self::class;
+    }
 }
