@@ -424,8 +424,4 @@ class Course extends Model
         });
     }
 
-    public function getMorphClass()
-    {
-        return \EscolaLms\Courses\Models\Course::class;
-    }
 }
