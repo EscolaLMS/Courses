@@ -6,16 +6,21 @@ use EscolaLms\Auth\Models\Traits\HasGroups;
 use EscolaLms\Auth\Models\Traits\HasOnboardingStatus;
 use EscolaLms\Auth\Models\Traits\UserHasSettings;
 use EscolaLms\Auth\Models\User as AuthUser;
+use EscolaLms\Categories\Models\Category;
 use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use EscolaLms\Courses\Models\Traits\HasAuthoredCourses;
 use EscolaLms\Courses\Models\Traits\HasCourses;
-use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Tests\Database\Factories\UserFactory;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends AuthUser
 {
     use HasCourses, HasAuthoredCourses, HasGroups, HasOnboardingStatus, UserHasSettings, ClearsResponseCache;
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_user');
+    }
 
     protected function getTraitOwner(): self
     {
