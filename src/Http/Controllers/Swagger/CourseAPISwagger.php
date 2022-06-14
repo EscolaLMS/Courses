@@ -87,17 +87,12 @@ interface CourseAPISwagger
      *              type="number",
      *          ),
      *      ),
-     *     @OA\Parameter(
-     *          name="authors",
-     *          description="Authors",
+     *      @OA\Parameter(
+     *          name="authors[]",
+     *          description="An array of author IDs",
      *          required=false,
      *          in="query",
-     *          @OA\Schema(
-     *              type="array",
-     *              @OA\Items(
-     *                 ref="#/components/schemas/User"
-     *              )
-     *          ),
+     *          @OA\Schema(type="array", @OA\Items(type="number")),
      *      ),
      *      @OA\Parameter(
      *          name="tag",
