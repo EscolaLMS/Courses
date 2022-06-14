@@ -54,6 +54,10 @@ class CourseService implements CourseServiceContract
             $criteria[] = new HasCriterion('categories', null);
             unset($search['only_with_categories']);
         }
+        if (isset($search['authors']) && is_array($search['authors'])) {
+            $criteria[] = new HasCriterion('authors', fn($query) => $query->whereIn('author_id', $search['authors']));
+            unset($search['authors']);
+        }
 
         $query = $this->courseRepository->allQueryBuilder(
             $search,
