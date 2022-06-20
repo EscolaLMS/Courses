@@ -6,8 +6,10 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class CourseAnonymousApiTest extends TestCase
 {
@@ -313,5 +315,63 @@ class CourseAnonymousApiTest extends TestCase
         ]);
 
         $this->assertEquals(2, $this->response->getData()->meta->total);
+    }
+
+    public function test_search_courses_by_course_authors()
+    {
+        $author1 = User::factory()->create();
+        $author2 = User::factory()->create();
+
+        Course::factory()
+            ->hasAttached($author1, [],'authors')
+            ->count(2)
+            ->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory()
+            ->hasAttached($author2, [],'authors')
+            ->count(3)
+            ->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Course::factory()
+            ->hasAttached(User::factory(), [],'authors')
+            ->count(10)
+            ->create(['status' => CourseStatusEnum::PUBLISHED]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses?authors[]=' . $author1->id . '&authors[]=' . $author2->id
+        )->assertOk();
+        $this->assertCourseAuthorFilterResponse([$author1->id, $author2->id], 5);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses?authors[]=' . $author1->id
+        )->assertOk();
+        $this->assertCourseAuthorFilterResponse([$author1->id], 2);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses?authors[]=' . $author2->id
+        )->assertOk();
+        $this->assertCourseAuthorFilterResponse([$author2->id], 3);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses'
+        )->assertOk();
+
+        $this->response->assertJsonCount(15, 'data');
+    }
+
+    private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void {
+        $this->response->assertJsonCount($count, 'data');
+        $this->response->assertJson(fn (AssertableJson $json) => $json->has(
+            'data',
+            fn ($json) => $json->each(fn (AssertableJson $json) =>
+                $json->has('authors', fn (AssertableJson $json) =>
+                    $json->each(fn (AssertableJson $json) =>
+                        $json->where('id', fn ($json) => in_array($json, $authorIds))->etc()
+                    )->etc()
+                )->etc()
+            ))->etc()
+        );
     }
 }
