@@ -1,0 +1,15 @@
+{
+  "$schema": "vendor/infection/infection/resources/schema.json",
+  "source": {
+    "directories": ["src"]
+  },
+  "timeout": 90,
+  "mutators": {
+    "@default": true
+  },
+  "logs": {
+    "stryker": {
+      "report": "main"
+    }
+  }
+}

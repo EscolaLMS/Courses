@@ -1,0 +1,55 @@
+name: Mutation Tests PHPUnit in environments
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  php8-mysql:
+    runs-on: ubuntu-latest
+    container:
+      image: escolalms/php:8-work
+
+    services:
+      mysql:
+        image: mariadb
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: database
+          MYSQL_PASSWORD: password
+          MYSQL_USER: username
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Instantiate package
+        run: apt-get install git -y
+
+      - name: Instantiate package
+        uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: cp env/mysql/* .
+
+      - name: Update composer
+        run: composer update
+
+      - name: Require composer infection package
+        run: |
+          composer config --no-plugins allow-plugins.infection/extension-installer true
+          composer require infection/infection:^0
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
+
+      - name: Run tests
+        run: ./vendor/bin/infection --min-msi=48 --min-covered-msi=70 --threads=8
+        env:
+          INFECTION_DASHBOARD_API_KEY: ${{ secrets.INFECTION_DASHBOARD_API_KEY }}
