@@ -23,7 +23,7 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
     {
         $tutors = $this->courseRepositoryContract->findTutors();
 
-        return $this->sendResponseForResource(TutorResource::collection($tutors), 'Tutors retrieved successfully');
+        return $this->sendResponseForResource(TutorResource::collection($tutors), __('Tutors retrieved successfully'));
     }
 
     /**
@@ -37,7 +37,7 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
             return $this->sendError('Not found', 404);
         }
 
-        return $this->sendResponseForResource(TutorResource::make($tutor), 'Tutor retrieved successfully');
+        return $this->sendResponseForResource(TutorResource::make($tutor), __('Tutor retrieved successfully'));
     }
 
     public function assign(AssignAuthorApiRequest $request): JsonResponse
@@ -46,15 +46,15 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
         $course = $request->getCourse();
 
         if (empty($tutor)) {
-            return $this->sendError('Tutor not found', 404);
+            return $this->sendError(__('Tutor not found'), 404);
         }
         if (empty($course)) {
-            return $this->sendError('Course not found', 404);
+            return $this->sendError(__('Course not found'), 404);
         }
 
         $this->courseRepositoryContract->addAuthor($course, $tutor);
 
-        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), 'Tutor assigned');
+        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), __('Tutor assigned'));
     }
 
     public function unassign(AssignAuthorApiRequest $request): JsonResponse
@@ -63,14 +63,14 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
         $course = $request->getCourse();
 
         if (empty($tutor)) {
-            return $this->sendError('Tutor not found', 404);
+            return $this->sendError(__('Tutor not found'), 404);
         }
         if (empty($course)) {
-            return $this->sendError('Course not found', 404);
+            return $this->sendError(__('Course not found'), 404);
         }
 
         $this->courseRepositoryContract->removeAuthor($course, $tutor);
 
-        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), 'Tutor unassigned');
+        return $this->sendResponse(TutorResource::collection($course->refresh()->authors), __('Tutor unassigned'));
     }
 }

@@ -41,7 +41,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             $request->get('limit')
         )->load('topicable', 'resources', 'topicable.topic');
 
-        return $this->sendResponseForResource(TopicResource::collection($topics), 'Topics retrieved successfully');
+        return $this->sendResponseForResource(TopicResource::collection($topics), __('Topics retrieved successfully'));
     }
 
     public function store(CreateTopicAPIRequest $request)
@@ -56,7 +56,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponseForResource(TopicAdminResource::make($topic), 'Topic saved successfully');
+        return $this->sendResponseForResource(TopicAdminResource::make($topic), __('Topic saved successfully'));
     }
 
     public function show($id, GetTopicAPIRequest $request)
@@ -64,16 +64,16 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $topic = $request->getTopic();
 
         if (empty($topic)) {
-            return $this->sendError('Topic not found');
+            return $this->sendError(__('Topic not found'));
         }
 
-        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic retrieved successfully');
+        return $this->sendResponseForResource(TopicResource::make($topic), __('Topic retrieved successfully'));
     }
 
     public function update($id, UpdateTopicAPIRequest $request)
     {
         if (is_null($request->getTopic())) {
-            return $this->sendError('Topic not found', 404);
+            return $this->sendError(__('Topic not found'), 404);
         }
 
         try {
@@ -86,7 +86,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendResponseForResource(TopicAdminResource::make($topic), 'Topic updated successfully');
+        return $this->sendResponseForResource(TopicAdminResource::make($topic), __('Topic updated successfully'));
     }
 
     public function destroy($id, DeleteTopicAPIRequest $request)
@@ -94,7 +94,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $topic = $request->getTopic();
 
         if (empty($topic)) {
-            return $this->sendError('Topic not found');
+            return $this->sendError(__('Topic not found'));
         }
 
         try {
@@ -107,14 +107,14 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError($error->getMessage(), 422);
         }
 
-        return $this->sendSuccess('Topic deleted successfully');
+        return $this->sendSuccess(__('Topic deleted successfully'));
     }
 
     public function classes()
     {
         $classes = $this->topicRepository->availableContentClasses();
 
-        return $this->sendResponse($classes, 'Topic content available list');
+        return $this->sendResponse($classes, __('Topic content available list'));
     }
 
     public function clone(CloneTopicAPIRequest $request)
@@ -122,7 +122,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         $topic = $request->getTopic();
 
         if (empty($topic)) {
-            return $this->sendError('Topic not found');
+            return $this->sendError(__('Topic not found'));
         }
 
         try {
@@ -131,6 +131,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError('Error', 400);
         }
 
-        return $this->sendResponseForResource(TopicResource::make($topic), 'Topic cloned successfully');
+        return $this->sendResponseForResource(TopicResource::make($topic), __('Topic cloned successfully'));
     }
 }
