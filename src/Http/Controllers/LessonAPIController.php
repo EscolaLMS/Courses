@@ -40,7 +40,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
             $request->get('limit')
         );
 
-        return $this->sendResponseForResource(LessonResource::collection($lessons), 'Lessons retrieved successfully');
+        return $this->sendResponseForResource(LessonResource::collection($lessons), __('Lessons retrieved successfully'));
     }
 
     public function store(CreateLessonAPIRequest $request)
@@ -49,7 +49,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
 
         $lesson = $this->lessonRepository->create($input);
 
-        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson saved successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), __('Lesson saved successfully'));
     }
 
     public function show($id, GetLessonAPIRequest $request)
@@ -57,10 +57,10 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         $lesson = $request->getLesson();
 
         if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+            return $this->sendError(__('Lesson not found'));
         }
 
-        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson retrieved successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), __('Lesson retrieved successfully'));
     }
 
     public function update($id, UpdateLessonAPIRequest $request)
@@ -71,12 +71,12 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         $lesson = $this->lessonRepository->find($id);
 
         if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+            return $this->sendError(__('Lesson not found'));
         }
 
         $lesson = $this->lessonRepository->update($input, $id);
 
-        return $this->sendResponseForResource(LessonResource::make($lesson), 'Lesson updated successfully');
+        return $this->sendResponseForResource(LessonResource::make($lesson), __('Lesson updated successfully'));
     }
 
     public function destroy($id, DeleteLessonAPIRequest $request)
@@ -84,12 +84,12 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         $lesson = $request->getLesson();
 
         if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+            return $this->sendError(__('Lesson not found'));
         }
 
         $this->lessonRepository->delete($id);
 
-        return $this->sendSuccess('Lesson deleted successfully');
+        return $this->sendSuccess(__('Lesson deleted successfully'));
     }
 
     public function clone(CloneLessonAPIRequest $request): JsonResponse
@@ -97,15 +97,15 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
         $lesson = $request->getLesson();
 
         if (empty($lesson)) {
-            return $this->sendError('Lesson not found');
+            return $this->sendError(__('Lesson not found'));
         }
 
         try {
             $lesson = $this->lessonService->cloneLesson($lesson);
         } catch (\Exception $error) {
-            return $this->sendError('Error', 400);
+            return $this->sendError(__('Error'), 400);
         }
 
-        return $this->sendResponseForResource(LessonWithTopicsAdminResource::make($lesson), 'Lesson cloned successfully');
+        return $this->sendResponseForResource(LessonWithTopicsAdminResource::make($lesson), __('Lesson cloned successfully'));
     }
 }

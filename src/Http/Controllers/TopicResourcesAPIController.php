@@ -25,14 +25,14 @@ class TopicResourcesAPIController extends AppBaseController implements TopicReso
 
     public function list(ListTopicResourceAPIRequest $request): JsonResponse
     {
-        return $this->sendResponseForResource(TopicResourceResource::collection($request->getTopic()->resources), 'Topic resources retrieved successfully');
+        return $this->sendResponseForResource(TopicResourceResource::collection($request->getTopic()->resources), __('Topic resources retrieved successfully'));
     }
 
     public function upload(UploadTopicResourceAPIRequest $request): JsonResponse
     {
         $topicResource = $this->resourceRepository->storeUploadedResourceForTopic($request->getTopic(), $request->getUploadedResource());
 
-        return $this->sendResponseForResource(TopicResourceResource::make($topicResource), 'Topic resource uploaded successfully');
+        return $this->sendResponseForResource(TopicResourceResource::make($topicResource), __('Topic resource uploaded successfully'));
     }
 
     public function delete(DeleteTopicResourceAPIRequest $request): JsonResponse
@@ -52,7 +52,7 @@ class TopicResourcesAPIController extends AppBaseController implements TopicReso
             return $this->sendError(__('Topic resource not found'));
         }
         if ($this->resourceRepository->renameModel($topicResource, $request->getName())) {
-            return $this->sendResponseForResource(TopicResourceResource::make($topicResource->refresh()), 'Topic resource renamed successfully');
+            return $this->sendResponseForResource(TopicResourceResource::make($topicResource->refresh()), __('Topic resource renamed successfully'));
         }
 
         return $this->sendError(__('File already exists'), 422);
