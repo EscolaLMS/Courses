@@ -96,11 +96,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             ['lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources']
         );
 
-        if (empty($course)) {
-            return $this->sendError(__('Course not found'));
-        }
-
-        if (!$course->is_active && $course->hasUser($request->user())) {
+        if (!$course->is_active && !$request->user()->can('update', $course)) {
             return $this->sendError(__('Course is not activated yet.'));
         }
 

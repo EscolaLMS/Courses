@@ -431,9 +431,18 @@ class CourseAdminApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/' . $course->id . '/program'
-        );
+        )->assertStatus(200);
 
-        $this->response->assertStatus(200);
+        $course->update([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'active_from' => now()->addHour(),
+            'active_to' => now()->addDay(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/' . $course->id . '/program'
+        )->assertStatus(200);
     }
 
     /**
