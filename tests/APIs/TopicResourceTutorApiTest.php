@@ -12,7 +12,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class TopicResourceTutorApiTest extends TestCase
 {
@@ -35,8 +34,6 @@ class TopicResourceTutorApiTest extends TestCase
 
     public function testCreateResource()
     {
-        Event::fake(ClearedResponseCache::class);
-
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
@@ -58,8 +55,6 @@ class TopicResourceTutorApiTest extends TestCase
             'id' => $data->data->id,
             'name' => 'test.pdf',
         ]);
-
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function testListResource()
@@ -103,7 +98,6 @@ class TopicResourceTutorApiTest extends TestCase
 
     public function testDeleteResource()
     {
-        Event::fake(ClearedResponseCache::class);
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
@@ -132,8 +126,6 @@ class TopicResourceTutorApiTest extends TestCase
         $this->assertDatabaseMissing('topic_resources', [
             'id' => $id,
         ]);
-
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function testRenameResource()

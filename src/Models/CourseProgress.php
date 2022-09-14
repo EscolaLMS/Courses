@@ -2,7 +2,6 @@
 
 namespace EscolaLms\Courses\Models;
 
-use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,7 +33,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CourseProgress extends Model
 {
-    use HasFactory, ClearsResponseCache;
+    use HasFactory;
 
     protected $dates = ['deleted_at', 'finished_at'];
 

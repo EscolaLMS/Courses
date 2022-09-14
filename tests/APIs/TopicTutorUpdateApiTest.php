@@ -9,8 +9,6 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Event;
-use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
@@ -39,8 +37,6 @@ class TopicTutorUpdateApiTest extends TestCase
      */
     public function testUpdateTopicRichtext()
     {
-        Event::fake(ClearedResponseCache::class);
-
         $this->response = $this->withHeaders([
             'Content' => 'application/x-www-form-urlencoded',
             'Accept' => 'application/json',
@@ -64,7 +60,5 @@ class TopicTutorUpdateApiTest extends TestCase
         $this->assertDatabaseHas('topic_example', [
             'value' => $path,
         ]);
-
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 }

@@ -3,7 +3,6 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Courses\Database\Factories\LessonFactory;
-use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,7 +50,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Lesson extends Model
 {
-    use HasFactory, ClearsResponseCache;
+    use HasFactory;
 
     public $table = 'lessons';
 

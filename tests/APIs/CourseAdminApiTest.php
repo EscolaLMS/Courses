@@ -17,7 +17,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponseCache\Events\ClearedResponseCache;
 
 class CourseAdminApiTest extends TestCase
 {
@@ -38,8 +37,6 @@ class CourseAdminApiTest extends TestCase
 
     public function test_create_course()
     {
-        Event::fake(ClearedResponseCache::class);
-
         $course = Course::factory()->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -53,7 +50,6 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(201);
 
         $this->assertApiResponse($course);
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function test_create_course_published()
@@ -80,8 +76,6 @@ class CourseAdminApiTest extends TestCase
 
     public function test_create_and_update_course_with_deadline()
     {
-        Event::fake(ClearedResponseCache::class);
-
         $course = Course::factory()->make([
             'status' => CourseStatusEnum::PUBLISHED,
             'active_from' => Carbon::now()->subDay(1),
@@ -114,7 +108,6 @@ class CourseAdminApiTest extends TestCase
 
         $dbCourse->refresh();
         $this->assertFalse($dbCourse->is_active);
-        Event::assertDispatchedTimes(ClearedResponseCache::class, 3);
     }
 
     /**
@@ -137,8 +130,6 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_update_course()
     {
-        Event::fake(ClearedResponseCache::class);
-
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
 
@@ -149,7 +140,6 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function test_active_course()
@@ -242,8 +232,6 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_delete_course()
     {
-        Event::fake(ClearedResponseCache::class);
-
         $course = Course::factory()->create();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -258,7 +246,6 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->response->assertStatus(404);
-        Event::assertDispatched(ClearedResponseCache::class);
     }
 
     public function test_category_course()
