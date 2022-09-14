@@ -4,6 +4,7 @@ namespace EscolaLms\Courses;
 
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Observers\TopicObserver;
+use EscolaLms\Courses\Providers\EventServiceProvider;
 use EscolaLms\Courses\Providers\SettingsServiceProvider;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
@@ -75,5 +76,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(ScheduleServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
         $this->app->register(ResponseCacheServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
     }
 }

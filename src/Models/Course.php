@@ -3,7 +3,6 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\PlatformVisibility;
@@ -159,7 +158,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 
 class Course extends Model
 {
-    use HasFactory, ClearsResponseCache;
+    use HasFactory;
 
     public $table = 'courses';
 

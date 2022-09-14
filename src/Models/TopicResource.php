@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class TopicResource extends Model
 {
-    use HasFactory, ClearsResponseCache;
+    use HasFactory;
 
     public $table = 'topic_resources';
 
