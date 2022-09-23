@@ -57,6 +57,69 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
     }
 
+    public function excludedFileExtensionProvider(): array
+    {
+        return [
+            ['html'],
+            ['php'],
+            ['css'],
+            ['java'],
+            ['h5p'],
+            ['m3u8'],
+            ['heic'],
+            ['xlsx'],
+        ];
+    }
+
+    public function allowedFileExtensionProvider(): array
+    {
+        $this->createApplication();
+        return array_map(fn ($item) => [$item], explode(',', config('escolalms_courses.topic_resource_mimes')));
+    }
+
+    /**
+     * @dataProvider allowedFileExtensionProvider
+     */
+    public function testCreateResourceAllowedFileExtensions(string $ext)
+    {
+        Storage::fake('local');
+
+        $file = UploadedFile::fake()->create('file.' . $ext);
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            [
+                'resource' => $file,
+            ]
+        );
+
+        $this->response->assertStatus(201);
+
+        $data = json_decode($this->response->getContent());
+
+        Storage::disk('local')->assertExists($data->data->path);
+
+        $this->assertDatabaseHas('topic_resources', [
+            'id' => $data->data->id,
+            'name' => 'file.' . $ext,
+        ]);
+    }
+
+    /**
+     * @dataProvider excludedFileExtensionProvider
+     */
+    public function testCreateResourceExcludedFileExtensions(string $ext): void
+    {
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            '/api/admin/topics/' . $this->topic->getKey() . '/resources',
+            [
+                'resource' =>  UploadedFile::fake()->create('file.' . $ext),
+            ]
+        );
+
+        $this->response->assertStatus(422);
+    }
+
     public function testListResource()
     {
         Storage::fake('local');

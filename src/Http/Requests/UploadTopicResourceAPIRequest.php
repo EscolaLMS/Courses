@@ -10,8 +10,17 @@ class UploadTopicResourceAPIRequest extends TopicResourceAPIRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'resource' => ['required', new TopicResourceRule($this->route('topic_id'))],
+            'resource' => [
+                'required',
+                new TopicResourceRule([$this->getMimesRule()], $this->route('topic_id'))
+            ],
         ]);
+    }
+
+    public function getMimesRule(): ?string
+    {
+        $mimes = config('escolalms_courses.topic_resource_mimes');
+        return $mimes ? 'mimes:' . $mimes : null;
     }
 
     public function getUploadedResource()
