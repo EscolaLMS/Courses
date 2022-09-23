@@ -7,7 +7,7 @@ use EscolaLms\Files\Rules\FileOrStringRule;
 
 class TopicResourceRule extends FileOrStringRule
 {
-    public function __construct(int $topicId = null)
+    public function __construct(?array $fileRules = [], int $topicId = null)
     {
         if (is_null($topicId)) {
             return false;
@@ -15,6 +15,6 @@ class TopicResourceRule extends FileOrStringRule
         $topic = Topic::findOrFail($topicId);
         $prefixPath = 'course/' . $topic->course->getKey();
 
-        parent::__construct(['file'], $prefixPath);
+        parent::__construct(empty($fileRules) ? ['file'] : $fileRules, $prefixPath);
     }
 }
