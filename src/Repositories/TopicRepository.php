@@ -254,7 +254,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
         if ($model instanceof TopicFileContentContract) {
             foreach ($model->getFileKeyNames() as $fileKey) {
-                $modelRules[$fileKey] = new FileOrStringRule([$modelRules[$fileKey]], "course/{$topic->course->getKey()}");
+                $modelRules[$fileKey] = new FileOrStringRule($modelRules[$fileKey], "course/{$topic->course->getKey()}");
             }
         }
 
