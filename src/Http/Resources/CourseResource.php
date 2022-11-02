@@ -46,6 +46,7 @@ class CourseResource extends JsonResource
             'findable' => $course->findable,
             'target_group' => $course->target_group,
             'teaser_url' => $course->teaser_url,
+            'public' => $this->public,
         ];
     }
 }

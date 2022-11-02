@@ -150,6 +150,11 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          description="teaser url",
  *          type="string",
  *      ),
+ *      @OA\Property(
+ *          property="public",
+ *          description="teaser public",
+ *          type="boolean",
+ *      ),
  * )
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
@@ -185,6 +190,7 @@ class Course extends Model
         'findable',
         'target_group',
         'teaser_url',
+        'public'
     ];
 
     /**
@@ -212,6 +218,8 @@ class Course extends Model
         'findable' => 'boolean',
         'target_group' => 'string',
         'teaser_url' => 'string',
+        'public' => 'boolean',
+
     ];
 
     /**
@@ -245,6 +253,7 @@ class Course extends Model
             'findable' => 'boolean',
             'target_group' => 'nullable|string|max:100',
             'teaser_url' => 'nullable|string',
+            'public' => 'nullable|boolean',
         ];
     }
 
@@ -426,5 +435,10 @@ class Course extends Model
     public function getMorphClass()
     {
         return self::class;
+    }
+
+    public function getIsPublic()
+    {
+        return boolval($this->public);
     }
 }

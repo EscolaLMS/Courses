@@ -81,6 +81,9 @@ class CoursesPolicy
      */
     public function attend(?User $user, Course $course): bool
     {
+        if ($course->getIsPublic()) {
+            return true;
+        }
         if (empty($user)) {
             return false;
         }

@@ -43,6 +43,7 @@ class CourseSimpleResource extends JsonResource
             'video_url' => $this->video_url,
             'poster_url' => $this->poster_url,
             'teaser_url' => $this->teaser_url,
+            'public' => $this->public,
         ];
         return self::apply($fields, $this);
     }
