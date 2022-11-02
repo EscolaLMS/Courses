@@ -40,17 +40,18 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 });
 
 // user endpoints
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/courses'], function () {
+Route::group(['prefix' => 'api/courses'], function () {
     Route::get('/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
-    Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);
 
-    Route::group(['prefix' => '/progress'], function () {
-        Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
-        Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
-        Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
-
-        Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
-        Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);
+        Route::group(['prefix' => '/progress'], function () {
+            Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
+            Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
+            Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
+            Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
+            Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
+        });
     });
 });
 
