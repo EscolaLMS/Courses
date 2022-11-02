@@ -152,7 +152,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *      ),
  *      @OA\Property(
  *          property="public",
- *          description="teaser public",
+ *          description="free access, public audience ",
  *          type="boolean",
  *      ),
  * )

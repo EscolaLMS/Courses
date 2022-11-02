@@ -9,7 +9,7 @@ class AddColumnPublic extends Migration
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->boolean('public');
+            $table->boolean('public')->default(false);
         });
     }
 
