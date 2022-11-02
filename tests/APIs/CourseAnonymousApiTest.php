@@ -176,6 +176,16 @@ class CourseAnonymousApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
+    public function test_anonymous_can_attend_free_course_program()
+    {
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'public' => true]);
+
+        $this->response = $this
+            ->json('GET', '/api/courses/' . $course->id . '/program');
+
+        $this->response->assertStatus(200);
+    }
+
     public function test_anonymous_sorting()
     {
         $course1 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -323,15 +333,15 @@ class CourseAnonymousApiTest extends TestCase
         $author2 = User::factory()->create();
 
         Course::factory()
-            ->hasAttached($author1, [],'authors')
+            ->hasAttached($author1, [], 'authors')
             ->count(2)
             ->create(['status' => CourseStatusEnum::PUBLISHED]);
         Course::factory()
-            ->hasAttached($author2, [],'authors')
+            ->hasAttached($author2, [], 'authors')
             ->count(3)
             ->create(['status' => CourseStatusEnum::PUBLISHED]);
         Course::factory()
-            ->hasAttached(User::factory(), [],'authors')
+            ->hasAttached(User::factory(), [], 'authors')
             ->count(10)
             ->create(['status' => CourseStatusEnum::PUBLISHED]);
 
@@ -361,17 +371,24 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertJsonCount(15, 'data');
     }
 
-    private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void {
+    private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void
+    {
         $this->response->assertJsonCount($count, 'data');
-        $this->response->assertJson(fn (AssertableJson $json) => $json->has(
-            'data',
-            fn ($json) => $json->each(fn (AssertableJson $json) =>
-                $json->has('authors', fn (AssertableJson $json) =>
-                    $json->each(fn (AssertableJson $json) =>
-                        $json->where('id', fn ($json) => in_array($json, $authorIds))->etc()
+        $this->response->assertJson(
+            fn (AssertableJson $json) => $json->has(
+                'data',
+                fn ($json) => $json->each(
+                    fn (AssertableJson $json) =>
+                    $json->has(
+                        'authors',
+                        fn (AssertableJson $json) =>
+                        $json->each(
+                            fn (AssertableJson $json) =>
+                            $json->where('id', fn ($json) => in_array($json, $authorIds))->etc()
+                        )->etc()
                     )->etc()
-                )->etc()
-            ))->etc()
+                )
+            )->etc()
         );
     }
 }
