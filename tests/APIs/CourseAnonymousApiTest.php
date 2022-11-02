@@ -180,12 +180,8 @@ class CourseAnonymousApiTest extends TestCase
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'public' => true]);
 
-
-
         $this->response = $this
             ->json('GET', '/api/courses/' . $course->id . '/program');
-
-
 
         $this->response->assertStatus(200);
     }
