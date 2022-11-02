@@ -178,7 +178,7 @@ class CourseAnonymousApiTest extends TestCase
 
     public function test_anonymous_can_attend_free_course_program()
     {
-        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'public']);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'public' => true]);
 
         $this->response = $this->json(
             'GET',
