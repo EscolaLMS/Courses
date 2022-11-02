@@ -182,10 +182,10 @@ class CourseAnonymousApiTest extends TestCase
 
 
 
-        $this->response = $this->json(
-            'GET',
-            '/api/admin/courses/' . $course->id . '/program'
-        );
+        $this->response = $this
+            ->json('GET', '/api/courses/' . $course->id . '/program');
+
+
 
         $this->response->assertStatus(200);
     }
