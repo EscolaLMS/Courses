@@ -59,7 +59,7 @@ class CourseWithProgramResource extends JsonResource
             'findable' => $course->findable,
             'target_group' => $course->target_group,
             'teaser_url' => $course->teaser_url,
-            'public' => $this->public,
+            'public' => $this->public ?? false,
         ];
     }
 }
