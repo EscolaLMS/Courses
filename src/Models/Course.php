@@ -436,9 +436,4 @@ class Course extends Model
     {
         return self::class;
     }
-
-    public function getIsPublic()
-    {
-        return boolval($this->public);
-    }
 }
