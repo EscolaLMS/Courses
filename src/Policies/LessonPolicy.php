@@ -13,17 +13,17 @@ class LessonPolicy
 
     public function view(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
+        return $this->canUpdateLesson($user, $lesson);
     }
 
     public function update(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
+        return $this->canUpdateLesson($user, $lesson);
     }
 
     public function delete(User $user, Lesson $lesson): bool
     {
-        return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
+        return $this->canUpdateLesson($user, $lesson);
     }
 
     public function attend(?User $user, Lesson $lesson): bool
@@ -33,6 +33,15 @@ class LessonPolicy
 
     public function clone(User $user, Lesson $lesson): bool
     {
+        return $this->canUpdateLesson($user, $lesson);
+    }
+
+    private function canUpdateLesson(User $user, Lesson $lesson): bool
+    {
+        if ($lesson->parentLesson) {
+            return $user->can('update', $lesson->parentLesson);
+        }
+
         return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 }

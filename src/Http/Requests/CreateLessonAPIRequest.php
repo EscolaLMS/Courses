@@ -8,23 +8,27 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateLessonAPIRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize(): bool
     {
         $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+
         $course = Course::find($this->input('course_id'));
-        return isset($user) ? $user->can('update', $course) : false;
+        if ($course) {
+            return $user->can('update', $course);
+        }
+
+        $parentLesson = Lesson::find($this->input('parent_lesson_id'));
+
+        if ($parentLesson) {
+            return $user->can('update', $parentLesson);
+        }
+
+        return false;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return Lesson::$rules;

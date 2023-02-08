@@ -42,11 +42,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *          property="course_id",
  *          description="course_id",
  *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="parent_lesson_id",
+ *          description="parent_lesson_id",
+ *          type="integer",
  *      )
  * )
  *
  * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $childrenLessons
  */
 class Lesson extends Model
 {
@@ -60,7 +66,8 @@ class Lesson extends Model
         'order',
         'course_id',
         'summary',
-        'active'
+        'active',
+        'parent_lesson_id',
     ];
 
     /**
@@ -75,7 +82,8 @@ class Lesson extends Model
         'order' => 'integer',
         'course_id' => 'integer',
         'summary' => 'string',
-        'active' => 'boolean'
+        'active' => 'boolean',
+        'parent_lesson_id' => 'integer',
     ];
 
     /**
@@ -87,9 +95,10 @@ class Lesson extends Model
         'title' => 'required|string|max:255',
         'duration' => 'nullable|string|max:255',
         'order' => 'required|integer',
-        'course_id' => 'required|exists:courses,id',
+        'course_id' => 'required_without:parent_lesson_id|exists:courses,id',
         'summary' => 'nullable|string',
-        'active' => 'boolean'
+        'active' => 'boolean',
+        'parent_lesson_id' => 'required_without:course_id|exists:lessons,id',
     ];
 
     public function course(): BelongsTo
@@ -100,6 +109,16 @@ class Lesson extends Model
     public function topics(): HasMany
     {
         return $this->hasMany(Topic::class, 'lesson_id');
+    }
+
+    public function parentLesson(): BelongsTo
+    {
+        return $this->belongsTo(Lesson::class, 'parent_lesson_id');
+    }
+
+    public function childrenLessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class, 'parent_lesson_id');
     }
 
     protected static function newFactory(): LessonFactory
@@ -115,8 +134,14 @@ class Lesson extends Model
     protected static function booted()
     {
         static::creating(function (Lesson $lesson) {
-            if ($lesson->course_id && !$lesson->order) {
-                $lesson->order = 1 + (int) Lesson::where('course_id', $lesson->course_id)->max('order');
+            if (!$lesson->order) {
+                $lesson->order = 1 + (int)Lesson::when($lesson->course_id, function (Builder $query, int $courseId) {
+                        $query->where('course_id', $courseId);
+                    })
+                    ->when($lesson->parent_lesson_id, function (Builder $query, int $parentId) {
+                        $query->where('parent_lesson_id', $parentId);
+                    })
+                    ->max('order');
             }
         });
     }

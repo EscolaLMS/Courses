@@ -6,13 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,
@@ -22,6 +16,7 @@ class LessonResource extends JsonResource
             'active' => $this->active,
             'order' => $this->order,
             'course_id' => $this->course_id,
+            'children_lessons' => LessonSimpleResource::collection($this->childrenLessons),
         ];
     }
 }
