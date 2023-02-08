@@ -80,4 +80,17 @@ class LessonRepositoryTest extends TestCase
         $this->assertTrue($resp);
         $this->assertNull(Lesson::find($lesson->id), 'Lesson should not exist in DB');
     }
+
+    public function test_get_all_main_lessons(): void
+    {
+        $mainLesson = Lesson::factory()->create();
+        $childLesson = Lesson::factory([
+            'course_id' => null,
+            'parent_lesson_id' => $mainLesson->getKey(),
+        ])->create();
+
+        $result = $this->lessonRepo->allMain()->pluck('id');
+        $this->assertContains($mainLesson->getKey(), $result);
+        $this->assertNotContains($childLesson->getKey(), $result);
+    }
 }

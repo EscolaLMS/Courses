@@ -73,7 +73,6 @@ class CourseAdminApiTest extends TestCase
         Event::assertDispatched(CoursedPublished::class);
     }
 
-
     public function test_create_and_update_course_with_deadline()
     {
         $course = Course::factory()->make([
