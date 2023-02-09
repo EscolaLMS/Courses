@@ -81,16 +81,16 @@ class CourseSortAdminApiTest extends TestCase
     {
         $course = Course::factory()->create();
         $mainLesson = Lesson::factory()->create([
-            'course_id' => $course->id
+            'course_id' => $course->getKey(),
         ]);
 
         $childLesson1 = Lesson::factory()->create([
-            'course_id' => null,
+            'course_id' => $course->getKey(),
             'parent_lesson_id' => $mainLesson->getKey(),
         ]);
 
         $childLesson2 = Lesson::factory()->create([
-            'course_id' => null,
+            'course_id' => $course->getKey(),
             'parent_lesson_id' => $mainLesson->getKey(),
         ]);
 
@@ -115,11 +115,11 @@ class CourseSortAdminApiTest extends TestCase
     {
         $course = Course::factory()->create();
         $mainLesson = Lesson::factory()->create([
-            'course_id' => $course->id
+            'course_id' => $course->getKey(),
         ]);
 
         $childLesson = Lesson::factory()->create([
-            'course_id' => null,
+            'course_id' => $course->getKey(),
             'parent_lesson_id' => $mainLesson->getKey(),
         ]);
 

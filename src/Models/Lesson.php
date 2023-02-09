@@ -96,10 +96,10 @@ class Lesson extends Model
         'title' => 'required|string|max:255',
         'duration' => 'nullable|string|max:255',
         'order' => 'required|integer',
-        'course_id' => 'required_without:parent_lesson_id|exists:courses,id',
+        'course_id' => 'required|exists:courses,id',
         'summary' => 'nullable|string',
         'active' => 'boolean',
-        'parent_lesson_id' => 'required_without:course_id|exists:lessons,id',
+        'parent_lesson_id' => 'nullable|exists:lessons,id',
     ];
 
     public function course(): BelongsTo
@@ -130,6 +130,11 @@ class Lesson extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('lessons.active', '=', true);
+    }
+
+    public function scopeMain(Builder $query): Builder
+    {
+        return $query->whereNull('parent_lesson_id');
     }
 
     protected static function booted()

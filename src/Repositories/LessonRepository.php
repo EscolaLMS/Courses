@@ -78,7 +78,7 @@ class LessonRepository extends BaseRepository implements LessonRepositoryContrac
         string $orderColumn = 'id'
     ): Collection {
         return $this->allQuery($search, $skip, $limit)
-            ->whereNotNull('course_id')
+            ->whereNull('parent_lesson_id')
             ->orderBy($orderColumn, $orderDirection)
             ->get($columns);
     }

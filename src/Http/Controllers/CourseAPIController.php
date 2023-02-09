@@ -81,7 +81,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponseForResource(
             CourseSimpleResource::make(
                 $course
-                    ->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'lessons.topics.resources', 'categories', 'tags', 'authors', 'lessons.childrenLessons')
+                    ->loadMissing('lessons', 'lessons.topics', 'lessons.topics.topicable', 'lessons.topics.resources', 'categories', 'tags', 'authors')
                     ->loadCount('users', 'authors')
             ),
             __('Course retrieved successfully')

@@ -34,6 +34,7 @@ class ProgressService implements ProgressServiceContract
         if (!$user instanceof CoursesUser) {
             $user = CoursesUser::find($user->getKey());
         }
+
         /** @var CoursesUser $user */
         foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));

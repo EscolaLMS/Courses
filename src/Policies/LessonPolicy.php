@@ -38,10 +38,6 @@ class LessonPolicy
 
     private function canUpdateLesson(User $user, Lesson $lesson): bool
     {
-        if ($lesson->parentLesson) {
-            return $user->can('update', $lesson->parentLesson);
-        }
-
         return $user->can('update', $lesson->course); // this calls `update` method from CoursePolicy
     }
 }
