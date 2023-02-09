@@ -140,7 +140,7 @@ class CourseSortAdminApiTest extends TestCase
                 'orders' => [
                     [$topic->getKey(), 2],
                     [$topic2->getKey(), 3],
-                ]
+                ],
             ]
         )->assertOk();
 
@@ -171,7 +171,7 @@ class CourseSortAdminApiTest extends TestCase
                 'orders' => [
                     [$topic1->getKey(), 2],
                     [$topic2->getKey(), 3],
-                ]
+                ],
             ]
         )->assertForbidden();
     }

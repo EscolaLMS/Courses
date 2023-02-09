@@ -159,7 +159,10 @@ class CourseAnonymousApiTest extends TestCase
     public function test_anonymous_read_free_course_program()
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
-        Lesson::factory(['course_id' => $course->getKey()])
+        Lesson::factory([
+            'course_id' => $course->getKey(),
+            'active' => true,
+        ])
             ->has(Lesson::factory(['course_id' => $course->getKey()])
                 ->count(2)
                 ->sequence(
