@@ -1891,6 +1891,10 @@
                     "course_id": {
                         "description": "course_id",
                         "type": "integer"
+                    },
+                    "parent_lesson_id": {
+                        "description": "parent_lesson_id",
+                        "type": "integer"
                     }
                 },
                 "type": "object"
