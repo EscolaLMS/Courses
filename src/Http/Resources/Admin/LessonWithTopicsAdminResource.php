@@ -32,7 +32,7 @@ class LessonWithTopicsAdminResource extends JsonResource
             'active' => $this->active,
             'topics' => TopicAdminResource::collection($lesson->topics->sortBy('order')),
             'order' => $this->order,
-            'childrenLessons' => LessonWithTopicsAdminResource::collection($lesson->childrenLessons->sortBy('order')),
+            'children_lessons' => LessonWithTopicsAdminResource::collection($lesson->childrenLessons->sortBy('order')),
         ];
     }
 }

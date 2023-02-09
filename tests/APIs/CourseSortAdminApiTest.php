@@ -147,4 +147,32 @@ class CourseSortAdminApiTest extends TestCase
         $this->assertEquals($topic->refresh()->order, 2);
         $this->assertEquals($topic2->refresh()->order, 3);
     }
+
+    public function test_admin_cannot_sort_topics_from_different_lessons(): void
+    {
+        $course = Course::factory()->create();
+        $lesson1 = Lesson::factory()->create();
+        $lesson2 = Lesson::factory()->create();
+
+        $topic1 = Topic::factory()->create([
+            'lesson_id' => $lesson1->getKey(),
+        ]);
+
+        $topic2 = Topic::factory()->create([
+            'lesson_id' => $lesson2->getKey(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses/sort',
+            [
+                'class' => 'Topic',
+                'course_id' => $course->getKey(),
+                'orders' => [
+                    [$topic1->getKey(), 2],
+                    [$topic2->getKey(), 3],
+                ]
+            ]
+        )->assertForbidden();
+    }
 }

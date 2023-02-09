@@ -85,12 +85,30 @@ class LessonRepositoryTest extends TestCase
     {
         $mainLesson = Lesson::factory()->create();
         $childLesson = Lesson::factory([
-            'course_id' => null,
             'parent_lesson_id' => $mainLesson->getKey(),
         ])->create();
 
         $result = $this->lessonRepo->allMain()->pluck('id');
         $this->assertContains($mainLesson->getKey(), $result);
         $this->assertNotContains($childLesson->getKey(), $result);
+    }
+
+    public function test_delete_lesson_with_children_lessons(): void
+    {
+        $mainLesson = Lesson::factory()->create();
+        $childLesson = Lesson::factory([
+            'parent_lesson_id' => $mainLesson->getKey(),
+        ])->create();
+
+        $result = $this->lessonRepo->delete($mainLesson->getKey());
+        $this->assertTrue($result);
+
+        $this->assertDatabaseMissing('lessons', [
+            'id' => $mainLesson->getKey(),
+        ]);
+
+        $this->assertDatabaseMissing('lessons', [
+            'id' => $childLesson->getKey(),
+        ]);
     }
 }

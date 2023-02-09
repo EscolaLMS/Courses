@@ -642,7 +642,6 @@ class CourseAdminApiTest extends TestCase
 
         $response = $this->json('GET', '/api/tags/uniqueTags');
         $response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $response->getData());
         $result = false;
         foreach ($response->getData()->data as $tag) {
             if ($tag->title === $tagPublishedCourse->title) {

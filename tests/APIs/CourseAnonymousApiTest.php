@@ -6,6 +6,7 @@ use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -158,6 +159,16 @@ class CourseAnonymousApiTest extends TestCase
     public function test_anonymous_read_free_course_program()
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        Lesson::factory(['course_id' => $course->getKey()])
+            ->has(Lesson::factory(['course_id' => $course->getKey()])
+                ->count(2)
+                ->sequence(
+                    ['active' => true],
+                    ['active' => false],
+                ),
+                'childrenLessons'
+            )
+            ->create();
 
         $this->response = $this->json(
             'GET',
@@ -174,6 +185,8 @@ class CourseAnonymousApiTest extends TestCase
 
         $this->response->assertStatus(200);
         $this->assertApiResponse($course->toArray());
+        $this->response->assertJsonCount(1, 'data.lessons.*');
+        $this->response->assertJsonCount(1, 'data.lessons.*.children_lessons.*');
     }
 
     public function test_anonymous_can_attend_free_course_program()

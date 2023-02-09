@@ -9,11 +9,12 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 
 class LessonTutorApiTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, WithFaker;
 
     protected function setUp(): void
     {
@@ -42,6 +43,23 @@ class LessonTutorApiTest extends TestCase
         );
 
         $this->assertApiResponse($lesson);
+    }
+
+    public function test_create_child_lesson(): void
+    {
+        $course = Course::factory()->create();
+        $parentLesson = Lesson::factory(['course_id' => $course->getKey()])->create();
+        $lessonData = [
+            'title' => $this->faker->word,
+            'order' => 0,
+            'course_id' => $course->getKey(),
+            'parent_lesson_id' => $parentLesson->getKey(),
+        ];
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson('/api/admin/lessons', $lessonData)
+            ->assertCreated();
+
+        $this->assertCount(1, $parentLesson->refresh()->childrenLessons);
     }
 
     /**

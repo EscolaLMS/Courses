@@ -64,6 +64,11 @@ class LessonRepository extends BaseRepository implements LessonRepositoryContrac
         foreach ($lesson->topics as $topic) {
             $this->topicRepository->deleteModel($topic);
         }
+
+        foreach ($lesson->childrenLessons as $child) {
+            $this->deleteModel($child);
+        }
+
         $lesson->delete();
 
         return true;
