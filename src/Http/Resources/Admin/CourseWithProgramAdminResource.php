@@ -52,7 +52,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'language' => $course->language,
             'description' => $course->description,
             'level' => $course->level,
-            'lessons' => LessonWithTopicsAdminResource::collection($course->lessons->sortBy('order')),
+            'lessons' => LessonWithTopicsAdminResource::collection($course->lessons()->main()->orderBy('order')->get()),
             'poster_path' => $course->poster_path,
             'poster_url' => $course->poster_url,
             'active_from' => $course->active_from,

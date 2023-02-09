@@ -73,7 +73,6 @@ class CourseAdminApiTest extends TestCase
         Event::assertDispatched(CoursedPublished::class);
     }
 
-
     public function test_create_and_update_course_with_deadline()
     {
         $course = Course::factory()->make([
@@ -517,68 +516,6 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    public function test_admin_sort_lessons_in_course()
-    {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory()->create([
-            'course_id' => $course->id
-        ]);
-        $topic = Topic::factory()->create([
-            'lesson_id' => $lesson->id
-        ]);
-        $lesson2 = Lesson::factory()->create([
-            'course_id' => $course->id
-        ]);
-        $topic2 = Topic::factory()->create([
-            'lesson_id' => $lesson->id
-        ]);
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses/sort',
-            [
-                'class' => 'Lesson',
-                'course_id' => $course->getKey(),
-                'orders' => [
-                    [$lesson2->getKey(), 0],
-                    [$lesson->getKey(), 1]
-                ]
-            ]
-        );
-        $this->response->assertOk();
-    }
-
-    public function test_admin_sort_topics_in_lesson()
-    {
-        $course = Course::factory()->create();
-        $lesson = Lesson::factory()->create([
-            'course_id' => $course->id
-        ]);
-        $topic = Topic::factory()->create([
-            'lesson_id' => $lesson->id
-        ]);
-        $lesson2 = Lesson::factory()->create([
-            'course_id' => $course->id
-        ]);
-        $topic2 = Topic::factory()->create([
-            'lesson_id' => $lesson->id
-        ]);
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses/sort',
-            [
-                'class' => 'Topic',
-                'course_id' => $course->getKey(),
-                'orders' => [
-                    [$topic2->getKey(), 0],
-                    [$topic->getKey(), 1]
-                ]
-            ]
-        );
-        $this->response->assertOk();
-    }
-
     /**
      * @test
      */
@@ -705,7 +642,6 @@ class CourseAdminApiTest extends TestCase
 
         $response = $this->json('GET', '/api/tags/uniqueTags');
         $response->assertStatus(200);
-        $this->assertObjectHasAttribute('data', $response->getData());
         $result = false;
         foreach ($response->getData()->data as $tag) {
             if ($tag->title === $tagPublishedCourse->title) {

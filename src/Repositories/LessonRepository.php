@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Repositories;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Application;
 
 /**
@@ -24,6 +25,7 @@ class LessonRepository extends BaseRepository implements LessonRepositoryContrac
         'duration',
         'order',
         'course_id',
+        'parent_lesson_id',
     ];
 
     /**
@@ -62,8 +64,27 @@ class LessonRepository extends BaseRepository implements LessonRepositoryContrac
         foreach ($lesson->topics as $topic) {
             $this->topicRepository->deleteModel($topic);
         }
+
+        foreach ($lesson->childrenLessons as $child) {
+            $this->deleteModel($child);
+        }
+
         $lesson->delete();
 
         return true;
+    }
+
+    public function allMain(
+        array $search = [],
+        ?int $skip = null,
+        ?int $limit = null,
+        array $columns = ['*'],
+        string $orderDirection = 'asc',
+        string $orderColumn = 'id'
+    ): Collection {
+        return $this->allQuery($search, $skip, $limit)
+            ->whereNull('parent_lesson_id')
+            ->orderBy($orderColumn, $orderDirection)
+            ->get($columns);
     }
 }

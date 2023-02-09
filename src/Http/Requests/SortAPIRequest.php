@@ -5,17 +5,11 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SortAPIRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         $user = auth()->user();
         $course = Course::find($this->input('course_id'));
@@ -25,12 +19,21 @@ class SortAPIRequest extends FormRequest
                 return $order[0];
             }, $this->input('orders'));
             switch ($class) {
-                case "Lesson":
-                    return Lesson::whereIn('id', $ids)->where('course_id', '<>', $course->getKey())->doesntExist();
-                case "Topic":
-                    return Topic::whereIn('id', $ids)->whereHas('lesson', function (Builder $query) use ($course) {
-                        $query->where('course_id', '<>', $course->getKey());
-                    })->doesntExist();
+                case 'Lesson':
+                    $lessons = Lesson::whereIn('id', $ids)->get();
+
+                    return $lessons->count() === count($ids)
+                        && $lessons->pluck('course_id')->unique()->count() === 1
+                        && $lessons->pluck('parent_lesson_id')->unique()->count() === 1;
+                case 'Topic':
+                    $topics = Topic::whereIn('id', $ids)->get();
+
+                    if ($topics->count() !== count($ids) || $topics->pluck('lesson_id')->unique()->count() != 1) {
+                        return false;
+                    }
+                    $lesson = Lesson::find($topics->first()->lesson_id);
+
+                    return $lesson && $lesson->course_id === $course->getKey();
             }
 
             return true;
@@ -39,12 +42,7 @@ class SortAPIRequest extends FormRequest
         return false;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'course_id' => ['required', 'numeric', 'exists:courses,id'],

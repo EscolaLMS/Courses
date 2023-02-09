@@ -26,6 +26,7 @@ class LessonWithTopicsResource extends JsonResource
         $lesson = $this->getResource();
 
         $topics = $lesson->topics->filter(fn (Topic $topic) => $topic->active)->sortBy('order');
+        $childrenLessons = $lesson->childrenLessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order');
 
         return [
             'id' => $this->id,
@@ -35,6 +36,7 @@ class LessonWithTopicsResource extends JsonResource
             'active' => $this->active,
             'topics' => TopicResource::collection($topics),
             'order' => $this->order,
+            'children_lessons' => LessonWithTopicsResource::collection($childrenLessons),
         ];
     }
 }

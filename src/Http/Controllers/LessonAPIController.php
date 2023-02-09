@@ -34,7 +34,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
 
     public function index(Request $request)
     {
-        $lessons = $this->lessonRepository->all(
+        $lessons = $this->lessonRepository->allMain(
             $request->except(['skip', 'limit']),
             $request->get('skip'),
             $request->get('limit')

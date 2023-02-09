@@ -3,9 +3,11 @@
 namespace EscolaLms\Courses\Tests\APIs;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Courses\Database\Factories\LessonFactory;
 use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -130,15 +132,17 @@ class CourseTutorRestrictApiTest extends TestCase
      */
     public function test_read_course_program()
     {
-        $course = Course::factory()->create([
-            'author_id' => $this->user->id
-        ]);
+        $course = Course::factory()->create(['author_id' => $this->user->id]);
+        Lesson::factory(['course_id' => $course->getKey()])
+            ->has(Lesson::factory(['course_id' => $course->getKey()])->count(2), 'childrenLessons')
+            ->create();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
-            '/api/admin/courses/' . $course->id . '/program'
-        );
+            '/api/admin/courses/' . $course->getKey() . '/program'
+        )->assertOk();
 
-        $this->response->assertStatus(200);
+       $this->response->assertJsonCount(1, 'data.lessons.*');
+       $this->response->assertJsonCount(2, 'data.lessons.*.children_lessons.*');
     }
 }
