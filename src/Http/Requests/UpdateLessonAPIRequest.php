@@ -3,31 +3,23 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Rules\ValidParentLesson;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateLessonAPIRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         $user = auth()->user();
         $lesson = Lesson::find($this->route('lesson'));
+
         return isset($user) && $user->can('update', $lesson);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
-        $rules = Lesson::$rules;
-
-        return $rules;
+        return array_merge(Lesson::$rules, [
+            'parent_lesson_id' => ['nullable', new ValidParentLesson($this->get('course_id'))],
+        ]);
     }
 }

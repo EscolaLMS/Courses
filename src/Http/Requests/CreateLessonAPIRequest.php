@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Rules\ValidParentLesson;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateLessonAPIRequest extends FormRequest
@@ -18,6 +19,8 @@ class CreateLessonAPIRequest extends FormRequest
 
     public function rules(): array
     {
-        return Lesson::$rules;
+        return array_merge(Lesson::$rules, [
+            'parent_lesson_id' => ['nullable', new ValidParentLesson($this->get('course_id'))],
+        ]);
     }
 }
