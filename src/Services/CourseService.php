@@ -5,16 +5,11 @@ namespace EscolaLms\Courses\Services;
 use Carbon\Carbon;
 use Error;
 use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseUnassigned;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -114,48 +109,6 @@ class CourseService implements CourseServiceContract
         return $this->scormService->getScoViewDataByUuid($sco->uuid);
     }
 
-    public function addAccessForUsers(Course $course, array $users = []): void
-    {
-        if (!empty($users)) {
-            $changes = $course->users()->syncWithoutDetaching($users);
-            $this->dispatchEventForUsersAttachedToCourse($course, $changes['attached']);
-        }
-    }
-
-    public function addAccessForGroups(Course $course, array $groups = []): void
-    {
-        if (!empty($groups)) {
-            $course->groups()->syncWithoutDetaching($groups);
-        }
-    }
-
-    public function removeAccessForUsers(Course $course, array $users = []): void
-    {
-        if (!empty($users)) {
-            $course->users()->detach($users);
-            $this->dispatchEventForUsersDetachedFromCourse($course, $users);
-        }
-    }
-
-    public function removeAccessForGroups(Course $course, array $groups = []): void
-    {
-        if (!empty($groups)) {
-            $course->groups()->detach($groups);
-        }
-    }
-
-    public function setAccessForUsers(Course $course, array $users = []): void
-    {
-        $changes = $course->users()->sync($users);
-        $this->dispatchEventForUsersAttachedToCourse($course, $changes['attached']);
-        $this->dispatchEventForUsersDetachedFromCourse($course, $changes['detached']);
-    }
-
-    public function setAccessForGroups(Course $course, array $groups = []): void
-    {
-        $course->groups()->sync($groups);
-    }
-
     public function activatePublishedCourses(): void
     {
         $criteria = [
@@ -169,29 +122,5 @@ class CourseService implements CourseServiceContract
         $unactivatedCourses->each(function (Course $course) {
            $this->courseRepository->update(['status' => CourseStatusEnum::PUBLISHED], $course->getKey());
         });
-    }
-
-    private function dispatchEventForUsersAttachedToCourse(Course $course, array $users = []): void
-    {
-        foreach ($users as $attached) {
-            /** @var User $user */
-            $user = is_int($attached) ? User::find($attached) : $attached;
-            if ($user && !$course->userH) {
-                event(new CourseAssigned($user, $course));
-                event(new CourseAccessStarted($user, $course));
-            }
-        }
-    }
-
-    private function dispatchEventForUsersDetachedFromCourse(Course $course, array $users = []): void
-    {
-        foreach ($users as $detached) {
-            /** @var User $user */
-            $user = is_int($detached) ? User::find($detached) : $detached;
-            if ($user) {
-                event(new CourseUnassigned($user, $course));
-                event(new CourseFinished($user, $course));
-            }
-        }
     }
 }

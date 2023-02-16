@@ -47,8 +47,6 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsCategoriesServiceProvider::class,
             EscolaLmsCourseServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
             EscolaLmsSettingsServiceProvider::class,
             EscolaLmsTopicTypeTestServiceProvider::class,
             EscolaLmsFilesServiceProvider::class,
