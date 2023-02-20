@@ -27,11 +27,6 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
     Route::patch('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'rename']);
     Route::delete('topics/{topic_id}/resources/{resource_id}', [TopicResourcesAPIController::class, 'delete']);
 
-    Route::get('courses/{course_id}/access', [CourseAccessAPIController::class, 'list']);
-    Route::post('courses/{course_id}/access/add', [CourseAccessAPIController::class, 'add']);
-    Route::post('courses/{course_id}/access/remove', [CourseAccessAPIController::class, 'remove']);
-    Route::post('courses/{course_id}/access/set', [CourseAccessAPIController::class, 'set']);
-
     Route::get('/courses/search/tags', [CourseAPIController::class, 'searchByTag']);
     Route::get('/courses/search/{category_id}', [CourseAPIController::class, 'category']);
 

@@ -26,6 +26,8 @@ use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\LessonService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Services\TopicService;
+use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
+use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Spatie\ResponseCache\ResponseCacheServiceProvider;
@@ -78,5 +80,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(SettingsServiceProvider::class);
         $this->app->register(ResponseCacheServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
+        $this->app->register(EscolaLmsScormServiceProvider::class);
+        $this->app->register(EscolaLmsTagsServiceProvider::class);
     }
 }
