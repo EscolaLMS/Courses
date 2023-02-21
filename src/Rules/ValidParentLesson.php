@@ -7,15 +7,19 @@ use Illuminate\Contracts\Validation\Rule;
 
 class ValidParentLesson implements Rule
 {
-    private int $courseId;
+    private ?int $courseId;
 
-    public function __construct(int $courseId)
+    public function __construct(int $courseId = null)
     {
         $this->courseId = $courseId;
     }
 
     public function passes($attribute, $value): bool
     {
+        if (!is_numeric($this->courseId)) {
+            return false;
+        }
+
         $parentLesson = Lesson::find($value);
 
         if (!$parentLesson || $parentLesson->course_id !== $this->courseId) {
