@@ -52,7 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $childrenLessons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \EscolaLms\Courses\Models\Lesson|null $parentLesson
  */
 class Lesson extends Model
@@ -117,7 +117,7 @@ class Lesson extends Model
         return $this->belongsTo(Lesson::class, 'parent_lesson_id');
     }
 
-    public function childrenLessons(): HasMany
+    public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class, 'parent_lesson_id');
     }

@@ -134,7 +134,7 @@ class CourseTutorRestrictApiTest extends TestCase
     {
         $course = Course::factory()->create(['author_id' => $this->user->id]);
         Lesson::factory(['course_id' => $course->getKey()])
-            ->has(Lesson::factory(['course_id' => $course->getKey()])->count(2), 'childrenLessons')
+            ->has(Lesson::factory(['course_id' => $course->getKey()])->count(2))
             ->create();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
@@ -143,6 +143,6 @@ class CourseTutorRestrictApiTest extends TestCase
         )->assertOk();
 
        $this->response->assertJsonCount(1, 'data.lessons.*');
-       $this->response->assertJsonCount(2, 'data.lessons.*.children_lessons.*');
+       $this->response->assertJsonCount(2, 'data.lessons.*.lessons.*');
     }
 }

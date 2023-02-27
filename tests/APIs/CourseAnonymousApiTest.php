@@ -168,8 +168,7 @@ class CourseAnonymousApiTest extends TestCase
                 ->sequence(
                     ['active' => true],
                     ['active' => false],
-                ),
-                'childrenLessons'
+                )
             )
             ->create();
 
@@ -189,7 +188,7 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertStatus(200);
         $this->assertApiResponse($course->toArray());
         $this->response->assertJsonCount(1, 'data.lessons.*');
-        $this->response->assertJsonCount(1, 'data.lessons.*.children_lessons.*');
+        $this->response->assertJsonCount(1, 'data.lessons.*.lessons.*');
     }
 
     public function test_anonymous_can_attend_free_course_program()
