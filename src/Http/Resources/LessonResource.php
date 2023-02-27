@@ -16,7 +16,7 @@ class LessonResource extends JsonResource
             'active' => $this->active,
             'order' => $this->order,
             'course_id' => $this->course_id,
-            'children_lessons' => LessonSimpleResource::collection($this->childrenLessons),
+            'lessons' => LessonSimpleResource::collection($this->lessons),
         ];
     }
 }

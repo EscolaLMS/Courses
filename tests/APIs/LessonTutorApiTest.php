@@ -59,7 +59,7 @@ class LessonTutorApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->postJson('/api/admin/lessons', $lessonData)
             ->assertCreated();
 
-        $this->assertCount(1, $parentLesson->refresh()->childrenLessons);
+        $this->assertCount(1, $parentLesson->refresh()->lessons);
     }
 
     /**
