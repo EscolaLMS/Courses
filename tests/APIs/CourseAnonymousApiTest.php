@@ -7,6 +7,7 @@ use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -384,6 +385,35 @@ class CourseAnonymousApiTest extends TestCase
         )->assertOk();
 
         $this->response->assertJsonCount(15, 'data');
+    }
+
+    public function test_anonymous_read_course_without_inactive_lessons_and_topics()
+    {
+        $course = Course::factory()
+            ->state(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true, 'public' => true])
+            ->has(Lesson::factory()
+                ->count(2)
+                ->sequence(
+                    ['active' => true],
+                    ['active' => false],
+                )
+                ->has(Topic::factory()->count(2)
+                    ->sequence(
+                        ['active' => true],
+                        ['active' => false],
+                    )
+                )
+            )
+            ->create();
+
+        $this->response = $this->getJson('/api/courses/' . $course->id)
+            ->assertOk()
+            ->assertJsonCount(1, 'data.lessons')
+            ->assertJsonCount(1, 'data.lessons.0.topics');
+
+        $lesson = $this->response->getData()->data->lessons[0];
+        $this->assertTrue($lesson->active);
+        $this->assertTrue($lesson->topics[0]->active);
     }
 
     private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void
