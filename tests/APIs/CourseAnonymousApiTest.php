@@ -205,9 +205,9 @@ class CourseAnonymousApiTest extends TestCase
                 )
                 ->has(Topic::factory()->count(2)
                     ->sequence(
-                        ['active' => true, 'preview' => true],
-                        ['active' => true, 'preview' => false],
-                        ['active' => false],
+                        ['active' => true, 'preview' => true], // return with topicable and resources
+                        ['active' => true, 'preview' => false], // return without topicable and resources
+                        ['active' => false], // not return
                     )
                 )
             )
@@ -217,6 +217,28 @@ class CourseAnonymousApiTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(1, 'data.lessons')
             ->assertJsonCount(2, 'data.lessons.0.topics');
+
+        $this->response->assertJson(
+            fn (AssertableJson $json) => $json->has(
+                'data.lessons',
+                fn ($json) => $json->each(
+                    fn (AssertableJson $lesson) => $lesson
+                        ->where('active', true)
+                        ->has('topics',
+                            fn (AssertableJson $topics) => $topics->each(
+                            fn (AssertableJson $topic) => $topic
+                                ->where('active', true)
+                                ->where('preview', function (string $preview) use ($topic) {
+                                    $preview
+                                        ? $topic->hasAll(['topicable', 'resources'])->etc()
+                                        : $topic->missingAll(['topicable', 'resources'])->etc();
+                                    return true;
+                            })->etc()
+                        )->etc()
+                    )->etc()
+                )
+            )->etc()
+        );
     }
 
     public function test_anonymous_sorting()
@@ -404,7 +426,7 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertJsonCount(15, 'data');
     }
 
-    public function test_anonymous_read_course_without_inactive_lessons_and_topics()
+    public function test_anonymous_read_course_without_inactive_lessons_and_topics(): void
     {
         $course = Course::factory()
             ->state(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true, 'public' => true])
@@ -428,9 +450,22 @@ class CourseAnonymousApiTest extends TestCase
             ->assertJsonCount(1, 'data.lessons')
             ->assertJsonCount(1, 'data.lessons.0.topics');
 
-        $lesson = $this->response->getData()->data->lessons[0];
-        $this->assertTrue($lesson->active);
-        $this->assertTrue($lesson->topics[0]->active);
+        $this->response->assertJson(
+            fn (AssertableJson $json) => $json->has(
+                'data.lessons',
+                fn ($json) => $json->each(
+                    fn (AssertableJson $lesson) => $lesson
+                        ->where('active', true)->etc()
+                        ->has('topics',
+                            fn (AssertableJson $topics) => $topics->each(
+                                fn (AssertableJson $topic) => $topic
+                                    ->where('active', true)
+                                ->etc()
+                            )->etc()
+                        )->etc()
+                )->etc()
+            )->etc()
+        );
     }
 
     private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void
