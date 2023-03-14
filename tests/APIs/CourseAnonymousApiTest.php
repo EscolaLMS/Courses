@@ -7,6 +7,8 @@ use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\TopicResource;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -193,12 +195,50 @@ class CourseAnonymousApiTest extends TestCase
 
     public function test_anonymous_can_attend_free_course_program()
     {
-        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'public' => true]);
+        $course = Course::factory()
+            ->state(['status' => CourseStatusEnum::PUBLISHED, 'public' => true])
+            ->has(Lesson::factory()
+                ->count(2)
+                ->sequence(
+                    ['active' => true],
+                    ['active' => false],
+                )
+                ->has(Topic::factory()->count(2)
+                    ->sequence(
+                        ['active' => true, 'preview' => true], // return with topicable and resources
+                        ['active' => true, 'preview' => false], // return without topicable and resources
+                        ['active' => false], // not return
+                    )
+                )
+            )
+            ->create();
 
-        $this->response = $this
-            ->json('GET', '/api/courses/' . $course->id . '/program');
+        $this->response = $this->getJson('/api/courses/' . $course->id . '/program')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data.lessons')
+            ->assertJsonCount(2, 'data.lessons.0.topics');
 
-        $this->response->assertStatus(200);
+        $this->response->assertJson(
+            fn (AssertableJson $json) => $json->has(
+                'data.lessons',
+                fn ($json) => $json->each(
+                    fn (AssertableJson $lesson) => $lesson
+                        ->where('active', true)
+                        ->has('topics',
+                            fn (AssertableJson $topics) => $topics->each(
+                            fn (AssertableJson $topic) => $topic
+                                ->where('active', true)
+                                ->where('preview', function (string $preview) use ($topic) {
+                                    $preview
+                                        ? $topic->hasAll(['topicable', 'resources'])->etc()
+                                        : $topic->missingAll(['topicable', 'resources'])->etc();
+                                    return true;
+                            })->etc()
+                        )->etc()
+                    )->etc()
+                )
+            )->etc()
+        );
     }
 
     public function test_anonymous_sorting()
@@ -384,6 +424,48 @@ class CourseAnonymousApiTest extends TestCase
         )->assertOk();
 
         $this->response->assertJsonCount(15, 'data');
+    }
+
+    public function test_anonymous_read_course_without_inactive_lessons_and_topics(): void
+    {
+        $course = Course::factory()
+            ->state(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true, 'public' => true])
+            ->has(Lesson::factory()
+                ->count(2)
+                ->sequence(
+                    ['active' => true],
+                    ['active' => false],
+                )
+                ->has(Topic::factory()->count(2)
+                    ->sequence(
+                        ['active' => true],
+                        ['active' => false],
+                    )
+                )
+            )
+            ->create();
+
+        $this->response = $this->getJson('/api/courses/' . $course->id)
+            ->assertOk()
+            ->assertJsonCount(1, 'data.lessons')
+            ->assertJsonCount(1, 'data.lessons.0.topics');
+
+        $this->response->assertJson(
+            fn (AssertableJson $json) => $json->has(
+                'data.lessons',
+                fn ($json) => $json->each(
+                    fn (AssertableJson $lesson) => $lesson
+                        ->where('active', true)->etc()
+                        ->has('topics',
+                            fn (AssertableJson $topics) => $topics->each(
+                                fn (AssertableJson $topic) => $topic
+                                    ->where('active', true)
+                                ->etc()
+                            )->etc()
+                        )->etc()
+                )->etc()
+            )->etc()
+        );
     }
 
     private function assertCourseAuthorFilterResponse(array $authorIds, int $count): void

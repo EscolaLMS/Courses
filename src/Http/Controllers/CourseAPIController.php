@@ -102,7 +102,9 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         $resource = ($request->user() && $request->user()->can('update', $course))
             ? CourseWithProgramAdminResource::make($course)
-            : CourseWithProgramResource::make($course);
+            : (($request->user() && $course->hasUser($request->user()))
+                ? CourseWithProgramResource::make($course)
+                : CourseSimpleResource::make($course));
 
         return $this->sendResponseForResource($resource, __('Course retrieved successfully'));
     }

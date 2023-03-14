@@ -30,7 +30,7 @@ class CourseSimpleResource extends JsonResource
             'categories' => $this->categories,
             'tags' => $this->tags,
             'level' => $this->level,
-            'lessons' => LessonSimpleResource::collection($this->lessons()->main()->orderBy('order')->get()),
+            'lessons' => LessonSimpleResource::collection($this->lessons()->main()->active()->orderBy('order')->get()),
             'poster_path' => $this->poster_path,
             'active_from' => $this->active_from,
             'active_to' => $this->active_to,
