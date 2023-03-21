@@ -33,6 +33,7 @@ class TopicFactory extends Factory
             'lesson_id' => $lesson ? $lesson->id : null,
             'order' => $this->faker->randomDigitNotNull,
             'summary' => $this->faker->markdown,
+            'duration' => $this->faker->numberBetween(10, 50) . ' minutes',
         ];
     }
 }

@@ -198,6 +198,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             'description' => $validated['description'] ?? null,
             'can_skip' => $validated['can_skip'] ?? false,
             'json' => empty($validated['json']) ? null : json_decode($validated['json']),
+            'duration' => $validated['duration'] ?? null,
         ]);
         $topic->save();
 

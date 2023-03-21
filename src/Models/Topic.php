@@ -85,7 +85,12 @@ use Illuminate\Validation\Rule;
  *          property="json",
  *          description="json",
  *          type="object",
- *      )
+ *      ),
+ *      @OA\Property(
+ *          property="duration",
+ *          description="duration",
+ *          type="string"
+ *      ),
  * )
  *
  * @property bool                                  $active
@@ -110,6 +115,7 @@ class Topic extends Model
         'description',
         'json',
         'can_skip',
+        'duration',
     ];
 
     /**
@@ -131,6 +137,7 @@ class Topic extends Model
         'description' => 'string',
         'json' => 'array',
         'can_skip' => 'boolean',
+        'duration' => 'string',
     ];
 
     public static function rules(): array
@@ -147,6 +154,7 @@ class Topic extends Model
             'preview' => ['boolean'],
             'can_skip' => ['boolean'],
             'json' => ['json'],
+            'duration' => ['nullable', 'string', 'max:255'],
         ];
     }
 

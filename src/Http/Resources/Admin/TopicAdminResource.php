@@ -41,6 +41,7 @@ class TopicAdminResource extends JsonResource
             'order' => $this->order,
             'json' => $this->json,
             'can_skip' => $this->can_skip,
+            'duration' => $this->duration,
         ];
     }
 }
