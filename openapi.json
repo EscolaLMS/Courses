@@ -1753,6 +1753,10 @@
                     "json": {
                         "description": "json",
                         "type": "object"
+                    },
+                    "duration": {
+                        "description": "duration",
+                        "type": "string"
                     }
                 },
                 "type": "object"
