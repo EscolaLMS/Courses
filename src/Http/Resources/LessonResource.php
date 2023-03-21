@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Resources;
 
+use EscolaLms\Courses\Models\Lesson;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonResource extends JsonResource
@@ -16,7 +17,7 @@ class LessonResource extends JsonResource
             'active' => $this->active,
             'order' => $this->order,
             'course_id' => $this->course_id,
-            'lessons' => LessonSimpleResource::collection($this->lessons),
+            'lessons' => LessonSimpleResource::collection($this->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order')),
         ];
     }
 }
