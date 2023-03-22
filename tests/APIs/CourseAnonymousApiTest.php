@@ -136,6 +136,85 @@ class CourseAnonymousApiTest extends TestCase
         }
     }
 
+    public function test_anonymous_categories_course()
+    {
+        $category = Category::factory()->create();
+        $category2 = Category::factory()->create();
+        $course = Course::factory()->create();
+        $course2 = Course::factory()->create();
+        $course->categories()->save($category);
+        $course2->categories()->save($category2);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/admin/courses',
+            [
+                'categories' => [
+                    $category->getKey(),
+                    $category2->getKey(),
+                ],
+            ]
+        );
+
+        $this->response->assertStatus(401);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses',
+            [
+                'categories' => [
+                    $category->getKey(),
+                    $category2->getKey(),
+                ],
+            ]
+        );
+
+        $this->response->assertStatus(200);
+        $this->response->assertJsonStructure([
+            'data'
+        ]);
+
+        $courses_ids = [$category->getKey(), $category2->getKey()];
+
+        foreach ($this->response->getData()->data as $data) {
+            foreach ($data->categories as $courseCategory) {
+                $this->assertTrue(in_array($courseCategory->id, $courses_ids));
+            }
+        }
+    }
+
+    public function test_anonymous_categories_and_category_course_unprocessable()
+    {
+        $category = Category::factory()->create();
+        $category2 = Category::factory()->create();
+        $course = Course::factory()->create();
+        $course2 = Course::factory()->create();
+        $course->categories()->save($category);
+        $course2->categories()->save($category2);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/admin/courses',
+            [
+                'categories' => [
+                    $category->getKey(),
+                ],
+                'category_id' => $category2->getKey(),
+            ]
+        )->assertStatus(401);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses',
+            [
+                'categories' => [
+                    $category->getKey(),
+                ],
+                'category_id' => $category2->getKey(),
+            ]
+        )->assertUnprocessable();
+    }
+
     /**
      * @test
      */
