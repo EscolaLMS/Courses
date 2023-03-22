@@ -107,8 +107,17 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
             $flat = self::flatten($collection, 'children');
             $flat_ids = array_map(fn ($cat) => $cat->id, $flat);
-            $flat_ids[] = $search['category_id'];
             unset($search['category_id']);
+        }
+
+        if (isset($search) && isset($search['categories'])) {
+            $flat_ids = [];
+            foreach ($search['categories'] as $category_id) {
+                $collection = Category::where('id', $category_id)->with('children')->get();
+                $flat = self::flatten($collection, 'children');
+                $flat_ids = array_merge($flat_ids, array_map(fn ($cat) => $cat->id, $flat));
+            }
+            unset($search['categories']);
         }
 
         $query = $this->allQuery($search);

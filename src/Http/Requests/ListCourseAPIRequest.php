@@ -15,6 +15,10 @@ class ListCourseAPIRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'categories' => ['array', 'prohibited_unless:category_id,null'],
+            'categories.*' => ['integer'],
+            'category_id' => ['integer'],
+        ];
     }
 }

@@ -80,12 +80,19 @@ interface CourseAPISwagger
      *      ),
      *      @OA\Parameter(
      *          name="category_id",
-     *          description="Category ID. When applied all courses with given cat_id and children categories are searched",
+     *          description="Category ID. When applied all courses with given cat_id and children categories are searched. Prohibited with categories",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
      *              type="number",
      *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="categories[]",
+     *          description="An array of categories IDs. When applied all courses with given categories ids and children categories are searched. Prohibited with category_id",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="array", @OA\Items(type="number")),
      *      ),
      *      @OA\Parameter(
      *          name="authors[]",
