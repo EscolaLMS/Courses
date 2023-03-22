@@ -80,10 +80,22 @@
                     {
                         "name": "category_id",
                         "in": "query",
-                        "description": "Category ID. When applied all courses with given cat_id and children categories are searched",
+                        "description": "Category ID. When applied all courses with given cat_id and children categories are searched. Prohibited with categories",
                         "required": false,
                         "schema": {
                             "type": "number"
+                        }
+                    },
+                    {
+                        "name": "categories[]",
+                        "in": "query",
+                        "description": "An array of categories IDs. When applied all courses with given categories ids and children categories are searched. Prohibited with category_id",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
                         }
                     },
                     {
