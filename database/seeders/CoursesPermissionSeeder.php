@@ -26,6 +26,7 @@ class CoursesPermissionSeeder extends Seeder
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_UPDATE_OWNED, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_DELETE_OWNED, 'api');
         Permission::findOrCreate(CoursesPermissionsEnum::COURSE_ATTEND_OWNED, 'api');
+        Permission::findOrCreate(CoursesPermissionsEnum::COURSE_LIST_OWNED, 'api');
 
         $admin->givePermissionTo([
             CoursesPermissionsEnum::COURSE_LIST,
@@ -43,6 +44,7 @@ class CoursesPermissionSeeder extends Seeder
             CoursesPermissionsEnum::COURSE_UPDATE_OWNED,
             CoursesPermissionsEnum::COURSE_DELETE_OWNED,
             CoursesPermissionsEnum::COURSE_ATTEND_OWNED,
+            CoursesPermissionsEnum::COURSE_LIST_OWNED,
         ]);
     }
 }

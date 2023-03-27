@@ -366,4 +366,41 @@ class CourseTutorApiTest extends TestCase
                 'additional_field_a' => 'public string',
                 ]);
     }
+
+    public function test_list_only_author_courses()
+    {
+        $admin = $this->makeAdmin();
+
+        /** @var Course $course */
+        $course = Course::factory()->create([
+            'author_id' => $admin->getKey()
+        ]);
+
+        $courseAuthor = Course::factory()->create([
+            'author_id' => $this->user->getKey(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json('GET', '/api/admin/courses');
+        $this->response->assertOk();
+        $this->response
+            ->assertJsonCount(1, 'data')
+            ->assertJsonMissing([
+                'id' => $course->getKey(),
+                'title' => $course->title,
+            ])
+            ->assertJsonMissing([
+                'id' => $admin->getKey(),
+                'first_name' => $admin->first_name,
+                'last_name' => $admin->last_name,
+            ])
+            ->assertJsonFragment([
+                'id' => $courseAuthor->getKey(),
+                'title' => $courseAuthor->title,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->user->getKey(),
+                'first_name' => $this->user->first_name,
+                'last_name' => $this->user->last_name,
+            ]);
+    }
 }

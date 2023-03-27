@@ -17,7 +17,8 @@ class CoursesPolicy
         if ($user->hasRole('admin')) {
             return true;
         }
-        return $user->can(CoursesPermissionsEnum::COURSE_LIST);
+        return $user->can(CoursesPermissionsEnum::COURSE_LIST)
+            || $user->can(CoursesPermissionsEnum::COURSE_LIST_OWNED);
     }
 
     /**

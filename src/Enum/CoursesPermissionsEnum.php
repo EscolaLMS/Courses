@@ -15,4 +15,5 @@ class CoursesPermissionsEnum extends BasicEnum
     const COURSE_UPDATE_OWNED = 'course_update_authored';
     const COURSE_DELETE_OWNED = 'course_delete_authored';
     const COURSE_ATTEND_OWNED = 'course_read_authored';
+    const COURSE_LIST_OWNED = 'course_list_authored';
 }
