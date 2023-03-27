@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Enums\UserRole;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
@@ -49,9 +50,13 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
 
         $user = $request->user();
-        if (!isset($user) || !$user->hasRole([UserRole::ADMIN, UserRole::TUTOR])) {
+        if (!isset($user) || !$user->can('create', Course::class)) {
             $search['status'] = [CourseStatusEnum::PUBLISHED, CourseStatusEnum::PUBLISHED_UNACTIVATED];
             $search['findable'] = true;
+        }
+
+        if ($user && $user->can(CoursesPermissionsEnum::COURSE_LIST_OWNED)) {
+            $search['authors'][] = $user->getKey();
         }
 
         $orderDto = OrderDto::instantiateFromRequest($request);
