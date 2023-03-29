@@ -567,4 +567,11 @@ class CourseAnonymousApiTest extends TestCase
             )->etc()
         );
     }
+
+    public function test_assignable_users(): void
+    {
+        $this->response = $this
+            ->json('GET', '/api/admin/courses/users/assignable')
+            ->assertUnauthorized();
+    }
 }

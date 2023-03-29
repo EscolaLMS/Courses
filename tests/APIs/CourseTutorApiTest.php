@@ -403,4 +403,26 @@ class CourseTutorApiTest extends TestCase
                 'last_name' => $this->user->last_name,
             ]);
     }
+
+    public function test_assignable_users(): void
+    {
+        $admin = $this->makeAdmin();
+        $student = $this->makeStudent();
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/courses/users/assignable')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonMissing([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $admin->getKey(),
+                'email' => $admin->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
+    }
 }

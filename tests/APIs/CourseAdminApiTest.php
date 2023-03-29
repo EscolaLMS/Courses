@@ -761,4 +761,26 @@ class CourseAdminApiTest extends TestCase
         Storage::assertExists($data->video_path);
         Storage::assertExists($data->poster_path);
     }
+
+    public function test_assignable_users(): void
+    {
+        $tutor = $this->makeInstructor();
+        $student = $this->makeStudent();
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/courses/users/assignable')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonMissing([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $tutor->getKey(),
+                'email' => $tutor->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
+    }
 }

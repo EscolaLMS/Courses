@@ -2,8 +2,12 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use EscolaLms\Auth\Http\Resources\UserFullResource;
+use EscolaLms\Auth\Services\Contracts\UserServiceContract;
+use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
 use EscolaLms\Courses\Http\Requests\AssignAuthorApiRequest;
+use EscolaLms\Courses\Http\Requests\CourseAssignableUserListRequest;
 use EscolaLms\Courses\Http\Resources\TutorResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Http\JsonResponse;
@@ -12,11 +16,14 @@ use Illuminate\Http\Request;
 class CourseAuthorsAPIController extends AppBaseController implements CourseAuthorsAPISwagger
 {
     protected CourseRepositoryContract $courseRepositoryContract;
+    protected UserServiceContract $userService;
 
     public function __construct(
-        CourseRepositoryContract $courseRepositoryContract
+        CourseRepositoryContract $courseRepositoryContract,
+        UserServiceContract $userService
     ) {
         $this->courseRepositoryContract = $courseRepositoryContract;
+        $this->userService = $userService;
     }
 
     public function index(Request $request): JsonResponse
@@ -72,5 +79,12 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
         $this->courseRepositoryContract->removeAuthor($course, $tutor);
 
         return $this->sendResponse(TutorResource::collection($course->refresh()->authors), __('Tutor unassigned'));
+    }
+
+    public function assignableUsers(CourseAssignableUserListRequest $request): JsonResponse
+    {
+        $result = $this->userService
+            ->assignableUsers(CoursesPermissionsEnum::COURSE_CREATE, $request->get('per_page'), $request->get('page'));
+        return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to courses'));
     }
 }
