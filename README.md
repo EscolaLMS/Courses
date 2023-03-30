@@ -50,19 +50,7 @@ Run `./vendor/bin/phpunit  --filter 'EscolaLms\\Courses\\Tests'` to run tests. S
 - `EscolaLms\Courses\Events\CourseUnassigned` => Event is dispatched when user is unassigned to course.
 - `EscolaLms\Courses\Events\TopicFinished` => Event is dispatched when course topic is finished.
 
-### Admin panel
 
-**Left menu**
-
-![Menu](doc/menu_course.png "Menu")
-
-**List of courses**
-
-![List of courses](doc/list_courses.png "List of courses")
-
-**Creating/editing course**
-
-![Creating/editing course](doc/create_course.png "Creating or editing course")
 
 ## Permissions
 
