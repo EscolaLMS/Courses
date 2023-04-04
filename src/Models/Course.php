@@ -416,12 +416,12 @@ class Course extends Model
         $inGroup = DB::table('group_user')
             ->whereIn('group_id', $allGroups)
             ->where('user_id', $user->getKey())
-            ->exists();;
+            ->exists();
 
         return $this->users()->where('users.id', $user->getKey())->exists() || $inGroup;
     }
 
-    private function getChildGroups($groupIds): array
+    private function getChildGroups(array $groupIds): array
     {
         $childGroups = DB::table('groups')->whereIn('parent_id', $groupIds)->pluck('id')->toArray();
         if (count($childGroups) > 0) {
