@@ -410,26 +410,24 @@ class Course extends Model
     public function hasUser($user): bool
     {
         $groupIds = $this->groups->pluck('id')->toArray();
+        $childGroups = $this->getChildGroups($groupIds);
+        $allGroups = array_merge($groupIds, $childGroups);
 
-        if (empty($groupIds)) {
-            return $this->users()->where('users.id', $user->getKey())->exists();
+        $inGroup = DB::table('group_user')
+            ->whereIn('group_id', $allGroups)
+            ->where('user_id', $user->getKey())
+            ->exists();;
+
+        return $this->users()->where('users.id', $user->getKey())->exists() || $inGroup;
+    }
+
+    private function getChildGroups($groupIds): array
+    {
+        $childGroups = DB::table('groups')->whereIn('parent_id', $groupIds)->pluck('id')->toArray();
+        if (count($childGroups) > 0) {
+            $childGroups = array_merge($childGroups, $this->getChildGroups($childGroups));
         }
-
-        $platform = DB::connection()->getDriverName();
-        $whereIn = 'IN (' . implode(',', array_fill(0, count($groupIds), '?')) . ')';
-        $cte = "WITH RECURSIVE cte AS (SELECT id, parent_id FROM groups 
-                WHERE id $whereIn
-                UNION ALL SELECT g.id, g.parent_id FROM groups g JOIN cte ON g.parent_id = cte.id)";
-        $query = "SELECT 1 FROM group_user gu WHERE gu.user_id = ? AND gu.group_id IN (SELECT id FROM cte)";
-
-        if ($platform === 'pgsql') {
-            $query = $cte . ' ' . $query;
-        } else {
-            $query = str_replace('WITH RECURSIVE', '', $cte) . ' UNION ALL ' . $query;
-        }
-
-        return DB::select($query, array_merge($groupIds, [$user->getKey()]))
-            || $this->users()->where('users.id', $user->getKey())->exists();
+        return $childGroups;
     }
 
     protected static function booted()
