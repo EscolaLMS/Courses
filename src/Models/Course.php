@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Peopleaps\Scorm\Model\ScormScoModel;
@@ -408,7 +409,25 @@ class Course extends Model
 
     public function hasUser($user): bool
     {
-        return $this->users()->where('users.id', $user->getKey())->exists() || $this->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists();
+        $groupIds = $this->groups->pluck('id')->toArray();
+        $childGroups = $this->getChildGroups($groupIds);
+        $allGroups = array_merge($groupIds, $childGroups);
+
+        $inGroup = DB::table('group_user')
+            ->whereIn('group_id', $allGroups)
+            ->where('user_id', $user->getKey())
+            ->exists();
+
+        return $this->users()->where('users.id', $user->getKey())->exists() || $inGroup;
+    }
+
+    private function getChildGroups(array $groupIds): array
+    {
+        $childGroups = DB::table('groups')->whereIn('parent_id', $groupIds)->pluck('id')->toArray();
+        if (count($childGroups) > 0) {
+            $childGroups = array_merge($childGroups, $this->getChildGroups($childGroups));
+        }
+        return $childGroups;
     }
 
     protected static function booted()
