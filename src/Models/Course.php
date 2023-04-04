@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Peopleaps\Scorm\Model\ScormScoModel;
@@ -408,7 +409,27 @@ class Course extends Model
 
     public function hasUser($user): bool
     {
-        return $this->users()->where('users.id', $user->getKey())->exists() || $this->groups()->whereHas('users', fn ($query) => $query->where('users.id', $user->getKey()))->exists();
+        $groupIds = $this->groups->pluck('id')->toArray();
+        $inGroup = false;
+
+        if (count($groupIds) > 0) {
+            $groupIds = $this->groups->pluck('id')->toArray();
+            $inGroup = DB::table('groups')
+                ->selectRaw('DISTINCT 1')
+                ->whereIn('id', $groupIds)
+                ->whereRaw('EXISTS (
+                    WITH RECURSIVE cte AS (
+                        SELECT id, parent_id FROM groups WHERE id IN (?)
+                        UNION ALL
+                        SELECT g.id, g.parent_id FROM groups g JOIN cte ON g.parent_id = cte.id
+                    )
+                    SELECT 1 FROM group_user gu
+                    WHERE gu.user_id = ? AND gu.group_id IN (SELECT id FROM cte)
+                    )', [$groupIds, $user->getKey()])
+                    ->exists();
+        }
+
+        return $this->users()->where('users.id', $user->getKey())->exists() || $inGroup;
     }
 
     protected static function booted()
