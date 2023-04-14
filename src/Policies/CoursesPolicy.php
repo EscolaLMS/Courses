@@ -2,9 +2,9 @@
 
 namespace EscolaLms\Courses\Policies;
 
+use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CoursesPolicy
@@ -95,11 +95,12 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND)) {
             return true;
         }
-        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED)) {
-            return $course->hasAuthor($user);
-        }
+        $courseUser = new \EscolaLms\Courses\Models\User($user->toArray());
 
-        return $course->is_published && $course->hasUser($user);
+        if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED)) {
+            return $course->hasAuthor($courseUser);
+        }
+        return $course->is_published && $course->hasUser($courseUser);
     }
 
     public function view(?User $user, Course $course): bool
