@@ -95,12 +95,11 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND)) {
             return true;
         }
-        $courseUser = new \EscolaLms\Courses\Models\User($user->toArray());
 
         if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED)) {
-            return $course->hasAuthor($courseUser);
+            return $course->hasAuthor($user);
         }
-        return $course->is_published && $course->hasUser($courseUser);
+        return $course->is_published && $course->hasUser($user);
     }
 
     public function view(?User $user, Course $course): bool

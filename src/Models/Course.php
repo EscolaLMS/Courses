@@ -296,7 +296,7 @@ class Course extends Model
         $this->author_id = $author_id;
     }
 
-    public function hasAuthor(User $author): bool
+    public function hasAuthor(User|\EscolaLms\Core\Models\User $author): bool
     {
         return !is_null($this->authors()->where('author_id', $author->id)->first());
     }
@@ -407,7 +407,7 @@ class Course extends Model
             });
     }
 
-    public function hasUser($user): bool
+    public function hasUser(User|\EscolaLms\Core\Models\User $user): bool
     {
         $groupIds = $this->groups->pluck('id')->toArray();
         $childGroups = $this->getChildGroups($groupIds);
