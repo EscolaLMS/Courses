@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Models\User as CoreUser;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\PlatformVisibility;
@@ -296,7 +297,7 @@ class Course extends Model
         $this->author_id = $author_id;
     }
 
-    public function hasAuthor(User $author): bool
+    public function hasAuthor(CoreUser|User $author): bool
     {
         return !is_null($this->authors()->where('author_id', $author->id)->first());
     }
@@ -407,7 +408,7 @@ class Course extends Model
             });
     }
 
-    public function hasUser($user): bool
+    public function hasUser(CoreUser|User $user): bool
     {
         $groupIds = $this->groups->pluck('id')->toArray();
         $childGroups = $this->getChildGroups($groupIds);
