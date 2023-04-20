@@ -45,7 +45,7 @@ Route::group(['prefix' => 'api/courses'], function () {
             Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
             Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
             Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
-            Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping']);
+            Route::put('/{topic_id}/ping', [CourseProgressAPIController::class, 'ping'])->whereNumber('topic_id');
             Route::post('/{topic_id}/h5p', [CourseProgressAPIController::class, 'h5p']);
         });
     });

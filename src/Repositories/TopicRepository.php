@@ -138,7 +138,8 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
 
     public function getById($id): Topic
     {
-        return $this->model->newQuery()->where('id', '=', $id)->first();
+        /** @var Topic */
+        return $this->model->newQuery()->findOrFail($id);
     }
 
     /**
