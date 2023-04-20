@@ -346,4 +346,17 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($now->lessThan($deadline));
         $this->assertTrue($now->lessThanOrEqualTo($deadline->subHours($hours)->addSecond()));
     }
+
+    public function test_ping_on_nonexistent_topic(): void
+    {
+        $topic = Topic::factory()
+            ->state(['lesson_id' => Lesson::factory()])
+            ->create();
+
+        $topic->delete();
+
+        $this->actingAs($this->makeStudent(), 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
+            ->assertNotFound();
+    }
 }
