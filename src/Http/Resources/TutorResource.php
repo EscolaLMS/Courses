@@ -16,6 +16,7 @@ class TutorResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'path_avatar' => $this->path_avatar,
+            'url_avatar' => $this->avatar_url,
             'interests' => TutorInterestResource::collection($this->interests),
         ];
 
