@@ -349,6 +349,7 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_on_nonexistent_topic(): void
     {
+        Course::factory();
         $topic = Topic::factory()
             ->state(['lesson_id' => Lesson::factory()])
             ->create();
