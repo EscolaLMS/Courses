@@ -7,10 +7,11 @@ use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseProgramApiTest extends TestCase
 {
-    use CreatesUsers;
+    use CreatesUsers, DatabaseTransactions;
 
     public function testShowProgramForStudentInNestedGroup(): void
     {
