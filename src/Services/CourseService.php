@@ -9,6 +9,7 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Lesson;
@@ -52,6 +53,10 @@ class CourseService implements CourseServiceContract
         if (isset($search['authors']) && is_array($search['authors'])) {
             $criteria[] = new HasCriterion('authors', fn($query) => $query->whereIn('author_id', $search['authors']));
             unset($search['authors']);
+        }
+        if (isset($search['no_expired']) && $search['no_expired']) {
+            $criteria[] = new WhereCriterion('active_to', now(), '>=');
+            unset($search['no_expired']);
         }
 
         $query = $this->courseRepository->allQueryBuilder(
