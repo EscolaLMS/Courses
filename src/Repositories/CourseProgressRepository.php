@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Repositories;
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\TopicFinished;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\CourseUserAttendance;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
@@ -57,6 +58,10 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             'user_id' => $user->getKey(),
         ], $update);
 
+        if ($status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated) {
+            $courseProgress->increment('attempt');
+        }
+
         if (is_null($courseProgress->started_at)) {
             if ($courseProgress->finished_at) {
                 $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
@@ -65,6 +70,11 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             }
             $courseProgress->save();
         }
+        CourseUserAttendance::updateOrCreate([
+            'course_progress_id' => $courseProgress->getKey(),
+            'attendance_date' => $courseProgress->updated_at,
+            'attempt' => $courseProgress->attempt ?? 0,
+        ], []);
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon

@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Tests\APIs;
 use Carbon\CarbonImmutable;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
+use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\CourseAccessFinished;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
@@ -121,6 +122,10 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->assertFalse($courseProgress->isFinished());
 
+        $progress = $course->topics()->first()->progress()->first();
+
+        $this->assertTrue($progress->attempt === 0);
+
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -128,7 +133,49 @@ class CourseProgressApiTest extends TestCase
         );
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->response->assertOk();
+        $this->assertTrue($progress->attempt === 0);
         $this->assertTrue($courseProgress->isFinished());
+        Event::assertDispatched(TopicFinished::class);
+        Event::assertDispatched(CourseAccessFinished::class);
+        Event::assertDispatched(CourseFinished::class);
+    }
+
+    public function test_update_course_progress_new_attempt(): void
+    {
+        Mail::fake();
+        Notification::fake();
+        Queue::fake();
+        Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class]);
+
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory([
+            'course_id' => $course->getKey()
+        ])->create();
+        Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+
+        $student = User::factory([
+            'points' => 0,
+        ])->create();
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course)]
+        );
+        $this->response->assertOk();
+        $progress = $course->topics()->first()->progress()->first();
+        $this->assertTrue($progress->attempt === 0);
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course, ProgressStatus::INCOMPLETE)]
+        );
+        $progress = $progress->refresh();
+        $this->assertTrue($progress->attempt === 1);
         Event::assertDispatched(TopicFinished::class);
         Event::assertDispatched(CourseAccessFinished::class);
         Event::assertDispatched(CourseFinished::class);
