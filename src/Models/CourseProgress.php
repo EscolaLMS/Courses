@@ -2,9 +2,11 @@
 
 namespace EscolaLms\Courses\Models;
 
+use EscolaLms\Courses\Database\Factories\CourseProgressFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * EscolaLms\Courses\Models\CourseProgress
@@ -45,6 +47,7 @@ class CourseProgress extends Model
         'seconds',
         'started_at',
         'finished_at',
+        'attempt',
     ];
 
     /**
@@ -66,5 +69,15 @@ class CourseProgress extends Model
     public function topic(): BelongsTo
     {
         return $this->belongsTo(Topic::class, 'topic_id');
+    }
+
+    public function courseUserAttendances(): HasMany
+    {
+        return $this->hasMany(CourseUserAttendance::class, 'course_progress_id', 'id');
+    }
+
+    protected static function newFactory(): CourseProgressFactory
+    {
+        return \EscolaLms\Courses\Database\Factories\CourseProgressFactory::new();
     }
 }

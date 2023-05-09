@@ -574,4 +574,32 @@ class CourseAnonymousApiTest extends TestCase
             ->json('GET', '/api/admin/courses/users/assignable')
             ->assertUnauthorized();
     }
+
+    public function test_search_courses_no_expired()
+    {
+        $expiredCourse = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'active_from' => today()->subDays(2),
+            'active_to' => today()->subDay(),
+        ]);
+        $activeCourse = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'active_from' => today()->subDay(),
+            'active_to' => today()->addDay(),
+        ]);
+
+        $this->response = $this->json(
+            'GET',
+            '/api/courses',
+            ['no_expired' => true],
+        )
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonMissing([
+                'id' => $expiredCourse->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $activeCourse->id,
+            ]);
+    }
 }
