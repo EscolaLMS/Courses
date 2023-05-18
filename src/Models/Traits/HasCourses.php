@@ -11,7 +11,7 @@ trait HasCourses
     public function courses(): BelongsToMany
     {
         /* @var $this \EscolaLms\Core\Models\User */
-        return $this->belongsToMany(Course::class)->using(CourseUserPivot::class);
+        return $this->belongsToMany(Course::class)->using(CourseUserPivot::class)->withTimestamps();
     }
 
     public function finishedCourse(int $id): bool
