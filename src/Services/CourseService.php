@@ -54,6 +54,10 @@ class CourseService implements CourseServiceContract
             $criteria[] = new HasCriterion('authors', fn($query) => $query->whereIn('author_id', $search['authors']));
             unset($search['authors']);
         }
+        if (isset($search['group_id'])) {
+            $criteria[] = new HasCriterion('groups', fn($query) => $query->where('group_id', $search['group_id']));
+            unset($search['group_id']);
+        }
         if (isset($search['no_expired']) && $search['no_expired']) {
             $criteria[] = new WhereCriterion('active_to', now(), '>=');
             unset($search['no_expired']);

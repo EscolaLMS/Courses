@@ -19,6 +19,7 @@ class ListCourseAPIRequest extends FormRequest
             'categories' => ['array', 'prohibited_unless:category_id,null'],
             'categories.*' => ['integer'],
             'category_id' => ['integer'],
+            'group_id' => ['integer'],
             'no_expired' => ['boolean'],
         ];
     }
