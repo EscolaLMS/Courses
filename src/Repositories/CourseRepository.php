@@ -12,6 +12,7 @@ use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
 use EscolaLms\Files\Helpers\FileHelper;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
@@ -19,6 +20,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -26,7 +28,6 @@ use Illuminate\Support\Facades\Storage;
  * @package EscolaLms\Courses\Repositories
  * @version April 27, 2021, 11:19 am UTC
  */
-
 class CourseRepository extends BaseRepository implements CourseRepositoryContract
 {
     private LessonRepositoryContract $lessonRepository;
@@ -106,7 +107,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         if (isset($search) && isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
             $flat = self::flatten($collection, 'children');
-            $flat_ids = array_map(fn ($cat) => $cat->id, $flat);
+            $flat_ids = array_map(fn($cat) => $cat->id, $flat);
             unset($search['category_id']);
         }
 
@@ -115,7 +116,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
             foreach ($search['categories'] as $category_id) {
                 $collection = Category::where('id', $category_id)->with('children')->get();
                 $flat = self::flatten($collection, 'children');
-                $flat_ids = array_merge($flat_ids, array_map(fn ($cat) => $cat->id, $flat));
+                $flat_ids = array_merge($flat_ids, array_map(fn($cat) => $cat->id, $flat));
             }
             unset($search['categories']);
         }
@@ -335,4 +336,14 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     {
         return $this->tutors()->where('id', $id)->first();
     }
+
+    public function getAuthoredCourses(int $id): Builder
+    {
+        return $this->model
+            ->newQuery()
+            ->whereHas('authors', function ($query) use ($id) {
+                $query->where('author_id', $id);
+            });
+    }
+
 }
