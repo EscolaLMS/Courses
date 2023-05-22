@@ -250,13 +250,22 @@ interface CourseAPISwagger
      *          in="query",
      *          @OA\Schema(type="boolean"),
      *      ),
-    *       @OA\Parameter(
+     *      @OA\Parameter(
      *          name="status",
      *          description="Course status: published, draft, archived",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
      *              type="string",
+     *          ),
+     *      ),
+     *     @OA\Parameter(
+     *          name="group_id",
+     *          description="Group",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="integer",
      *          ),
      *      ),
      *      @OA\Response(

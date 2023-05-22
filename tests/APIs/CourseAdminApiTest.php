@@ -8,6 +8,7 @@ use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CoursedPublished;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
@@ -782,5 +783,29 @@ class CourseAdminApiTest extends TestCase
                 'id' => $this->user->getKey(),
                 'email' => $this->user->email,
             ]);
+    }
+
+    public function test_search_course_by_group(): void
+    {
+        $courses = Course::factory()
+            ->count(5)
+            ->state(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true])
+            ->create();
+
+        $group = Group::factory()->create();
+
+        $course = $courses->random();
+        $course->groups()->sync($group);
+
+        $this->actingAs($this->makeAdmin(), 'api')
+            ->getJson('api/admin/courses')
+            ->assertOk()
+            ->assertJsonCount(5, 'data');
+
+        $this->actingAs($this->makeAdmin(), 'api')
+            ->getJson('api/admin/courses?group_id=' . $group->getKey())
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['id' => $course->getKey()]);
     }
 }
