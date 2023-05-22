@@ -3,7 +3,6 @@
 namespace EscolaLms\Courses\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Enums\UserRole;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
@@ -65,6 +64,16 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
             ->paginate($request->get('per_page') ?? 15);
 
         return $this->sendResponseForResource(CourseListResource::collection($courses), __('Courses retrieved successfully'));
+    }
+
+    public function authoredCourses(ListCourseAPIRequest $request): JsonResponse
+    {
+        $user = $request->user();
+
+        return $this->sendResponseForResource(CourseListResource::collection(
+            $this->courseRepository->getAuthoredCourses(
+                $user->getKey())->paginate($request->get('per_page', 20))
+        ), __('Courses retrieved successfully'));
     }
 
     public function store(CreateCourseAPIRequest $request): JsonResponse
