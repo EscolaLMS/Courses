@@ -335,6 +335,51 @@
                 ]
             }
         },
+        "/api/courses/authored": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "summary": "Get a listing of the authored Courses.",
+                "description": "Get all Courses",
+                "operationId": "edd821bd23bb730c4a5852cfafe235c8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination Page Number",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Pagination Per Page",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/admin/courses/{id}": {
             "get": {
                 "tags": [
