@@ -74,7 +74,9 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             'course_progress_id' => $courseProgress->getKey(),
             'attendance_date' => $courseProgress->updated_at,
             'attempt' => $courseProgress->attempt ?? 0,
-        ], []);
+        ], [
+            'seconds' => $courseProgress->seconds ?? 0,
+        ]);
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon
