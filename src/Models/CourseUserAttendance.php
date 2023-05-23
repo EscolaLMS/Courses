@@ -19,6 +19,7 @@ class CourseUserAttendance extends Model
         'course_progress_id',
         'attendance_date',
         'attempt',
+        'seconds',
     ];
 
     protected $casts = [
