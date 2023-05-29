@@ -58,7 +58,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             'user_id' => $user->getKey(),
         ], $update);
 
-        if ($status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated) {
+        if ($status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
             $courseProgress->increment('attempt');
         }
 
