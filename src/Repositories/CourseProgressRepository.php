@@ -41,7 +41,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         return CourseProgress::class;
     }
 
-    public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null): void
+    public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null, ?bool $newAttempt = false): void
     {
         $update = ['status' => $status];
 
@@ -58,7 +58,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             'user_id' => $user->getKey(),
         ], $update);
 
-        if ($status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
+        if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
             $courseProgress->increment('attempt');
         }
 
