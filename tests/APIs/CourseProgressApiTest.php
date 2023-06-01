@@ -203,6 +203,108 @@ class CourseProgressApiTest extends TestCase
         Event::assertDispatched(CourseFinished::class);
     }
 
+    public function test_update_course_progress_incomplete(): void
+    {
+        Mail::fake();
+        Notification::fake();
+        Queue::fake();
+        Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class]);
+
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory([
+            'course_id' => $course->getKey()
+        ])->create();
+        Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+
+        $student = User::factory([
+            'points' => 0,
+        ])->create();
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course)]
+        );
+        $this->response->assertOk();
+
+        $progress = $course->topics()->first()->progress()->first();
+        $this->assertTrue($progress->attempt === 0);
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course, ProgressStatus::INCOMPLETE)]
+        )
+            ->assertOk();
+        $progress = $progress->refresh();
+        $this->assertTrue($progress->attempt === 1);
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course, ProgressStatus::INCOMPLETE)]
+        )
+            ->assertOk();
+        $progress = $progress->refresh();
+        $this->assertTrue($progress->attempt === 1);
+
+        Event::assertDispatched(TopicFinished::class);
+        Event::assertDispatched(CourseAccessFinished::class);
+        Event::assertDispatched(CourseFinished::class);
+    }
+
+    public function test_update_course_progress_not_all_incomplete(): void
+    {
+        Mail::fake();
+        Notification::fake();
+        Queue::fake();
+        Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class]);
+
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory([
+            'course_id' => $course->getKey()
+        ])->create();
+        Topic::factory(2)->create([
+            'lesson_id' => $lesson->getKey(),
+            'active' => true,
+        ]);
+
+        $student = User::factory([
+            'points' => 0,
+        ])->create();
+
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $this->getProgressUpdate($course)]
+        );
+        $this->response->assertOk();
+
+        $updatedProgress = $this->getProgressUpdate($course, ProgressStatus::INCOMPLETE);
+        $progress1 = $course->topics()->where('topics.id', '=', $updatedProgress[0]['topic_id'])->first()->progress()->first();
+        $progress2 = $course->topics()->where('topics.id', '=', $updatedProgress[1]['topic_id'])->first()->progress()->first();
+
+        $this->assertTrue($progress1->attempt === 0);
+        $this->assertTrue($progress2->attempt === 0);
+
+        $updatedProgress[0]['status'] = ProgressStatus::COMPLETE;
+        $this->response = $this->actingAs($student, 'api')->json(
+            'PATCH',
+            '/api/courses/progress/' . $course->getKey(),
+            ['progress' => $updatedProgress]
+        );
+        $progress1 = $progress1->refresh();
+        $progress2 = $progress2->refresh();
+        $this->assertTrue($progress1->attempt === 0);
+        $this->assertTrue($progress2->attempt === 0);
+        Event::assertDispatched(TopicFinished::class);
+        Event::assertDispatched(CourseAccessFinished::class);
+        Event::assertDispatched(CourseFinished::class);
+    }
+
     public function test_verify_course_started(): void
     {
         Mail::fake();

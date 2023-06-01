@@ -164,6 +164,8 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
             return $this;
         }
 
+        $incomplete = array_filter($progress, fn ($item) => $item['status'] === ProgressStatus::INCOMPLETE);
+        $newAttempt = count($incomplete) === $this->topics->count();
         foreach ($progress as $topicProgress) {
             $topic = Topic::findOrFail($topicProgress['topic_id']);
 
@@ -171,7 +173,9 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
                 $this->courseProgressRepositoryContract->updateInTopic(
                     $topic,
                     $this->user,
-                    $topicProgress['status']
+                    $topicProgress['status'],
+                    null,
+                    $newAttempt
                 );
             }
         }

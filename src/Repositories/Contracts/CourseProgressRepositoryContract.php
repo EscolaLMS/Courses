@@ -18,7 +18,7 @@ interface CourseProgressRepositoryContract extends BaseRepositoryContract
 
     public function model();
 
-    public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null): void;
+    public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null, ?bool $newAttempt = false): void;
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon;
 
