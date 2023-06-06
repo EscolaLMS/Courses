@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
 use EscolaLms\Auth\Http\Resources\UserFullResource;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
@@ -83,8 +84,9 @@ class CourseAuthorsAPIController extends AppBaseController implements CourseAuth
 
     public function assignableUsers(CourseAssignableUserListRequest $request): JsonResponse
     {
+        $dto = UserAssignableDto::instantiateFromArray(array_merge($request->validated(), ['assignable_by' => CoursesPermissionsEnum::COURSE_CREATE]));
         $result = $this->userService
-            ->assignableUsers(CoursesPermissionsEnum::COURSE_CREATE, $request->get('per_page'), $request->get('page'));
+            ->assignableUsers($dto, $request->get('per_page'), $request->get('page'));
         return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to courses'));
     }
 }
