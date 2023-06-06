@@ -3,7 +3,6 @@
 namespace EscolaLms\Courses\Http\Resources\Admin;
 
 use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Courses\Http\Resources\ScormResource;
 use EscolaLms\Courses\Http\Resources\ScormScoResource;
 use EscolaLms\Courses\Http\Resources\TutorResource;
 use EscolaLms\Courses\Models\Course;
