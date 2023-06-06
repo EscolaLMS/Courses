@@ -31,6 +31,7 @@ class LessonWithTopicsAdminResource extends JsonResource
             'duration' => $this->duration,
             'active' => $this->active,
             'topics' => TopicAdminResource::collection($lesson->topics->sortBy('order')),
+            'topics_count' => $lesson->topics->count(),
             'order' => $this->order,
             'lessons' => LessonWithTopicsAdminResource::collection($lesson->lessons->sortBy('order')),
         ];

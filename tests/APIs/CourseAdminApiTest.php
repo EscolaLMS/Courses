@@ -488,6 +488,27 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
+    public function test_read_course_program_topics_count()
+    {
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->id]);
+        Topic::factory()->create(['lesson_id' => $lesson->id]);
+        Topic::factory()->create(['lesson_id' => $lesson->id]);
+        Topic::factory()->create(['lesson_id' => $lesson->id]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/' . $course->id . '/program'
+        );
+
+        $this->response->assertJsonFragment([
+            'topics_count' => 3
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function test_read_course_program_scorm()
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
