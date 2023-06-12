@@ -804,6 +804,16 @@
                 ],
                 "description": "Get users assignable to course",
                 "operationId": "0c7ebb30ad9948c9cc538d963624ea15",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
