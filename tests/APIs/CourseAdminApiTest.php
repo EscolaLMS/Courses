@@ -829,4 +829,26 @@ class CourseAdminApiTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment(['id' => $course->getKey()]);
     }
+
+    public function test_assignable_users_search(): void
+    {
+        $tutor = $this->makeInstructor();
+        $student = $this->makeStudent();
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/courses/users/assignable', ['search' => $tutor->email])
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'id' => $tutor->getKey(),
+                'email' => $tutor->email,
+            ])
+            ->assertJsonMissing([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonMissing([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
+    }
 }
