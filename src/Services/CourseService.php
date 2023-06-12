@@ -25,6 +25,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 class CourseService implements CourseServiceContract
 {
     private CourseRepositoryContract $courseRepository;
+    private ScormServiceContract $scormService;
 
     public function __construct(
         CourseRepositoryContract $courseRepository,

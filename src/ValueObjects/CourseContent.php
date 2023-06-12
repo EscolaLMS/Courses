@@ -15,6 +15,7 @@ class CourseContent extends ValueObject implements DtoContract, ValueObjectContr
 {
     private CourseServiceContract $courseService;
     private Course $course;
+    private array $topics;
 
     public function __construct(CourseServiceContract $courseService)
     {
@@ -25,15 +26,6 @@ class CourseContent extends ValueObject implements DtoContract, ValueObjectContr
     {
         $this->course = $course;
         $this->topics = [];
-        //        foreach ($this->getSections() as $section) {
-        //            $this->topics[$section->getKey()] = $this->courseService->getTopics($section);
-        //
-        //            foreach ($this->topics[$section->getKey()] as $topic) {
-        //                if (!($topic instanceof Topic)) {
-        //                    continue;
-        //                }
-        //            }
-        //        }
 
         return $this;
     }
