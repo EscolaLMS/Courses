@@ -50,7 +50,9 @@ class ProgressService implements ProgressServiceContract
             }
         }
 
-        return $progresses->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->created_at);
+        return $progresses
+            ->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
+            ->values();
     }
 
     public function update(Course $course, User $user, array $progress): CourseProgressCollection

@@ -70,7 +70,7 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
-    public function test_show_progress_courses_ordered_by_latest()
+    public function test_show_progress_courses_ordered_by_latest_purchased()
     {
         $user = User::factory()->create();
         $courseOne = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
