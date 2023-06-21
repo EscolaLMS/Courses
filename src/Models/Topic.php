@@ -163,11 +163,6 @@ class Topic extends Model
         return $this->belongsTo(\EscolaLms\Courses\Models\Lesson::class, 'lesson_id');
     }
 
-    public function topicRichtexts(): HasMany
-    {
-        return $this->hasMany(\EscolaLms\Courses\Models\TopicRichtext::class, 'topic_id');
-    }
-
     protected static function newFactory(): TopicFactory
     {
         return \EscolaLms\Courses\Database\Factories\TopicFactory::new();

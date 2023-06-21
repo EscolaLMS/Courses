@@ -31,7 +31,7 @@ class TopicService implements TopicServiceContract
         $clonedTopic = $this->topicRepository->create($clonedTopicArray);
         $clonedTopicable = $topic->topicable->replicate();
 
-        if ($clonedTopicable instanceof AbstractTopicFileContent) {
+        if (class_exists(AbstractTopicFileContent::class) && $clonedTopicable instanceof AbstractTopicFileContent) {
             foreach ($clonedTopicable->getFileKeyNames() as $fileKeyName) {
                 if (Storage::exists($clonedTopicable->{$fileKeyName})) {
                     $to = $clonedTopic->getStorageDirectoryAttribute() . basename($clonedTopicable->{$fileKeyName});

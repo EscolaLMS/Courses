@@ -2,8 +2,8 @@
 
 namespace EscolaLms\Courses\Http\Requests;
 
-use App\Models\Course;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
+use EscolaLms\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
