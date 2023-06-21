@@ -70,17 +70,17 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
-    public function test_show_progress_courses_ordered_by_latest()
+    public function test_show_progress_courses_ordered_by_latest_purchased()
     {
         $user = User::factory()->create();
         $courseOne = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $courseTwo = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
+
         $user->courses()->save($courseOne);
-
         $this->travel(1)->days();
-
         $user->courses()->save($courseTwo);
+
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
