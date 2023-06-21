@@ -35,7 +35,7 @@ class ProgressService implements ProgressServiceContract
             $user = CoursesUser::find($user->getKey());
         }
         /** @var CoursesUser $user */
-        foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED)->sortByDesc('pivot.created_at') as $course) {
+        foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
         foreach ($user->groups as $group) {
@@ -49,7 +49,8 @@ class ProgressService implements ProgressServiceContract
                 }
             }
         }
-        return $progresses;
+
+        return $progresses->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->created_at);
     }
 
     public function update(Course $course, User $user, array $progress): CourseProgressCollection
