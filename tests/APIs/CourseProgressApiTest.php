@@ -77,11 +77,8 @@ class CourseProgressApiTest extends TestCase
         $courseTwo = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $courseOne->users()->save($user);
-//        $user->courses()->save($courseOne);
         $this->travel(1)->days();
         $courseTwo->users()->save($user);
-//        $user->courses()->save($courseTwo);
-
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
