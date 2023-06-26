@@ -366,7 +366,7 @@ class Course extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->using(CourseUserPivot::class);
+        return $this->belongsToMany(User::class)->using(CourseUserPivot::class)->withTimestamps();
     }
 
     public function groups(): BelongsToMany
