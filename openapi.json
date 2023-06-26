@@ -1792,6 +1792,16 @@
                     "parent_lesson_id": {
                         "description": "parent_lesson_id",
                         "type": "integer"
+                    },
+                    "active_from": {
+                        "description": "active_from",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "active_to": {
+                        "description": "active_to",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
