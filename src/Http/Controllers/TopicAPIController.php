@@ -131,6 +131,6 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
             return $this->sendError('Error', 400);
         }
 
-        return $this->sendResponseForResource(TopicResource::make($topic), __('Topic cloned successfully'));
+        return $this->sendResponseForResource(TopicAdminResource::make($topic), __('Topic cloned successfully'));
     }
 }

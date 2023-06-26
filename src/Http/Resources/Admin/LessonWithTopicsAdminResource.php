@@ -5,6 +5,9 @@ namespace EscolaLms\Courses\Http\Resources\Admin;
 use EscolaLms\Courses\Models\Lesson;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Lesson
+ */
 class LessonWithTopicsAdminResource extends JsonResource
 {
     public function __construct(Lesson $resource)
@@ -34,6 +37,8 @@ class LessonWithTopicsAdminResource extends JsonResource
             'topics_count' => $lesson->topics->count(),
             'order' => $this->order,
             'lessons' => LessonWithTopicsAdminResource::collection($lesson->lessons->sortBy('order')),
+            'active_from' => $this->active_from,
+            'active_to' => $this->active_to,
         ];
     }
 }

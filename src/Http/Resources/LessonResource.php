@@ -5,6 +5,9 @@ namespace EscolaLms\Courses\Http\Resources;
 use EscolaLms\Courses\Models\Lesson;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Lesson
+ */
 class LessonResource extends JsonResource
 {
     public function toArray($request): array
@@ -17,6 +20,8 @@ class LessonResource extends JsonResource
             'active' => $this->active,
             'order' => $this->order,
             'course_id' => $this->course_id,
+            'active_from' => $this->active_from,
+            'active_to' => $this->active_to,
             'lessons' => LessonSimpleResource::collection($this->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order')),
         ];
     }

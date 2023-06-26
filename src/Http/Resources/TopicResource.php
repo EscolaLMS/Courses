@@ -18,7 +18,9 @@ class TopicResource extends JsonResource
     {
         $topicable = $this->topicable;
 
-        if (Topic::getResourceClass($this->topicable_type, 'client')) {
+        if ($this->lesson && !$this->lesson->isActive()) {
+            $topicable = null;
+        } elseif (Topic::getResourceClass($this->topicable_type, 'client')) {
             $resourceClass = Topic::getResourceClass($this->topicable_type, 'client');
             $resource = new $resourceClass($this->topicable);
             $topicable = $resource->toArray($request);
