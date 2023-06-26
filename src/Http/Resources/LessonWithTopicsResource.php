@@ -36,6 +36,8 @@ class LessonWithTopicsResource extends JsonResource
             'active' => $this->active,
             'topics' => TopicResource::collection($topics),
             'order' => $this->order,
+            'active_from' => $this->active_from,
+            'active_to' => $this->active_to,
             'lessons' => LessonWithTopicsResource::collection($lessons),
         ];
     }

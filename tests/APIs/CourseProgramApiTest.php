@@ -6,8 +6,12 @@ use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\Group;
+use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Carbon;
 
 class CourseProgramApiTest extends TestCase
 {
@@ -31,5 +35,51 @@ class CourseProgramApiTest extends TestCase
 
         $this->actingAs($student, 'api')->getJson('api/courses/' . $course->getKey() . '/program')
             ->assertStatus(200);
+    }
+
+    public function testShowCourseProgramForLessonAvailableBetweenDates(): void
+    {
+        $student = $this->makeStudent();
+        $course = Course::factory()->state(['status' => CourseStatusEnum::PUBLISHED])->create();
+        $course->users()->attach($student);
+        $lesson = Lesson::factory()->state([
+            'course_id' => $course->getKey(),
+            'active' => true,
+        ])
+            ->create();
+
+        $topicable = ExampleTopicType::factory()->create();
+        Topic::factory()->state([
+            'active' => true,
+            'lesson_id' => $lesson->getKey(),
+            'topicable_type' => ExampleTopicType::class,
+            'topicable_id' => $topicable->getKey(),
+        ])
+            ->create();
+
+        $this->actingAs($student, 'api')
+            ->getJson('api/courses/' . $course->getKey() . '/program')
+            ->assertOk()
+            ->assertJsonFragment([
+                'topicable' => [
+                    'value' => $topicable->value,
+                    'created_at' => $topicable->created_at,
+                    'updated_at' => $topicable->updated_at,
+                    'id' => $topicable->getKey(),
+                ],
+            ]);
+
+        // update
+        $lesson->update([
+            'active_from' => Carbon::now()->addMonth(),
+            'active_to' => Carbon::now()->addMonth()->addMinutes(),
+        ]);
+
+        $this->actingAs($student, 'api')
+            ->getJson('api/courses/' . $course->getKey() . '/program')
+            ->assertOk()
+            ->assertJsonFragment([
+                'topicable' => null,
+            ]);
     }
 }
