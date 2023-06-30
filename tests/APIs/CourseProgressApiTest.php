@@ -368,6 +368,65 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($this->response->getData()->data->status);
     }
 
+    public function test_ping_complete_topic()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topics = Topic::factory(2)->create([
+            'active' => true,
+            'lesson_id' => $lesson->getKey(),
+        ]);
+
+        $user->courses()->sync([$course->getKey()]);
+
+        $oneTopic = null;
+        foreach ($topics as $topic) {
+            $oneTopic = $topic;
+            CourseProgress::create([
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+                'status' => ProgressStatus::COMPLETE,
+                'seconds' => 10,
+            ]);
+        }
+
+        $this->assertDatabaseHas('course_progress', [
+            'user_id' => $user->getKey(),
+            'topic_id' => $oneTopic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 10,
+        ]);
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+        )
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    'status'
+                ]
+            ]);
+        $this->assertTrue($this->response->getData()->data->status);
+
+        sleep(5);
+        $this
+            ->actingAs($user, 'api')
+            ->json(
+                'PUT',
+                '/api/courses/progress/' . $oneTopic->getKey() . '/ping'
+            )
+            ->assertOk();
+
+        $this->assertDatabaseHas('course_progress', [
+            'user_id' => $user->getKey(),
+            'topic_id' => $oneTopic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 15,
+        ]);
+    }
+
     public function test_adding_new_topic_will_reset_finished_status(): void
     {
         Mail::fake();
