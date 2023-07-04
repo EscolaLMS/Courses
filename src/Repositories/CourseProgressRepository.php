@@ -11,9 +11,7 @@ use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class CourseProgressRepository extends BaseRepository implements CourseProgressRepositoryContract
 {
@@ -45,48 +43,40 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
 
     public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null, ?bool $newAttempt = false): void
     {
-        try {
-            $update = ['status' => $status];
+        $update = ['status' => $status];
 
-            if (!is_null($seconds)) {
-                $update['seconds'] = $seconds;
-            }
-
-            if ($status === ProgressStatus::COMPLETE) {
-                $update['finished_at'] = Carbon::now();
-                event(new TopicFinished($user, $topic));
-            }
-
-            $courseProgress = $topic->progress()->updateOrCreate([
-                'user_id' => $user->getKey(),
-            ], $update);
-
-            if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
-                $courseProgress->increment('attempt');
-            }
-
-            if (is_null($courseProgress->started_at)) {
-                if ($courseProgress->finished_at) {
-                    $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
-                } elseif (!is_null($courseProgress->seconds)) {
-                    $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
-                }
-                $courseProgress->save();
-            }
-            CourseUserAttendance::updateOrCreate([
-                'course_progress_id' => $courseProgress->getKey(),
-                'attendance_date' => $courseProgress->updated_at,
-                'attempt' => $courseProgress->attempt ?? 0,
-            ], [
-                'seconds' => $courseProgress->seconds ?? 0,
-            ]);
-        } catch (QueryException $e) {
-            Log::error('Unable to update or create course progress', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->getKey(),
-                'topic_id' => $topic->getKey(),
-            ]);
+        if (!is_null($seconds)) {
+            $update['seconds'] = $seconds;
         }
+
+        if ($status === ProgressStatus::COMPLETE) {
+            $update['finished_at'] = Carbon::now();
+            event(new TopicFinished($user, $topic));
+        }
+
+        $courseProgress = $topic->progress()->updateOrCreate([
+            'user_id' => $user->getKey(),
+        ], $update);
+
+        if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
+            $courseProgress->increment('attempt');
+        }
+
+        if (is_null($courseProgress->started_at)) {
+            if ($courseProgress->finished_at) {
+                $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
+            } elseif (!is_null($courseProgress->seconds)) {
+                $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
+            }
+            $courseProgress->save();
+        }
+        CourseUserAttendance::updateOrCreate([
+            'course_progress_id' => $courseProgress->getKey(),
+            'attendance_date' => $courseProgress->updated_at,
+            'attempt' => $courseProgress->attempt ?? 0,
+        ], [
+            'seconds' => $courseProgress->seconds ?? 0,
+        ]);
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon
