@@ -12,6 +12,7 @@ use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CourseProgressRepository extends BaseRepository implements CourseProgressRepositoryContract
 {
@@ -57,6 +58,14 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         $courseProgress = $topic->progress()->updateOrCreate([
             'user_id' => $user->getKey(),
         ], $update);
+
+        $courseProgress = null;
+
+        DB::transaction(function () use ($user, $topic, $update, &$courseProgress) {
+            $courseProgress = $topic->progress()->lockForUpdate()->updateOrCreate([
+                'user_id' => $user->getKey(),
+            ], $update);
+        });
 
         if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
             $courseProgress->increment('attempt');
