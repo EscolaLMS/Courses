@@ -14,7 +14,7 @@
     "escolalms/settings": "^0",
     "escolalms/tags": "^0",
     "laravel/framework": ">=8.0",
-    "spatie/laravel-responsecache": "^6.6"
+    "spatie/laravel-responsecache": "^7.4"
   },
   "require-dev": {
     "orchestra/testbench": ">=5.0",
