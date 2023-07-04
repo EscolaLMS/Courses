@@ -55,37 +55,31 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             event(new TopicFinished($user, $topic));
         }
 
-        $courseProgress = $topic->progress()->updateOrCreate([
-            'user_id' => $user->getKey(),
-        ], $update);
-
-        $courseProgress = null;
-
-        DB::transaction(function () use ($user, $topic, $update, &$courseProgress) {
+        DB::transaction(function () use ($topic, $user, $update, $newAttempt, $status) {
             $courseProgress = $topic->progress()->lockForUpdate()->updateOrCreate([
                 'user_id' => $user->getKey(),
             ], $update);
-        });
 
-        if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
-            $courseProgress->increment('attempt');
-        }
-
-        if (is_null($courseProgress->started_at)) {
-            if ($courseProgress->finished_at) {
-                $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
-            } elseif (!is_null($courseProgress->seconds)) {
-                $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
+            if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
+                $courseProgress->increment('attempt');
             }
-            $courseProgress->save();
-        }
-        CourseUserAttendance::updateOrCreate([
-            'course_progress_id' => $courseProgress->getKey(),
-            'attendance_date' => $courseProgress->updated_at,
-            'attempt' => $courseProgress->attempt ?? 0,
-        ], [
-            'seconds' => $courseProgress->seconds ?? 0,
-        ]);
+
+            if (is_null($courseProgress->started_at)) {
+                if ($courseProgress->finished_at) {
+                    $courseProgress->started_at = $courseProgress->finished_at->subSeconds($courseProgress->seconds ?? 0);
+                } elseif (!is_null($courseProgress->seconds)) {
+                    $courseProgress->started_at = Carbon::now()->subSeconds($courseProgress->seconds);
+                }
+                $courseProgress->save();
+            }
+            CourseUserAttendance::updateOrCreate([
+                'course_progress_id' => $courseProgress->getKey(),
+                'attendance_date' => $courseProgress->updated_at,
+                'attempt' => $courseProgress->attempt ?? 0,
+            ], [
+                'seconds' => $courseProgress->seconds ?? 0,
+            ]);
+        });
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon
