@@ -11,8 +11,9 @@ use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CourseProgressRepository extends BaseRepository implements CourseProgressRepositoryContract
 {
@@ -44,19 +45,19 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
 
     public function updateInTopic(Topic $topic, Authenticatable $user, int $status, ?int $seconds = null, ?bool $newAttempt = false): void
     {
-        $update = ['status' => $status];
+        try {
+            $update = ['status' => $status];
 
-        if (!is_null($seconds)) {
-            $update['seconds'] = $seconds;
-        }
+            if (!is_null($seconds)) {
+                $update['seconds'] = $seconds;
+            }
 
-        if ($status === ProgressStatus::COMPLETE) {
-            $update['finished_at'] = Carbon::now();
-            event(new TopicFinished($user, $topic));
-        }
+            if ($status === ProgressStatus::COMPLETE) {
+                $update['finished_at'] = Carbon::now();
+                event(new TopicFinished($user, $topic));
+            }
 
-        DB::transaction(function () use ($topic, $user, $update, $newAttempt, $status) {
-            $courseProgress = $topic->progress()->lockForUpdate()->updateOrCreate([
+            $courseProgress = $topic->progress()->updateOrCreate([
                 'user_id' => $user->getKey(),
             ], $update);
 
@@ -79,7 +80,13 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             ], [
                 'seconds' => $courseProgress->seconds ?? 0,
             ]);
-        });
+        } catch (QueryException $e) {
+            Log::error('Unable to update or create course progress', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->getKey(),
+                'topic_id' => $topic->getKey(),
+            ]);
+        }
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon
