@@ -38,6 +38,17 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
             ProgressResource::collection(
                 $this->progressServiceContract->getByUser(
                     $request->user(),
+                )),
+            __('Progresses')
+        );
+    }
+
+    public function indexPaginated(Request $request): JsonResponse
+    {
+        return $this->sendResponseForResource(
+            ProgressResource::collection(
+                $this->progressServiceContract->getByUserPaginated(
+                    $request->user(),
                     OrderDto::instantiateFromRequest($request),
                     $request->get('per_page', 20),
                 )),

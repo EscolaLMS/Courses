@@ -37,6 +37,48 @@ interface CourseProgressAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
+     *      path="/api/courses/progress/paginated",
+     *      description="Get Paginated Progresses",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *     @OA\Parameter(
+     *          name="order_by",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *     @OA\Parameter(
+     *          name="order",
+     *          required=false,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Bad request",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     *   )
+     */
+    public function indexPaginated(Request $request): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      tags={"Courses"},
      *      path="/api/courses/progress/{course_id}",
      *      description="Show user course progress",
      *      security={

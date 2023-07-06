@@ -111,7 +111,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
-            '/api/courses/progress',
+            '/api/courses/progress/paginated',
         );
 
         $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
@@ -133,7 +133,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
-            '/api/courses/progress',
+            '/api/courses/progress/paginated',
             [
                 'order_by' => 'title',
                 'order' => 'asc',
@@ -146,7 +146,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
-            '/api/courses/progress',
+            '/api/courses/progress/paginated',
             [
                 'order_by' => 'title',
                 'order' => 'desc',

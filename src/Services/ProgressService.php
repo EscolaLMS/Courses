@@ -10,6 +10,7 @@ use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
 use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\User as CoursesUser;
@@ -31,7 +32,34 @@ class ProgressService implements ProgressServiceContract
         $this->courseH5PProgressContract = $courseH5PProgressContract;
     }
 
-    public function getByUser(User $user, ?OrderDto $orderDto = null, ?int $perPage = 20): LengthAwarePaginator
+    public function getByUser(User $user): Collection
+    {
+        $progresses = new Collection();
+        if (!$user instanceof CoursesUser) {
+            $user = CoursesUser::find($user->getKey());
+        }
+        /** @var CoursesUser $user */
+        foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
+            $progresses->push(CourseProgressCollection::make($user, $course));
+        }
+        foreach ($user->groups as $group) {
+            if (!$group instanceof Group) {
+                $group = Group::find($group->getKey());
+            }
+            /** @var Group $group */
+            foreach ($group->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
+                if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
+                    $progresses->push(CourseProgressCollection::make($user, $course));
+                }
+            }
+        }
+
+        return $progresses
+            ->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
+            ->values();
+    }
+
+    public function getByUserPaginated(User $user, ?OrderDto $orderDto = null, ?int $perPage = 20): LengthAwarePaginator
     {
         $userId = $user->getKey();
         $progresses = new Collection();
