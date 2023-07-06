@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
@@ -21,10 +22,11 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     protected CourseRepositoryContract $courseRepositoryContract;
 
     public function __construct(
-        ProgressServiceContract $progressServiceContract,
-        TopicRepositoryContract $topicRepositoryContract,
+        ProgressServiceContract  $progressServiceContract,
+        TopicRepositoryContract  $topicRepositoryContract,
         CourseRepositoryContract $courseRepositoryContract
-    ) {
+    )
+    {
         $this->progressServiceContract = $progressServiceContract;
         $this->topicRepositoryContract = $topicRepositoryContract;
         $this->courseRepositoryContract = $courseRepositoryContract;
@@ -32,7 +34,15 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
 
     public function index(Request $request): JsonResponse
     {
-        return $this->sendResponseForResource(ProgressResource::collection($this->progressServiceContract->getByUser($request->user())), __('Progresses'));
+        return $this->sendResponseForResource(
+            ProgressResource::collection(
+                $this->progressServiceContract->getByUser(
+                    $request->user(),
+                    OrderDto::instantiateFromRequest($request),
+                    $request->get('per_page', 20),
+                )),
+            __('Progresses')
+        );
     }
 
     /**

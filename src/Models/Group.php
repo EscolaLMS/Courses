@@ -10,7 +10,7 @@ class Group extends AuthGroup
 {
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class)->using(CourseGroupPivot::class);
+        return $this->belongsToMany(Course::class)->using(CourseGroupPivot::class)->withTimestamps();
     }
 
     protected static function newFactory()

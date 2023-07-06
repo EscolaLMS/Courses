@@ -371,7 +371,7 @@ class Course extends Model
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class);
+        return $this->belongsToMany(Group::class)->using(CourseGroupPivot::class)->withTimestamps();
     }
 
     public function topics(): HasManyThrough
