@@ -17,9 +17,9 @@ use EscolaLms\Courses\Models\User as CoursesUser;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ProgressService implements ProgressServiceContract
 {
@@ -48,14 +48,14 @@ class ProgressService implements ProgressServiceContract
             }
             /** @var Group $group */
             foreach ($group->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
-                if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
+                if (!$progresses->contains(fn(CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }
             }
         }
 
         return $progresses
-            ->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
+            ->sortByDesc(fn(CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
             ->values();
     }
 
@@ -64,43 +64,31 @@ class ProgressService implements ProgressServiceContract
         $userId = $user->getKey();
         $progresses = new Collection();
 
-        $userCourses = DB::table('course_user')
-            ->join('courses', 'courses.id', '=', 'course_user.course_id')
-            ->where('course_user.user_id', $userId)
-            ->where('courses.status', CourseStatusEnum::PUBLISHED)
-            ->select('course_user.course_id as course_id', 'course_user.created_at as created_at');
+        $query = Course::query()
+            ->leftJoin('course_user', 'courses.id', '=', 'course_user.course_id')
+            ->leftJoin('course_group', 'courses.id', '=', 'course_group.course_id')
+            ->whereHas('users', function (Builder $query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
+            ->orWhereHas('groups', function (Builder $query) use ($userId) {
+                $query->whereHas('users', function (Builder $query) use ($userId) {
+                    $query->where('users.id', $userId);
+                });
+            })
+            ->addSelect('courses.*') // select all columns from courses
+            ->addSelect('course_user.created_at as user_pivot_created_at')
+            ->addSelect('course_group.created_at as group_pivot_created_at');
 
-        $groupCourses = DB::table('course_group')
-            ->join('courses', 'courses.id', '=', 'course_group.course_id')
-            ->join('group_user', 'group_user.group_id', '=', 'course_group.group_id')
-            ->where('group_user.user_id', $userId)
-            ->where('courses.status', CourseStatusEnum::PUBLISHED)
-            ->select('course_group.course_id as course_id', 'course_group.created_at as created_at');
-
-        $mergedCourses = $userCourses->union($groupCourses)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->pluck('created_at', 'course_id')
-            ->sortDesc()
-            ->keys()
-            ->all();
-
-        $courseQuery = Course::query()
-            ->whereIn('id', $mergedCourses);
-
-        if ($orderDto?->getOrderBy() === 'title') {
-            $courseQuery->orderBy('title', $orderDto->getOrder() ?? 'asc');
+        if ($orderDto->getOrderBy()) {
+            $query->orderBy($orderDto->getOrderBy(), $orderDto->getOrder() ?? 'desc');
         } else {
-            match (DB::connection()->getDriverName()) {
-                'pgsql' => $courseQuery
-                    ->orderByRaw('array_position(ARRAY[' . implode(',', $mergedCourses) . ']::BIGINT[], id)'),
-                default => $courseQuery
-                    ->orderByRaw('FIELD(id, ' . implode(',', $mergedCourses) . ')')
-                    ->orderBy('title'),
-            };
+            $query
+                ->orderBy('user_pivot_created_at', 'desc')
+                ->orderBy('group_pivot_created_at', 'desc');
         }
 
-        $courses = $courseQuery->paginate($perPage);
+        $courses = $query
+            ->paginate($perPage);
 
         foreach ($courses as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
