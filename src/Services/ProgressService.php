@@ -88,10 +88,6 @@ class ProgressService implements ProgressServiceContract
 
         $courses = $query->paginate($perPage);
 
-
-        $courses = $query
-            ->paginate($perPage);
-
         foreach ($courses as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
