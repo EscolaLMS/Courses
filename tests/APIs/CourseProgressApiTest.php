@@ -114,6 +114,9 @@ class CourseProgressApiTest extends TestCase
             '/api/courses/progress/paginated',
         );
 
+        $debug = collect($this->response->json('data'));
+        var_dump($debug->pluck('course.title')->toArray());
+
         $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course1->getKey());
         $this->assertTrue($this->response->json('data.2.course.id') === $course2->getKey());
@@ -140,6 +143,9 @@ class CourseProgressApiTest extends TestCase
             ],
         );
 
+        $debug = collect($this->response->json('data'));
+        var_dump($debug->pluck('course.title')->toArray());
+
         $this->assertTrue($this->response->json('data.0.course.id') === $course1->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
         $this->assertTrue($this->response->json('data.2.course.id') === $course3->getKey());
@@ -152,6 +158,9 @@ class CourseProgressApiTest extends TestCase
                 'order' => 'desc',
             ],
         );
+
+        $debug = collect($this->response->json('data'));
+        var_dump($debug->pluck('course.title')->toArray());
 
         $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
