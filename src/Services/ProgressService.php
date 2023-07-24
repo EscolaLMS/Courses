@@ -65,8 +65,12 @@ class ProgressService implements ProgressServiceContract
         $progresses = new Collection();
 
         $query = Course::query()
-            ->leftJoin('course_user', 'courses.id', '=', 'course_user.course_id')
-            ->leftJoin('course_group', 'courses.id', '=', 'course_group.course_id')
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
+                $join->on('courses.id', '=', 'course_user.course_id');
+            })
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function ($join) {
+                $join->on('courses.id', '=', 'course_group.course_id');
+            })
             ->whereHas('users', function (Builder $query) use ($userId) {
                 $query->where('users.id', $userId);
             })
@@ -74,18 +78,16 @@ class ProgressService implements ProgressServiceContract
                 $query->whereHas('users', function (Builder $query) use ($userId) {
                     $query->where('users.id', $userId);
                 });
-            })
-            ->addSelect('courses.*') // select all columns from courses
-            ->addSelect('course_user.created_at as user_pivot_created_at')
-            ->addSelect('course_group.created_at as group_pivot_created_at');
+            });
 
         if ($orderDto->getOrderBy()) {
             $query->orderBy($orderDto->getOrderBy(), $orderDto->getOrder() ?? 'desc');
         } else {
-            $query
-                ->orderBy('user_pivot_created_at', 'desc')
-                ->orderBy('group_pivot_created_at', 'desc');
+            $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, '2999-12-31'), COALESCE(group_pivot_created_at, '2999-12-31')) DESC");
         }
+
+        $courses = $query->paginate($perPage);
+
 
         $courses = $query
             ->paginate($perPage);

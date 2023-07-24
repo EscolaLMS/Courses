@@ -73,6 +73,7 @@ class CourseProgressApiTest extends TestCase
     public function test_show_progress_courses_paginated_ordered()
     {
         $user = User::factory()->create();
+
         $course1 = Course::factory()->create([
             'status' => CourseStatusEnum::PUBLISHED,
             'title' => 'A Course',
@@ -91,31 +92,27 @@ class CourseProgressApiTest extends TestCase
             'status' => CourseStatusEnum::PUBLISHED,
             'title' => 'C Course',
         ]);
-
         $lesson3 = Lesson::factory()->create(['course_id' => $course3->getKey()]);
         Topic::factory()->create(['lesson_id' => $lesson3->getKey(), 'active' => true]);
 
-        $user->courses()->save($course2);
+        $user->courses()->save($course2); //Course B
 
         $this->travel(1)->days();
 
-        $user->courses()->save($course1);
+        $user->courses()->save($course1); //Course A
         /** @var Group $group */
         $group = Group::factory()->create();
 
         $this->travel(1)->days();
 
-        $course3->groups()->save($group);
-        $course2->groups()->save($group);
+        $course3->groups()->save($group); //Course C
+        $course2->groups()->save($group); //Course B
         $user->groups()->save($group);
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
             '/api/courses/progress/paginated',
         );
-
-        $debug = collect($this->response->json('data'));
-        var_dump($debug->pluck('course.title')->toArray());
 
         $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course1->getKey());
@@ -143,9 +140,6 @@ class CourseProgressApiTest extends TestCase
             ],
         );
 
-        $debug = collect($this->response->json('data'));
-        var_dump($debug->pluck('course.title')->toArray());
-
         $this->assertTrue($this->response->json('data.0.course.id') === $course1->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
         $this->assertTrue($this->response->json('data.2.course.id') === $course3->getKey());
@@ -158,9 +152,6 @@ class CourseProgressApiTest extends TestCase
                 'order' => 'desc',
             ],
         );
-
-        $debug = collect($this->response->json('data'));
-        var_dump($debug->pluck('course.title')->toArray());
 
         $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
         $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
