@@ -7,6 +7,7 @@ use EscolaLms\Core\Http\Resources\Status;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
+use EscolaLms\Courses\Http\Requests\CourseProgressPaginatedListRequest;
 use EscolaLms\Courses\Http\Resources\ProgressResource;
 use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
@@ -43,7 +44,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         );
     }
 
-    public function indexPaginated(Request $request): JsonResponse
+    public function indexPaginated(CourseProgressPaginatedListRequest $request): JsonResponse
     {
         return $this->sendResponseForResource(
             ProgressResource::collection(

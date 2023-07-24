@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
+use EscolaLms\Courses\Http\Requests\CourseProgressPaginatedListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -56,6 +57,7 @@ interface CourseProgressAPISwagger
      *          in="path",
      *          @OA\Schema(
      *              type="string",
+     *              enum={"title", "obtained"}
      *          ),
      *      ),
      *      @OA\Response(
@@ -74,7 +76,7 @@ interface CourseProgressAPISwagger
      *      )
      *   )
      */
-    public function indexPaginated(Request $request): JsonResponse;
+    public function indexPaginated(CourseProgressPaginatedListRequest $request): JsonResponse;
 
     /**
      * @OA\Get(
