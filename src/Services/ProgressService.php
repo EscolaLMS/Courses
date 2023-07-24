@@ -83,7 +83,8 @@ class ProgressService implements ProgressServiceContract
         if ($orderDto->getOrderBy()) {
             $query->orderBy($orderDto->getOrderBy(), $orderDto->getOrder() ?? 'desc');
         } else {
-            $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, '2999-12-31'), COALESCE(group_pivot_created_at, '2999-12-31')) DESC");
+            $order = $orderDto->getOrder() ?? 'desc';
+            $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, '2999-12-31'), COALESCE(group_pivot_created_at, '2999-12-31')) $order");
         }
 
         $courses = $query->paginate($perPage);
