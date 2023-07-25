@@ -20,7 +20,6 @@ use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ProgressService implements ProgressServiceContract
 {
@@ -86,14 +85,16 @@ class ProgressService implements ProgressServiceContract
         if ($orderDto->getOrderBy() && $orderDto->getOrderBy() !== 'obtained') {
             $query->orderBy($orderDto->getOrderBy(), $order);
         } else {
-            if (DB::connection()->getDriverName() === 'pgsql') {
-                if ($order === 'desc') {
-                    $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order NULLS LAST");
-                } else {
-                    $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order NULLS FIRST");
-                }
-            } elseif (DB::connection()->getDriverName() === 'mysql') {
-                $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order");
+            if ($order === 'desc') {
+                $query->orderByRaw("(
+                    COALESCE(user_pivot_created_at, group_pivot_created_at) IS NULL) ASC,
+                    LEAST(COALESCE(user_pivot_created_at, group_pivot_created_at), COALESCE(group_pivot_created_at, user_pivot_created_at)) DESC"
+                );
+            } else {
+                $query->orderByRaw("(
+                    COALESCE(user_pivot_created_at, group_pivot_created_at) IS NULL) DESC,
+                    LEAST(COALESCE(user_pivot_created_at, group_pivot_created_at), COALESCE(group_pivot_created_at, user_pivot_created_at)) ASC"
+                );
             }
         }
 
