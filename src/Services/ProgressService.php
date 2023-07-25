@@ -93,7 +93,7 @@ class ProgressService implements ProgressServiceContract
                     $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order NULLS FIRST");
                 }
             } elseif (DB::connection()->getDriverName() === 'mysql') {
-                $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order, COALESCE(user_pivot_created_at, group_pivot_created_at)");
+                $query->orderByRaw("COALESCE(user_pivot_created_at, group_pivot_created_at) $order");
             }
         }
 
