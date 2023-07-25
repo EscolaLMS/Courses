@@ -13,6 +13,7 @@ use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Events\TopicFinished;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
+use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
@@ -68,6 +69,132 @@ class CourseProgressApiTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    public function test_show_progress_courses_paginated_ordered()
+    {
+        $user = User::factory()->create();
+
+        $course1 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'A Course',
+        ]);
+        $lesson1 = Lesson::factory()->create(['course_id' => $course1->getKey()]);
+        Topic::factory()->create(['lesson_id' => $lesson1->getKey(), 'active' => true]);
+
+        $course2 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'B Course',
+        ]);
+        $lesson2 = Lesson::factory()->create(['course_id' => $course2->getKey()]);
+        Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+
+        $course3 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'C Course',
+        ]);
+        $lesson3 = Lesson::factory()->create(['course_id' => $course3->getKey()]);
+        Topic::factory()->create(['lesson_id' => $lesson3->getKey(), 'active' => true]);
+
+        $course4 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'D Course',
+        ]);
+        $lesson4 = Lesson::factory()->create(['course_id' => $course4->getKey()]);
+        Topic::factory()->create(['lesson_id' => $lesson4->getKey(), 'active' => true]);
+
+        $user->courses()->save($course4); //Course D
+        CourseUserPivot::query()
+            ->where('user_id', $user->getKey())
+            ->where('course_id', $course4->getKey())
+            ->update(['created_at' => null]);
+
+        $user->courses()->save($course2); //Course B
+
+        $this->travel(1)->days();
+
+        $user->courses()->save($course1); //Course A
+        /** @var Group $group */
+        $group = Group::factory()->create();
+
+        $this->travel(1)->days();
+
+        $course3->groups()->save($group); //Course C
+        $course2->groups()->save($group); //Course B
+        $user->groups()->save($group);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated',
+        );
+
+        $this->assertTrue($this->response->json('data.0.course.id') === $course3->getKey());
+        $this->assertTrue($this->response->json('data.1.course.id') === $course1->getKey());
+        $this->assertTrue($this->response->json('data.2.course.id') === $course2->getKey());
+        $this->assertTrue($this->response->json('data.3.course.id') === $course4->getKey());
+
+        $this->response->assertStatus(200);
+        $this->response->assertJsonStructure([
+            'data' => [
+                [
+                    'course',
+                    'progress',
+                    'categories',
+                    'tags',
+                    'finish_date',
+                ]
+            ],
+            'meta' => [
+                'per_page',
+                'total',
+            ]
+        ]);
+
+        $this->response->assertJsonFragment([
+            'per_page' => 20,
+            'total' => 4,
+        ]);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated',
+            [
+                'order' => 'asc',
+            ]
+        );
+
+        $this->assertTrue($this->response->json('data.0.course.id') === $course4->getKey());
+        $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
+        $this->assertTrue($this->response->json('data.2.course.id') === $course1->getKey());
+        $this->assertTrue($this->response->json('data.3.course.id') === $course3->getKey());
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated',
+            [
+                'order_by' => 'title',
+                'order' => 'asc',
+            ],
+        );
+
+        $this->assertTrue($this->response->json('data.0.course.id') === $course1->getKey());
+        $this->assertTrue($this->response->json('data.1.course.id') === $course2->getKey());
+        $this->assertTrue($this->response->json('data.2.course.id') === $course3->getKey());
+        $this->assertTrue($this->response->json('data.3.course.id') === $course4->getKey());
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated',
+            [
+                'order_by' => 'title',
+                'order' => 'desc',
+            ],
+        );
+
+        $this->assertTrue($this->response->json('data.0.course.id') === $course4->getKey());
+        $this->assertTrue($this->response->json('data.1.course.id') === $course3->getKey());
+        $this->assertTrue($this->response->json('data.2.course.id') === $course2->getKey());
+        $this->assertTrue($this->response->json('data.3.course.id') === $course1->getKey());
     }
 
     public function test_show_progress_courses_ordered_by_latest_purchased()

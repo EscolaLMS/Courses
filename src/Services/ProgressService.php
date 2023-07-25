@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Services;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Events\CourseAccessFinished;
@@ -16,7 +17,10 @@ use EscolaLms\Courses\Models\User as CoursesUser;
 use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class ProgressService implements ProgressServiceContract
 {
@@ -24,7 +28,8 @@ class ProgressService implements ProgressServiceContract
 
     public function __construct(
         CourseH5PProgressRepositoryContract $courseH5PProgressContract
-    ) {
+    )
+    {
         $this->courseH5PProgressContract = $courseH5PProgressContract;
     }
 
@@ -44,15 +49,62 @@ class ProgressService implements ProgressServiceContract
             }
             /** @var Group $group */
             foreach ($group->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
-                if (!$progresses->contains(fn (CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
+                if (!$progresses->contains(fn(CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }
             }
         }
 
         return $progresses
-            ->sortByDesc(fn (CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
+            ->sortByDesc(fn(CourseProgressCollection $collection) => $collection->getCourse()->pivot->created_at)
             ->values();
+    }
+
+    public function getByUserPaginated(User $user, ?OrderDto $orderDto = null, ?int $perPage = 20): LengthAwarePaginator
+    {
+        $userId = $user->getKey();
+        $progresses = new Collection();
+
+        $query = Course::query()
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
+                $join->on('courses.id', '=', 'course_user.course_id');
+            })
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function ($join) {
+                $join->on('courses.id', '=', 'course_group.course_id');
+            })
+            ->whereHas('users', function (Builder $query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
+            ->orWhereHas('groups', function (Builder $query) use ($userId) {
+                $query->whereHas('users', function (Builder $query) use ($userId) {
+                    $query->where('users.id', $userId);
+                });
+            });
+
+        $order = $orderDto->getOrder() ?? 'desc';
+
+        if ($orderDto->getOrderBy() && $orderDto->getOrderBy() !== 'obtained') {
+            $query->orderBy($orderDto->getOrderBy(), $order);
+        } else {
+            if (DB::connection()->getDriverName() === 'pgsql') {
+                $order = $order === 'desc' ? $order . ' NULLS LAST' : $order . ' NULLS FIRST';
+            }
+            $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, group_pivot_created_at), COALESCE(group_pivot_created_at, user_pivot_created_at)) $order");
+        }
+
+        $courses = $query->paginate($perPage);
+
+        foreach ($courses as $course) {
+            $progresses->push(CourseProgressCollection::make($user, $course));
+        }
+
+        return new LengthAwarePaginator(
+            $progresses->values(),
+            $courses->total(),
+            $courses->perPage(),
+            $courses->currentPage(),
+            ['path' => $courses->path()]
+        );
     }
 
     public function update(Course $course, User $user, array $progress): CourseProgressCollection

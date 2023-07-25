@@ -42,6 +42,7 @@ Route::group(['prefix' => 'api/courses'], function () {
     Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);
         Route::group(['prefix' => '/progress'], function () {
+            Route::get('/paginated', [CourseProgressAPIController::class, 'indexPaginated']);
             Route::get('/', [CourseProgressAPIController::class, 'index'])->middleware('cacheResponse');
             Route::get('/{course_id}', [CourseProgressAPIController::class, 'show']);
             Route::patch('/{course_id}', [CourseProgressAPIController::class, 'store']);
