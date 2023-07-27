@@ -42,9 +42,17 @@ class CourseProgramApiTest extends TestCase
         $student = $this->makeStudent();
         $course = Course::factory()->state(['status' => CourseStatusEnum::PUBLISHED])->create();
         $course->users()->attach($student);
+
+        $parentLesson = Lesson::factory()->state([
+            'course_id' => $course->getKey(),
+            'active' => true,
+        ])
+            ->create();
+
         $lesson = Lesson::factory()->state([
             'course_id' => $course->getKey(),
             'active' => true,
+            'parent_lesson_id' => $parentLesson->getKey(),
         ])
             ->create();
 
