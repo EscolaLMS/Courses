@@ -160,15 +160,18 @@ class Lesson extends Model
 
     public function isActive(): bool
     {
+        if (!$this->active ||
+            ($this->active_from && $this->active_from >= Carbon::now()) ||
+            ($this->active_to && $this->active_to <= Carbon::now())
+        ) {
+            return false;
+        }
+
         if ($this->parentLesson) {
             return $this->parentLesson->isActive();
         }
 
-        if (($this->active_from && !$this->active_from >= Carbon::now()) || ($this->active_to && !$this->active_to <= Carbon::now())) {
-            return false;
-        }
-
-        return $this->active;
+        return true;
     }
 
     protected static function booted()
