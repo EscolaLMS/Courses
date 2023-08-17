@@ -5,164 +5,6 @@
         "version": "0.0.1"
     },
     "paths": {
-        "/api/courses": {
-            "get": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Get a listing of the Courses.",
-                "description": "Get all Courses",
-                "parameters": [
-                    {
-                        "name": "order_by",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "created_at",
-                                "title",
-                                "duration",
-                                "only_with_categories"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "order",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ASC",
-                                "DESC"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "only_with_categories",
-                        "in": "query",
-                        "description": "Consultation has categories",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Pagination Page Number",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "default": 1
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Pagination Per Page",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "default": 15
-                        }
-                    },
-                    {
-                        "name": "title",
-                        "in": "query",
-                        "description": "Course title %LIKE%",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "category_id",
-                        "in": "query",
-                        "description": "Category ID. When applied all courses with given cat_id and children categories are searched. Prohibited with categories",
-                        "required": false,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "categories[]",
-                        "in": "query",
-                        "description": "An array of categories IDs. When applied all courses with given categories ids and children categories are searched. Prohibited with category_id",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "number"
-                            }
-                        }
-                    },
-                    {
-                        "name": "authors[]",
-                        "in": "query",
-                        "description": "An array of author IDs",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "number"
-                            }
-                        }
-                    },
-                    {
-                        "name": "tag",
-                        "in": "query",
-                        "description": "Tag name exactly",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "tag[]",
-                        "in": "query",
-                        "description": "An array of tags",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    {
-                        "name": "ids[]",
-                        "in": "query",
-                        "description": "An array of IDs",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "number"
-                            }
-                        }
-                    },
-                    {
-                        "name": "free",
-                        "in": "query",
-                        "description": "Will show only free courses",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/courses": {
             "get": {
                 "tags": [
@@ -380,13 +222,14 @@
                 ]
             }
         },
-        "/api/admin/courses/{id}": {
+        "/api/courses/{id}": {
             "get": {
                 "tags": [
-                    "Admin Courses"
+                    "Courses"
                 ],
                 "summary": "Display the specified Course",
                 "description": "Get Course",
+                "operationId": "ac094110c32a7652583ef86ee8037d60",
                 "parameters": [
                     {
                         "name": "id",
@@ -405,19 +248,17 @@
                             "application/json": {}
                         }
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
-            },
-            "put": {
+                }
+            }
+        },
+        "/api/courses/{id}/program": {
+            "get": {
                 "tags": [
-                    "Admin Courses"
+                    "Courses"
                 ],
-                "summary": "Update the specified Course in storage",
-                "description": "Update Course",
+                "summary": "Display the specified Course program/curriculum/syllabus. No token required when course is free",
+                "description": "Get Course",
+                "operationId": "266724e5be1f5afa88c63b86c20c28cb",
                 "parameters": [
                     {
                         "name": "id",
@@ -429,16 +270,6 @@
                         }
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Course"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -452,7 +283,43 @@
                         "passport": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/courses/{id}/scorm": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "summary": "Display the specified Course scorm View to be embeede with iframe",
+                "description": "Get Course",
+                "operationId": "2e8515a1c635b3d7589e5344f49d4891",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Course",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "text/html": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/courses/{id}": {
             "post": {
                 "tags": [
                     "Admin Courses"
@@ -518,136 +385,6 @@
                         "description": "successful operation",
                         "content": {
                             "application/json": {}
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
-            }
-        },
-        "/api/courses/{id}": {
-            "get": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Display the specified Course",
-                "description": "Get Course",
-                "operationId": "ac094110c32a7652583ef86ee8037d60",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id of Course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/courses/{id}/program": {
-            "get": {
-                "tags": [
-                    "Admin Courses"
-                ],
-                "summary": "Display the specified Course program/curriculum/syllabus",
-                "description": "Get Course",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id of Course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
-            }
-        },
-        "/api/courses/{id}/program": {
-            "get": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Display the specified Course program/curriculum/syllabus. No token required when course is free",
-                "description": "Get Course",
-                "operationId": "266724e5be1f5afa88c63b86c20c28cb",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id of Course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
-            }
-        },
-        "/api/courses/{id}/scorm": {
-            "get": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Display the specified Course scorm View to be embeede with iframe",
-                "description": "Get Course",
-                "operationId": "2e8515a1c635b3d7589e5344f49d4891",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id of Course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "text/html": {}
                         }
                     }
                 },
@@ -842,6 +579,56 @@
                 ],
                 "description": "Get Progresses",
                 "operationId": "f38c13e50f028895b45b14c94d288b74",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/courses/progress/paginated": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "description": "Get Paginated Progresses",
+                "operationId": "9c0a1e7e6f885e4ba95b00f384942333",
+                "parameters": [
+                    {
+                        "name": "order_by",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "title",
+                                "obtained"
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -1219,6 +1006,7 @@
                 ],
                 "summary": "Clone Lesson",
                 "description": "Clone Lesson with topics",
+                "operationId": "1a8aaae144f28e3921f305173373c7d5",
                 "parameters": [
                     {
                         "name": "id",
@@ -1437,6 +1225,7 @@
                 ],
                 "summary": "Clone topic",
                 "description": "Clone Topic.",
+                "operationId": "51a5c7c20061276394d197b748d12e48",
                 "parameters": [
                     {
                         "name": "id",
@@ -1470,6 +1259,7 @@
                 ],
                 "summary": "Get list of resources",
                 "description": "Get list of resources",
+                "operationId": "ac6c615ffe085614d6f57247693af029",
                 "parameters": [
                     {
                         "name": "topic_id",
@@ -1729,11 +1519,13 @@
                     },
                     "active_from": {
                         "description": "active_from",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "active_to": {
                         "description": "active_to",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "hours_to_complete": {
                         "description": "hours_to_complete",
@@ -1931,32 +1723,6 @@
                 "xml": {
                     "name": "Group"
                 }
-            },
-            "pre-user": {
-                "required": [
-                    "email",
-                    "first_name",
-                    "last_name"
-                ],
-                "properties": {
-                    "id": {
-                        "description": "id",
-                        "type": "integer"
-                    },
-                    "email": {
-                        "description": "email",
-                        "type": "string"
-                    },
-                    "first_name": {
-                        "description": "first_name",
-                        "type": "string"
-                    },
-                    "last_name": {
-                        "description": "last_name",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
             },
             "User": {
                 "title": "User",
