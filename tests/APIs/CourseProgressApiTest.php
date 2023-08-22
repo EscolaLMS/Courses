@@ -197,6 +197,54 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($this->response->json('data.3.course.id') === $course1->getKey());
     }
 
+    public function test_show_progress_courses_paginated_filtered()
+    {
+        $user = User::factory()->create();
+
+        $course1 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'A Course',
+        ]);
+
+        $lesson1 = Lesson::factory()->create(['course_id' => $course1->getKey()]);
+        $topic1 = Topic::factory()->create(['lesson_id' => $lesson1->getKey(), 'active' => true]);
+
+        $course2 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'B Course',
+        ]);
+        $lesson2 = Lesson::factory()->create(['course_id' => $course2->getKey()]);
+        $topic2 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic1->getKey(),
+            'finished_at' => null,
+            'seconds' => 0,
+        ]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic2->getKey(),
+            'finished_at' => now(),
+            'started_at' => now(),
+            'seconds' => 100,
+        ]);
+
+
+        $user->courses()->save($course1); //Course A
+        $user->courses()->save($course2); //Course B
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated', [
+                'status' => 'planned',
+            ]
+        );
+
+        dd($this->response->json());
+    }
+
     public function test_show_progress_courses_ordered_by_latest_purchased()
     {
         $user = User::factory()->create();

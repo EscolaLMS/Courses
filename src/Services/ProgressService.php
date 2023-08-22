@@ -10,6 +10,7 @@ use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
 use EscolaLms\Courses\Events\CourseStarted;
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\H5PUserProgress;
 use EscolaLms\Courses\Models\Topic;
@@ -18,6 +19,7 @@ use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -66,10 +68,11 @@ class ProgressService implements ProgressServiceContract
         $progresses = new Collection();
 
         $query = Course::query()
-            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
+            ->select('courses.*')
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function (JoinClause $join) {
                 $join->on('courses.id', '=', 'course_user.course_id');
             })
-            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function ($join) {
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function (JoinClause $join) {
                 $join->on('courses.id', '=', 'course_group.course_id');
             })
             ->whereHas('users', function (Builder $query) use ($userId) {
@@ -79,7 +82,16 @@ class ProgressService implements ProgressServiceContract
                 $query->whereHas('users', function (Builder $query) use ($userId) {
                     $query->where('users.id', $userId);
                 });
-            });
+            })
+            ->groupBy('courses.id', 'course_user.user_pivot_created_at', 'course_group.group_pivot_created_at');
+
+        if (request()->has('status')) {
+            $query = match (request()->get('status')) {
+                'planned' => $this->applyPlannedFilter($query, $user->getKey())
+            };
+        }
+
+        dd($query->get()->toArray());
 
         $order = $orderDto->getOrder() ?? 'desc';
 
@@ -166,5 +178,24 @@ class ProgressService implements ProgressServiceContract
             return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
         }
         return null;
+    }
+
+    private function applyPlannedFilter($query, $userId)
+    {
+        $totalSpentTimeSubquery = CourseProgress::query()
+            ->select('topics.id as topic_id')
+            ->addSelect(DB::raw('SUM(seconds) as total_spent_time'))
+            ->join('topics', 'course_progress.topic_id', '=', 'topics.id')
+            ->where('user_id', $userId)
+            ->groupBy('topics.id');
+
+        return $query
+            ->leftJoin('lessons', 'courses.id', '=', 'lessons.course_id')
+            ->leftJoin('topics', 'lessons.id', '=', 'topics.lesson_id')
+            ->leftJoinSub($totalSpentTimeSubquery, 'total_spent_time', function (JoinClause $join) {
+                $join->on('topics.id', '=', 'total_spent_time.topic_id');
+            })
+            ->havingRaw('total_spent_time.total_spent_time = 0')
+            ->groupBy('courses.id', 'total_spent_time.total_spent_time');
     }
 }
