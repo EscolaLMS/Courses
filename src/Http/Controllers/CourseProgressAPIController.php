@@ -52,6 +52,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
                     $request->user(),
                     OrderDto::instantiateFromRequest($request),
                     $request->get('per_page', 20),
+                    $request->get('status', null),
                 )),
             __('Progresses')
         );
