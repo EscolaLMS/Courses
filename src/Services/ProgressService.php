@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Services;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
+use EscolaLms\Courses\Enum\ProgressFilterEnum;
 use EscolaLms\Courses\Events\CourseAccessFinished;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
@@ -18,6 +19,7 @@ use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -60,37 +62,14 @@ class ProgressService implements ProgressServiceContract
             ->values();
     }
 
-    public function getByUserPaginated(User $user, ?OrderDto $orderDto = null, ?int $perPage = 20): LengthAwarePaginator
+    public function getByUserPaginated(User $user, ?OrderDto $orderDto = null, ?int $perPage = 20, ?string $filter = null): LengthAwarePaginator
     {
         $userId = $user->getKey();
         $progresses = new Collection();
 
-        $query = Course::query()
-            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
-                $join->on('courses.id', '=', 'course_user.course_id');
-            })
-            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function ($join) {
-                $join->on('courses.id', '=', 'course_group.course_id');
-            })
-            ->whereHas('users', function (Builder $query) use ($userId) {
-                $query->where('users.id', $userId);
-            })
-            ->orWhereHas('groups', function (Builder $query) use ($userId) {
-                $query->whereHas('users', function (Builder $query) use ($userId) {
-                    $query->where('users.id', $userId);
-                });
-            });
-
-        $order = $orderDto->getOrder() ?? 'desc';
-
-        if ($orderDto->getOrderBy() && $orderDto->getOrderBy() !== 'obtained') {
-            $query->orderBy($orderDto->getOrderBy(), $order);
-        } else {
-            if (DB::connection()->getDriverName() === 'pgsql') {
-                $order = $order === 'desc' ? $order . ' NULLS LAST' : $order . ' NULLS FIRST';
-            }
-            $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, group_pivot_created_at), COALESCE(group_pivot_created_at, user_pivot_created_at)) $order");
-        }
+        $query = $this->getBaseQuery($userId);
+        $query = $this->applyFilters($query, $filter);
+        $query = $this->orderQuery($query, $orderDto);
 
         $courses = $query->paginate($perPage);
 
@@ -166,5 +145,99 @@ class ProgressService implements ProgressServiceContract
             return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
         }
         return null;
+    }
+
+    private function getBaseQuery(int $userId): Builder
+    {
+        return Course::query()
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
+                $join->on('courses.id', '=', 'course_user.course_id');
+            })
+            ->leftJoinSub('SELECT course_id, MAX(created_at) as group_pivot_created_at FROM course_group GROUP BY course_id', 'course_group', function ($join) {
+                $join->on('courses.id', '=', 'course_group.course_id');
+            })
+            ->where(function (Builder $query) use ($userId) {
+                $query
+                    ->whereHas('users', function (Builder $query) use ($userId) {
+                        $query->where('users.id', $userId);
+                    })
+                    ->orWhereHas('groups', function (Builder $query) use ($userId) {
+                        $query->whereHas('users', function (Builder $query) use ($userId) {
+                            $query->where('users.id', $userId);
+                        });
+                    });
+            });
+    }
+
+    private function orderQuery(Builder $query, ?OrderDto $orderDto = null): Builder
+    {
+        $order = $orderDto->getOrder() ?? 'desc';
+
+        if ($orderDto->getOrderBy() && $orderDto->getOrderBy() !== 'obtained') {
+            return $query->orderBy($orderDto->getOrderBy(), $order);
+        } else {
+            if (DB::connection()->getDriverName() === 'pgsql') {
+                $order = $order === 'desc' ? $order . ' NULLS LAST' : $order . ' NULLS FIRST';
+            }
+            return $query->orderByRaw("LEAST(COALESCE(user_pivot_created_at, group_pivot_created_at), COALESCE(group_pivot_created_at, user_pivot_created_at)) $order");
+        }
+    }
+
+    private function applyFilters($query, ?string $filter = null): Builder
+    {
+        return match ($filter) {
+            ProgressFilterEnum::STARTED => $this->filterForStartedCourses($query),
+            ProgressFilterEnum::FINISHED => $this->filterForFinishedCourses($query),
+            ProgressFilterEnum::PLANNED => $this->filterForPlannedCourses($query),
+            default => $query,
+        };
+    }
+
+    private function filterForPlannedCourses(Builder $query): Builder
+    {
+        return $query
+            ->where(function (Builder $query) {
+                $query
+                    ->whereDoesntHave('topics.progress')
+                    ->orWhereExists(function (QueryBuilder $query) {
+                        $query->select(DB::raw(1))
+                            ->from('topics')
+                            ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                            ->whereRaw('courses.id = lessons.course_id')
+                            ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                            ->whereNull('course_progress.finished_at')
+                            ->groupBy('topics.id')
+                            ->havingRaw('SUM(course_progress.seconds) = 0');
+                    });
+            });
+    }
+
+    private function filterForStartedCourses(Builder $query): Builder
+    {
+        return $query
+            ->whereExists(function (QueryBuilder $query) {
+                $query->select(DB::raw(1))
+                    ->from('lessons')
+                    ->join('topics', 'topics.lesson_id', '=', 'lessons.id')
+                    ->leftJoin('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                    ->whereColumn('lessons.course_id', 'courses.id')
+                    ->groupBy('lessons.id')
+                    ->havingRaw('(SUM(course_progress.seconds) > 0) AND (COUNT(*) > COUNT(course_progress.finished_at))');
+            });
+    }
+
+    private function filterForFinishedCourses(Builder $query): Builder
+    {
+        return $query
+            ->whereExists(function (QueryBuilder $query) {
+                $query->select(DB::raw(1))
+                    ->from('topics')
+                    ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                    ->whereRaw('courses.id = lessons.course_id')
+                    ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                    ->whereNotNull('course_progress.finished_at')
+                    ->groupBy('topics.id')
+                    ->havingRaw('COUNT(course_progress.topic_id) = COUNT(topics.id)');
+            });
     }
 }
