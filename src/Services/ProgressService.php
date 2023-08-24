@@ -19,6 +19,7 @@ use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -185,7 +186,7 @@ class ProgressService implements ProgressServiceContract
     private function applyFilters($query, ?string $filter = null): Builder
     {
         return match ($filter) {
-            ProgressFilterEnum::STARTED,
+            ProgressFilterEnum::STARTED => $this->filterForStartedCourses($query),
             ProgressFilterEnum::FINISHED => $this->filterForFinishedCourses($query),
             ProgressFilterEnum::PLANNED => $this->filterForPlannedCourses($query),
             default => $query,
@@ -198,7 +199,7 @@ class ProgressService implements ProgressServiceContract
             ->where(function (Builder $query) {
                 $query
                     ->whereDoesntHave('topics.progress')
-                    ->orWhereExists(function (Builder $query) {
+                    ->orWhereExists(function (QueryBuilder $query) {
                         $query->select(DB::raw(1))
                             ->from('topics')
                             ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
@@ -213,25 +214,30 @@ class ProgressService implements ProgressServiceContract
 
     private function filterForStartedCourses(Builder $query): Builder
     {
-        return $query;
+        return $query
+            ->whereExists(function (QueryBuilder $query) {
+                $query->select(DB::raw(1))
+                    ->from('lessons')
+                    ->join('topics', 'topics.lesson_id', '=', 'lessons.id')
+                    ->leftJoin('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                    ->whereColumn('lessons.course_id', 'courses.id')
+                    ->groupBy('lessons.id')
+                    ->havingRaw('(SUM(course_progress.seconds) > 0) AND (COUNT(*) > COUNT(course_progress.finished_at))');
+            });
     }
 
     private function filterForFinishedCourses(Builder $query): Builder
     {
         return $query
-            ->where(function (Builder $query) {
-                $query
-                    ->whereDoesntHave('topics.progress')
-                    ->orWhereExists(function (Builder $query) {
-                        $query->select(DB::raw(1))
-                            ->from('topics')
-                            ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
-                            ->whereRaw('courses.id = lessons.course_id')
-                            ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
-                            ->whereNotNull('course_progress.finished_at')
-                            ->groupBy('topics.id')
-                            ->havingRaw('COUNT(course_progress.topic_id) = COUNT(topics.id)');
-                    });
+            ->whereExists(function (QueryBuilder $query) {
+                $query->select(DB::raw(1))
+                    ->from('topics')
+                    ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                    ->whereRaw('courses.id = lessons.course_id')
+                    ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                    ->whereNotNull('course_progress.finished_at')
+                    ->groupBy('topics.id')
+                    ->havingRaw('COUNT(course_progress.topic_id) = COUNT(topics.id)');
             });
     }
 }

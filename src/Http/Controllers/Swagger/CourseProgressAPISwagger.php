@@ -60,6 +60,15 @@ interface CourseProgressAPISwagger
      *              enum={"title", "obtained"}
      *          ),
      *      ),
+     *     @OA\Parameter(
+     *           name="status",
+     *           required=false,
+     *           in="path",
+     *           @OA\Schema(
+     *               type="string",
+     *               enum={"planned", "started", "finished"}
+     *           ),
+     *       ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",

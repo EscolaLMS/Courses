@@ -311,6 +311,72 @@ class CourseProgressApiTest extends TestCase
             ]);
     }
 
+    public function test_show_progress_courses_paginated_filtered_started()
+    {
+        $user = User::factory()->create();
+
+        $course1 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'A Course',
+        ]);
+        $lesson1 = Lesson::factory()->create(['course_id' => $course1->getKey()]);
+        $topic1 = Topic::factory()->create(['lesson_id' => $lesson1->getKey(), 'active' => true]);
+        $topic2 = Topic::factory()->create(['lesson_id' => $lesson1->getKey(), 'active' => true]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic1->getKey(),
+            'finished_at' => now(),
+            'seconds' => 60,
+        ]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic2->getKey(),
+            'finished_at' => null,
+            'seconds' => 0,
+        ]);
+
+        $course2 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'B Course',
+        ]);
+        $lesson2 = Lesson::factory()->create(['course_id' => $course2->getKey()]);
+        $topic3 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+        $topic4 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic3->getKey(),
+            'finished_at' => now(),
+            'seconds' => 50,
+        ]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic4->getKey(),
+            'finished_at' => now(),
+            'seconds' => 50,
+        ]);
+
+
+        $user->courses()->save($course1); //Course A
+        $user->courses()->save($course2); //Course B
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'GET',
+            '/api/courses/progress/paginated', [
+                'status' => 'started',
+            ]
+        );
+
+        $this->response
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'title' => $course1->title,
+            ]);
+    }
+
     public function test_show_progress_courses_ordered_by_latest_purchased()
     {
         $user = User::factory()->create();
