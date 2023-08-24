@@ -627,6 +627,19 @@
                                 "obtained"
                             ]
                         }
+                    },
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "planned",
+                                "started",
+                                "finished"
+                            ]
+                        }
                     }
                 ],
                 "responses": {
