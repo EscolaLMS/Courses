@@ -20,6 +20,7 @@ use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -219,12 +220,18 @@ class ProgressService implements ProgressServiceContract
             ->whereExists(function (QueryBuilder $query) use ($userId) {
                 $query->select(DB::raw(1))
                     ->from('topics')
-                    ->leftJoin('lessons', 'lessons.id', '=', 'topics.lesson_id')
-                    ->leftJoin('course_progress', 'topics.id', '=', 'course_progress.topic_id')
+                    ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                    ->leftJoin('course_progress', function (JoinClause $join) use ($userId) {
+                        $join->on('topics.id', '=', 'course_progress.topic_id')
+                            ->where('course_progress.user_id', $userId);
+                    })
                     ->whereColumn('lessons.course_id', 'courses.id')
-                    ->where('course_progress.user_id', $userId)
-                    ->groupBy('topics.id')
-                    ->havingRaw('(SUM(course_progress.seconds) > 0) AND (COUNT(*) > COUNT(course_progress.finished_at))');
+                    ->where(function (QueryBuilder $query) {
+                        $query->whereNull('course_progress.finished_at')
+                            ->orWhere('course_progress.seconds', '>', 0);
+                    })
+                    ->groupBy('lessons.id')
+                    ->havingRaw('COUNT(*) > COUNT(course_progress.finished_at) AND SUM(course_progress.seconds) > 0');
             });
     }
 
