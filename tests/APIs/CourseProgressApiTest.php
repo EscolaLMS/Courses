@@ -10,7 +10,9 @@ use EscolaLms\Courses\Events\CourseAccessFinished;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
 use EscolaLms\Courses\Events\CourseStarted;
+use EscolaLms\Courses\Events\LessonFinished;
 use EscolaLms\Courses\Events\TopicFinished;
+use EscolaLms\Courses\Jobs\CheckFinishedLessons;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\CourseUserPivot;
@@ -26,6 +28,7 @@ use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -429,6 +432,7 @@ class CourseProgressApiTest extends TestCase
         Notification::fake();
         Queue::fake();
         Event::fake([TopicFinished::class, CourseAccessFinished::class, CourseFinished::class]);
+        Bus::fake([CheckFinishedLessons::class]);
 
         $courses = Course::factory(5)->create(['status' => CourseStatusEnum::PUBLISHED]);
         foreach ($courses as $course) {
@@ -465,6 +469,7 @@ class CourseProgressApiTest extends TestCase
         Event::assertDispatched(TopicFinished::class);
         Event::assertDispatched(CourseAccessFinished::class);
         Event::assertDispatched(CourseFinished::class);
+        Bus::assertDispatched(CheckFinishedLessons::class);
     }
 
     public function test_update_course_progress_new_attempt(): void
