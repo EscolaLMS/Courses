@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\TopicFinished;
+use EscolaLms\Courses\Jobs\CheckFinishedLessons;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\CourseUserAttendance;
 use EscolaLms\Courses\Models\Topic;
@@ -52,6 +53,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         if ($status === ProgressStatus::COMPLETE) {
             $update['finished_at'] = Carbon::now();
             event(new TopicFinished($user, $topic));
+            CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
         }
 
         $courseProgress = $topic->progress()->updateOrCreate([
