@@ -426,6 +426,29 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
+    public function test_show_progress_course_from_parent_group(): void
+    {
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
+        $parentGroup = Group::factory()->create();
+        $parentGroup->courses()->attach($course->getKey());
+        $group = Group::factory()->create(['parent_id' => $parentGroup->getKey()]);
+        $user = User::factory()->create();
+        $group->users()->attach($user);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/courses/progress')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonStructure([
+                'data' => [[
+                    'course',
+                    'progress',
+                ]]
+            ]);
+    }
+
     public function test_update_course_progress(): void
     {
         Mail::fake();
