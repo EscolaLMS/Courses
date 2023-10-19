@@ -46,7 +46,9 @@ class ProgressService implements ProgressServiceContract
         foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
-        foreach ($user->groups as $group) {
+
+        $groups = $user->groups->merge($this->getParentGroups($user->groups));
+        foreach ($groups as $group) {
             if (!$group instanceof Group) {
                 $group = Group::find($group->getKey());
             }
@@ -249,5 +251,15 @@ class ProgressService implements ProgressServiceContract
                     ->groupBy('topics.id')
                     ->havingRaw('COUNT(course_progress.topic_id) = COUNT(topics.id)');
             });
+    }
+
+    private function getParentGroups(Collection $groups): Collection
+    {
+        $childGroups = Group::query()->whereIn('id', $groups->pluck('parent_id')->unique())->get();
+        if ($childGroups->count() > 0) {
+            $childGroups = $childGroups->merge($this->getParentGroups($childGroups));
+        }
+
+        return $childGroups;
     }
 }
