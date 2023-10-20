@@ -703,6 +703,39 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($this->response->getData()->data->status);
     }
 
+    public function test_ping_should_not_dispatch_topic_finished_event_again(): void
+    {
+        Event::fake([TopicFinished::class]);
+        /** @var User $user */
+        $user = User::factory()->create();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create([
+            'active' => true,
+            'lesson_id' => $lesson->getKey(),
+        ]);
+
+        $user->courses()->sync([$course->getKey()]);
+        CourseProgress::create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+            'status' => 0
+        ]);
+
+        $this->response = $this->actingAs($user, 'api')->json(
+            'PUT',
+            '/api/courses/progress/' . $topic->getKey() . '/ping'
+        )
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    'status',
+                ]
+            ]);
+
+        Event::assertNotDispatched(TopicFinished::class);
+    }
+
     public function test_ping_complete_topic()
     {
         /** @var User $user */

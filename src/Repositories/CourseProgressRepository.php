@@ -50,7 +50,8 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             $update['seconds'] = $seconds;
         }
 
-        if ($status === ProgressStatus::COMPLETE) {
+        $progress = $this->findProgress($topic, $user);
+        if ($status === ProgressStatus::COMPLETE && $progress && $progress->status !== ProgressStatus::COMPLETE) {
             $update['finished_at'] = Carbon::now();
             event(new TopicFinished($user, $topic));
             CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
