@@ -10,7 +10,6 @@ use EscolaLms\Courses\Events\CourseAccessFinished;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
 use EscolaLms\Courses\Events\CourseStarted;
-use EscolaLms\Courses\Events\LessonFinished;
 use EscolaLms\Courses\Events\TopicFinished;
 use EscolaLms\Courses\Jobs\CheckFinishedLessons;
 use EscolaLms\Courses\Models\Course;
@@ -19,6 +18,7 @@ use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\UserTopicTime;
 use EscolaLms\Courses\Tests\MakeServices;
 use EscolaLms\Courses\Tests\Models\User;
 use EscolaLms\Courses\Tests\ProgressConfigurable;
@@ -716,21 +716,23 @@ class CourseProgressApiTest extends TestCase
         ]);
 
         $user->courses()->sync([$course->getKey()]);
+        UserTopicTime::create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+        ]);
         CourseProgress::create([
             'user_id' => $user->getKey(),
             'topic_id' => $topic->getKey(),
-            'status' => 0
+            'status' => ProgressStatus::COMPLETE,
         ]);
 
-        $this->response = $this->actingAs($user, 'api')->json(
-            'PUT',
-            '/api/courses/progress/' . $topic->getKey() . '/ping'
-        )
+        $this->response = $this->actingAs($user, 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
             ->assertOk()
             ->assertJsonStructure([
                 'data' => [
                     'status',
-                ]
+                ],
             ]);
 
         Event::assertNotDispatched(TopicFinished::class);
