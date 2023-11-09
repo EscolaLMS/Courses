@@ -42,9 +42,11 @@ class ProgressService implements ProgressServiceContract
         if (!$user instanceof CoursesUser) {
             $user = CoursesUser::find($user->getKey());
         }
+
+        $courses = $user->courses()->where('status', '=', CourseStatusEnum::PUBLISHED)->get();
         /** @var CoursesUser $user */
-        foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
-            $progresses->push(CourseProgressCollection::make($user, $course->refresh()));
+        foreach ($courses as $course) {
+            $progresses->push(CourseProgressCollection::make($user, $course));
         }
 
         $groups = $user->groups->merge($this->getParentGroups($user->groups));
@@ -52,8 +54,9 @@ class ProgressService implements ProgressServiceContract
             if (!$group instanceof Group) {
                 $group = Group::find($group->getKey());
             }
-            /** @var Group $group */
-            foreach ($group->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
+
+            $courses = $group->courses()->where('status', '=', CourseStatusEnum::PUBLISHED)->get();
+            foreach ($courses as $course) {
                 if (!$progresses->contains(fn(CourseProgressCollection $collection) => $collection->getCourse()->getKey() === $course->getKey())) {
                     $progresses->push(CourseProgressCollection::make($user, $course));
                 }
