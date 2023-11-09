@@ -44,7 +44,7 @@ class ProgressService implements ProgressServiceContract
         }
         /** @var CoursesUser $user */
         foreach ($user->courses->where('status', '=', CourseStatusEnum::PUBLISHED) as $course) {
-            $progresses->push(CourseProgressCollection::make($user, $course));
+            $progresses->push(CourseProgressCollection::make($user, $course->refresh()));
         }
 
         $groups = $user->groups->merge($this->getParentGroups($user->groups));
