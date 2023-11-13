@@ -325,6 +325,26 @@ interface CourseAPISwagger
      *               default=15,
      *          ),
      *      ),
+     *     @OA\Parameter(
+     *           name="order_by",
+     *           description="Order by column",
+     *           required=false,
+     *           in="query",
+     *           @OA\Schema(
+     *               type="string",
+     *                enum={"created_at","title","id", "status"}
+     *           ),
+     *       ),
+     *     @OA\Parameter(
+     *           name="order",
+     *           description="Order direction",
+     *           required=false,
+     *           in="query",
+     *           @OA\Schema(
+     *               type="string",
+     *                enum={"ASC","DESC"}
+     *           ),
+     *       ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",

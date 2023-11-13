@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Repositories\Contracts;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Models\User;
@@ -26,5 +27,5 @@ interface CourseRepositoryContract extends BaseRepositoryContract
     public function addAuthor(Course $course, User $author): void;
     public function removeAuthor(Course $course, User $author): void;
 
-    public function getAuthoredCourses(int $id): Builder;
+    public function getAuthoredCourses(int $id, OrderDto $orderDto): Builder;
 }

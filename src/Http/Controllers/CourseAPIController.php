@@ -72,7 +72,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         return $this->sendResponseForResource(CourseListResource::collection(
             $this->courseRepository->getAuthoredCourses(
-                $user->getKey())->paginate($request->get('per_page', 20))
+                $user->getKey(), OrderDto::instantiateFromRequest($request))->paginate($request->get('per_page', 20))
         ), __('Courses retrieved successfully'));
     }
 

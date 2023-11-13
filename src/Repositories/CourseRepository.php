@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Repositories;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Events\CoursedPublished;
 use EscolaLms\Courses\Events\CourseTutorAssigned;
@@ -337,13 +338,14 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         return $this->tutors()->where('id', $id)->first();
     }
 
-    public function getAuthoredCourses(int $id): Builder
+    public function getAuthoredCourses(int $id, OrderDto $orderDto): Builder
     {
         return $this->model
             ->newQuery()
             ->whereHas('authors', function ($query) use ($id) {
                 $query->where('author_id', $id);
-            });
+            })
+            ->orderBy($orderDto->getOrderBy() ?? 'created_at', $orderDto->getOrder() ?? 'desc');
     }
 
 }
