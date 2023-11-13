@@ -21,6 +21,7 @@ class ListCourseAPIRequest extends FormRequest
             'category_id' => ['integer'],
             'group_id' => ['integer'],
             'no_expired' => ['boolean'],
+            'order_by' => ['string', 'in:id,title,created_at,status'],
         ];
     }
 }
