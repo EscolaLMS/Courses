@@ -81,10 +81,12 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->totalSpentTime = $courseProgresses->sum('seconds');
         $this->startDate = $courseProgresses->min('started_at');
         $this->finishDate = $courseProgresses->max('finished_at');
+        $this->deadline = null;
 
-        if (is_null($this->deadline) && !is_null($this->course->hours_to_complete) && !is_null($this->startDate)) {
+        if (!is_null($this->course->hours_to_complete) && !is_null($this->startDate)) {
             $this->deadline = $this->startDate->addHours($this->course->hours_to_complete);
         }
+
         if (!is_null($this->course->active_to) && (is_null($this->deadline) || $this->course->active_to->lessThan($this->deadline))) {
             $this->deadline = $this->course->active_to;
         }

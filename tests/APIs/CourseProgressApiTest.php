@@ -945,6 +945,43 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($now->lessThanOrEqualTo($deadline->subHours($hours)->addSecond()));
     }
 
+    public function test_deadline_after_updated_course_active_to(): void
+    {
+        $activeFrom = Carbon::now();
+        $activeTo = Carbon::now()->addDay();
+
+        $user = User::factory()->create();
+        $course = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'active_from' => $activeFrom,
+            'active_to' => $activeTo,
+        ]);
+
+        $course->users()->attach($user);
+
+        $this->response = $this->actingAs($user, 'api')
+            ->getJson('/api/courses/progress/')
+            ->assertStatus(200);
+
+        $deadline = CarbonImmutable::parse($this->response->json('data.0.deadline'));
+        $this->assertEquals($activeTo->format('Y-m-d H:i'), $deadline->format('Y-m-d H:i'));
+
+        $activeTo = Carbon::now()->addDays(3);
+
+        $this->response = $this->actingAs($this->makeAdmin(), 'api')
+            ->postJson('/api/admin/courses/' . $course->getKey(), [
+                'active_to' => $activeTo,
+            ])
+            ->assertStatus(200);
+
+        $this->response = $this->actingAs($user, 'api')
+            ->getJson('/api/courses/progress/')
+            ->assertStatus(200);
+
+        $deadline = CarbonImmutable::parse($this->response->json('data.0.deadline'));
+        $this->assertEquals($activeTo->format('Y-m-d H:i'), $deadline->format('Y-m-d H:i'));
+    }
+
     public function test_ping_on_nonexistent_topic(): void
     {
         $course = Course::factory()->create();
