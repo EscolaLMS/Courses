@@ -107,7 +107,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         $course = $this->courseRepository->findWith(
             $id,
             ['*'],
-            ['lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources']
+            ['lessons', 'lessons.topics', 'lessons.topics.topicable', 'lessons.topics.topicable.topic', 'lessons.topics.resources', 'categories', 'tags', 'authors']
         );
 
         if (!$course->is_active && !$request->user()->can('update', $course)) {

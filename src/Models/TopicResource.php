@@ -2,7 +2,7 @@
 
 namespace EscolaLms\Courses\Models;
 
-use EscolaLms\Courses\Models\Traits\ClearsResponseCache;
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class TopicResource extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     public $table = 'topic_resources';
 

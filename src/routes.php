@@ -1,6 +1,5 @@
 <?php
 
-use EscolaLms\Courses\Http\Controllers\CourseAccessAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseAuthorsAPIController;
 use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;

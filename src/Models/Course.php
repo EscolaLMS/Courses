@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Categories\Models\Category;
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Core\Models\User as CoreUser;
 use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
@@ -165,7 +166,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     public $table = 'courses';
 
