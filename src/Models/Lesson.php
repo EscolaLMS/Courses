@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Models;
 
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Courses\Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,7 +73,7 @@ use Illuminate\Support\Carbon;
  */
 class Lesson extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     public $table = 'lessons';
 

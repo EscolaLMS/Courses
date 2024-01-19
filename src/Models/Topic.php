@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Models;
 
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Courses\Database\Factories\TopicFactory;
 use EscolaLms\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -98,7 +99,7 @@ use Illuminate\Validation\Rule;
  */
 class Topic extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     public $table = 'topics';
 
