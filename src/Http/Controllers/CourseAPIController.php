@@ -10,6 +10,7 @@ use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use EscolaLms\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\SortAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
@@ -66,7 +67,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $this->sendResponseForResource(CourseListResource::collection($courses), __('Courses retrieved successfully'));
     }
 
-    public function authoredCourses(ListCourseAPIRequest $request): JsonResponse
+    public function authoredCourses(ListAuthoredCourseAPIRequest $request): JsonResponse
     {
         $user = $request->user();
 

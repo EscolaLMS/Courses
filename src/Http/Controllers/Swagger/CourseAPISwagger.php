@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Http\Controllers\Swagger;
 
 
 use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
+use EscolaLms\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
@@ -371,7 +372,7 @@ interface CourseAPISwagger
      * )
      */
 
-    public function authoredCourses(ListCourseAPIRequest $request);
+    public function authoredCourses(ListAuthoredCourseAPIRequest $request);
 
     /**
      * @OA\Post(
