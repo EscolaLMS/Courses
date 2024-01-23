@@ -16,6 +16,13 @@ class TopicObserver
 
     public function saved(Topic $topic)
     {
+        Topic::flushQueryCache();
+        ResponseCache::clear();
+    }
+
+    public function deleted(Topic $topic)
+    {
+        Topic::flushQueryCache();
         ResponseCache::clear();
     }
 }
