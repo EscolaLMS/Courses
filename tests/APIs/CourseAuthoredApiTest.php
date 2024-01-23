@@ -113,4 +113,17 @@ class CourseAuthoredApiTest extends TestCase
         $this->assertEquals($course2->getKey(), $response->json('data.0.id'));
         $this->assertEquals($course1->getKey(), $response->json('data.1.id'));
     }
+
+    public function test_get_authored_courses_unauthorized(): void
+    {
+        $this->getJson('/api/courses/authored',)
+            ->assertUnauthorized();
+    }
+
+    public function test_get_authored_courses_forbidden(): void
+    {
+        $this->actingAs($this->makeStudent(), 'api')
+            ->getJson('/api/courses/authored',)
+            ->assertForbidden();
+    }
 }

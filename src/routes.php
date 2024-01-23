@@ -53,8 +53,11 @@ Route::group(['prefix' => 'api/courses'], function () {
 
 // public routes
 Route::group(['prefix' => 'api'], function () {
+    Route::group(['middleware' => ['auth:api', 'cacheResponse']], function () {
+        Route::get('/courses/authored', [CourseAPIController::class, 'authoredCourses']);
+    });
+
     Route::get('/courses', [CourseAPIController::class, 'index'])->middleware('cacheResponse');
-    Route::get('/courses/authored', [CourseAPIController::class, 'authoredCourses'])->middleware('cacheResponse');
     Route::get('/courses/{course}', [CourseAPIController::class, 'show'])->middleware('cacheResponse');
     Route::get('/tutors', [CourseAuthorsAPIController::class, 'index']);
     Route::get('/tutors/{id}', [CourseAuthorsAPIController::class, 'show']);
