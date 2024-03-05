@@ -8,10 +8,10 @@ on:
   pull_request:
 
 jobs:
-  php8-mysql:
+  php81-mysql:
     runs-on: ubuntu-latest
     container:
-      image: escolalms/php:8-work
+      image: escolalms/php:8.1-work
 
     services:
       mysql:
@@ -41,7 +41,7 @@ jobs:
       - name: Require composer infection package
         run: |
           composer config --no-plugins allow-plugins.infection/extension-installer true
-          composer require infection/infection:^0
+          composer require infection/infection:^0 -W
 
       - name: Clear config
         run: vendor/bin/testbench config:clear
