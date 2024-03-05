@@ -229,7 +229,8 @@ class CourseProgressApiTest extends TestCase
             'user_id' => $user->getKey(),
             'topic_id' => $topic1->getKey(),
             'finished_at' => null,
-            'seconds' => 0,
+            'seconds' => null,
+            'status' => ProgressStatus::INCOMPLETE
         ]);
 
         CourseProgress::factory()->create([
@@ -238,6 +239,7 @@ class CourseProgressApiTest extends TestCase
             'finished_at' => null,
             'started_at' => now(),
             'seconds' => 1000,
+            'status' => ProgressStatus::IN_PROGRESS,
         ]);
 
         CourseProgress::factory()->create([
@@ -246,6 +248,7 @@ class CourseProgressApiTest extends TestCase
             'finished_at' => now(),
             'started_at' => now(),
             'seconds' => 0,
+            'status' => ProgressStatus::COMPLETE,
         ]);
 
         $user->courses()->save($course1); //Course A
@@ -270,35 +273,43 @@ class CourseProgressApiTest extends TestCase
     {
         $user = User::factory()->create();
 
+        // finished
         $course1 = Course::factory()->create([
             'status' => CourseStatusEnum::PUBLISHED,
             'title' => 'A Course',
         ]);
-        $lesson1 = Lesson::factory()->create(['course_id' => $course1->getKey()]);
+        $lesson1 = Lesson::factory()->create(['course_id' => $course1->getKey(), 'active' => true]);
         $topic1 = Topic::factory()->create(['lesson_id' => $lesson1->getKey(), 'active' => true]);
-
-        $course2 = Course::factory()->create([
-            'status' => CourseStatusEnum::PUBLISHED,
-            'title' => 'B Course',
-        ]);
-        $lesson2 = Lesson::factory()->create(['course_id' => $course2->getKey()]);
-        $topic2 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
-
-
         CourseProgress::factory()->create([
             'user_id' => $user->getKey(),
             'topic_id' => $topic1->getKey(),
             'finished_at' => now(),
         ]);
 
+        $user->courses()->save($course1);
+
+        // not finished
+        $course2 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'B Course',
+        ]);
+        $lesson2 = Lesson::factory()->create(['course_id' => $course2->getKey(), 'active' => true]);
+        $topic2 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+        $topic3 = Topic::factory()->create(['lesson_id' => $lesson2->getKey(), 'active' => true]);
+
         CourseProgress::factory()->create([
             'user_id' => $user->getKey(),
             'topic_id' => $topic2->getKey(),
+            'finished_at' => now(),
+        ]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic3->getKey(),
             'finished_at' => null,
         ]);
 
-        $user->courses()->save($course1); //Course A
-        $user->courses()->save($course2); //Course B
+        $user->courses()->save($course2);
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
@@ -331,13 +342,15 @@ class CourseProgressApiTest extends TestCase
             'topic_id' => $topic1->getKey(),
             'finished_at' => now(),
             'seconds' => 60,
+            'status' => ProgressStatus::COMPLETE,
         ]);
 
         CourseProgress::factory()->create([
             'user_id' => $user->getKey(),
             'topic_id' => $topic2->getKey(),
             'finished_at' => null,
-            'seconds' => 0,
+            'seconds' => 10,
+            'status' => ProgressStatus::IN_PROGRESS,
         ]);
 
         $course2 = Course::factory()->create([
@@ -353,6 +366,7 @@ class CourseProgressApiTest extends TestCase
             'topic_id' => $topic3->getKey(),
             'finished_at' => now(),
             'seconds' => 50,
+            'status' => ProgressStatus::COMPLETE,
         ]);
 
         CourseProgress::factory()->create([
@@ -360,6 +374,7 @@ class CourseProgressApiTest extends TestCase
             'topic_id' => $topic4->getKey(),
             'finished_at' => now(),
             'seconds' => 50,
+            'status' => ProgressStatus::COMPLETE,
         ]);
 
 

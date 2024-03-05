@@ -6,6 +6,7 @@ use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\ProgressFilterEnum;
+use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\CourseAccessFinished;
 use EscolaLms\Courses\Events\CourseAccessStarted;
 use EscolaLms\Courses\Events\CourseFinished;
@@ -205,16 +206,14 @@ class ProgressService implements ProgressServiceContract
             ->where(function (Builder $query) use ($userId) {
                 $query
                     ->whereDoesntHave('topics.progress')
-                    ->orWhereExists(function (QueryBuilder $query) use ($userId) {
+                    ->orWhereNotExists(function (QueryBuilder $query) use ($userId) {
                         $query->select(DB::raw(1))
                             ->from('topics')
                             ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
                             ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
                             ->whereColumn('lessons.course_id', 'courses.id')
                             ->where('course_progress.user_id', $userId)
-                            ->whereNull('course_progress.finished_at')
-                            ->groupBy('topics.id')
-                            ->havingRaw('SUM(course_progress.seconds) = 0');
+                            ->whereIn('course_progress.status', [ProgressStatus::COMPLETE, ProgressStatus::IN_PROGRESS]);
                     });
             });
     }
@@ -231,28 +230,23 @@ class ProgressService implements ProgressServiceContract
                             ->where('course_progress.user_id', $userId);
                     })
                     ->whereColumn('lessons.course_id', 'courses.id')
-                    ->where(function (QueryBuilder $query) {
-                        $query->whereNull('course_progress.finished_at')
-                            ->orWhere('course_progress.seconds', '>', 0);
-                    })
-                    ->groupBy('lessons.id')
-                    ->havingRaw('COUNT(*) > COUNT(course_progress.finished_at) AND SUM(course_progress.seconds) > 0');
+                    ->where('course_progress.status', ProgressStatus::IN_PROGRESS);
             });
     }
 
     private function filterForFinishedCourses(Builder $query, int $userId): Builder
     {
         return $query
-            ->whereExists(function (QueryBuilder $query) use ($userId) {
+            ->whereNotExists(function (QueryBuilder $query) use ($userId) {
                 $query->select(DB::raw(1))
                     ->from('topics')
                     ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                    ->where('lessons.active', true)
+                    ->where('topics.active', true)
                     ->whereColumn('courses.id', 'lessons.course_id')
                     ->join('course_progress', 'topics.id', '=', 'course_progress.topic_id')
                     ->where('course_progress.user_id', $userId)
-                    ->whereNotNull('course_progress.finished_at')
-                    ->groupBy('topics.id')
-                    ->havingRaw('COUNT(course_progress.topic_id) = COUNT(topics.id)');
+                    ->whereNull('course_progress.finished_at');
             });
     }
 
