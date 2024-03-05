@@ -41,7 +41,7 @@ jobs:
       - name: Require composer infection package
         run: |
           composer config --no-plugins allow-plugins.infection/extension-installer true
-          composer require infection/infection:^0
+          composer require infection/infection
 
       - name: Clear config
         run: vendor/bin/testbench config:clear
