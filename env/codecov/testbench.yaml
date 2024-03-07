@@ -16,3 +16,4 @@ providers:
   - EscolaLms\Courses\EscolaLmsCourseServiceProvider
   - EscolaLms\Tags\EscolaLmsTagsServiceProvider
   - EscolaLms\Courses\Tests\EscolaLmsTopicTypeTestServiceProvider
+  - EscolaLms\ModelFields\ModelFieldsServiceProvider
