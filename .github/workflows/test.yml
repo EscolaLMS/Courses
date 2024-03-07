@@ -30,11 +30,11 @@ jobs:
       - name: Update composer
         run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
-      - name: Publish things
-        run: vendor/bin/testbench migrate:fresh
-
       - name: Clear config
         run: vendor/bin/testbench config:clear
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
 
       - name: Run tests
         run: vendor/bin/phpunit
@@ -66,11 +66,11 @@ jobs:
       - name: Update composer
         run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
-      - name: Publish things
-        run: vendor/bin/testbench migrate:fresh
-
       - name: Clear config
         run: vendor/bin/testbench config:clear
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
 
       - name: Run tests
         run: vendor/bin/phpunit
@@ -110,15 +110,6 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit
 
-      - name: Publish things
-        run: vendor/bin/testbench migrate:fresh
-
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
-      - name: Run tests
-        run: vendor/bin/phpunit
-
   php81-laravel-latest-phpunit-postgres:
     runs-on: ubuntu-latest
     container:
@@ -140,17 +131,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update composer
-        run: COMPOSER_ROOT_VERSION=0.9.9 composer update
+        run: composer update
 
       - name: Setup environment
         run: cp env/postgres/* .
 
-      - name: Publish things
-        run: vendor/bin/testbench migrate:fresh
-
       - name: Clear config
         run: vendor/bin/testbench config:clear
 
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
+
       - name: Run tests
         run: vendor/bin/phpunit
+
 ### TODO add behat tests here
