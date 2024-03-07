@@ -2,7 +2,6 @@
 
 namespace EscolaLms\Courses\Models;
 
-use Chelout\RelationshipEvents\Concerns\HasMorphToManyEvents;
 use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Courses\Database\Factories\TopicFactory;
 use EscolaLms\Courses\Facades\Topic as TopicFacade;

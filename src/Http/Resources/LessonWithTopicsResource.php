@@ -4,6 +4,8 @@ namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonWithTopicsResource extends JsonResource
@@ -39,6 +41,7 @@ class LessonWithTopicsResource extends JsonResource
             'active_from' => $this->active_from,
             'active_to' => $this->active_to,
             'lessons' => LessonWithTopicsResource::collection($lessons),
+            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }
 }

@@ -3,6 +3,8 @@
 namespace EscolaLms\Courses\Http\Resources\Admin;
 
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -39,6 +41,7 @@ class LessonWithTopicsAdminResource extends JsonResource
             'lessons' => LessonWithTopicsAdminResource::collection($lesson->lessons->sortBy('order')),
             'active_from' => $this->active_from,
             'active_to' => $this->active_to,
+            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }
 }

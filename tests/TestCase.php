@@ -13,6 +13,7 @@ use EscolaLms\Courses\Tests\Http\Resources\TopicType\Admin\ExampleTopicTypeResou
 use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use EscolaLms\Courses\Tests\Models\User as UserTest;
 use EscolaLms\Files\EscolaLmsFilesServiceProvider;
+use EscolaLms\ModelFields\ModelFieldsServiceProvider;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
@@ -51,6 +52,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             EscolaLmsTopicTypeTestServiceProvider::class,
             EscolaLmsFilesServiceProvider::class,
             ResponseCacheServiceProvider::class,
+            ModelFieldsServiceProvider::class,
         ];
     }
 

@@ -2,7 +2,9 @@
 
 namespace EscolaLms\Courses;
 
+use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Observers\LessonObserver;
 use EscolaLms\Courses\Observers\TopicObserver;
 use EscolaLms\Courses\Providers\EventServiceProvider;
 use EscolaLms\Courses\Providers\SettingsServiceProvider;
@@ -26,6 +28,7 @@ use EscolaLms\Courses\Services\CourseService;
 use EscolaLms\Courses\Services\LessonService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Services\TopicService;
+use EscolaLms\ModelFields\ModelFieldsServiceProvider;
 use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
 use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Support\ServiceProvider;
@@ -61,6 +64,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $router->aliasMiddleware('cacheResponse', CacheResponse::class);
 
         Topic::observe(TopicObserver::class);
+        Lesson::observe(LessonObserver::class);
     }
 
     protected function bootForConsole(): void
@@ -82,5 +86,6 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         $this->app->register(EscolaLmsScormServiceProvider::class);
         $this->app->register(EscolaLmsTagsServiceProvider::class);
+        $this->app->register(ModelFieldsServiceProvider::class);
     }
 }
