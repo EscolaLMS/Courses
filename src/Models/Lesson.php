@@ -4,6 +4,7 @@ namespace EscolaLms\Courses\Models;
 
 use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Courses\Database\Factories\LessonFactory;
+use EscolaLms\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -73,7 +74,9 @@ use Illuminate\Support\Carbon;
  */
 class Lesson extends Model
 {
-    use HasFactory, QueryCacheable;
+    use HasFactory;
+    use QueryCacheable;
+    use ModelFields;
 
     public $table = 'lessons';
 
@@ -173,20 +176,5 @@ class Lesson extends Model
         }
 
         return true;
-    }
-
-    protected static function booted()
-    {
-        static::creating(function (Lesson $lesson) {
-            if (!$lesson->order) {
-                $lesson->order = 1 + (int)Lesson::when($lesson->course_id, function (Builder $query, int $courseId) {
-                        $query->where('course_id', $courseId);
-                    })
-                    ->when($lesson->parent_lesson_id, function (Builder $query, int $parentId) {
-                        $query->where('parent_lesson_id', $parentId);
-                    })
-                    ->max('order');
-            }
-        });
     }
 }
