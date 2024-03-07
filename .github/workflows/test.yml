@@ -30,11 +30,11 @@ jobs:
       - name: Update composer
         run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
 
       - name: Run tests
         run: vendor/bin/phpunit
@@ -66,11 +66,11 @@ jobs:
       - name: Update composer
         run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
 
       - name: Run tests
         run: vendor/bin/phpunit
@@ -110,11 +110,11 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit
 
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
 
       - name: Run tests
         run: vendor/bin/phpunit
@@ -145,11 +145,11 @@ jobs:
       - name: Setup environment
         run: cp env/postgres/* .
 
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
 
       - name: Run tests
         run: vendor/bin/phpunit

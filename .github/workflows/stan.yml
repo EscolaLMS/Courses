@@ -29,11 +29,11 @@ jobs:
       - name: Setup environment
         run: cp env/postgres/* .
 
-      - name: Clear config
-        run: vendor/bin/testbench config:clear
-
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
 
       - name: Run tests
         run: vendor/bin/phpstan analyse --level max src
