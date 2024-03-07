@@ -7,13 +7,15 @@ env:
   - DB_PASSWORD=password
 
 providers:
-  - Spatie\Permission\PermissionServiceProvider
   - Laravel\Passport\PassportServiceProvider
+  - Spatie\Permission\PermissionServiceProvider
   - EscolaLms\Categories\EscolaLmsCategoriesServiceProvider
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Auth\EscolaLmsAuthServiceProvider
   - EscolaLms\Scorm\EscolaLmsScormServiceProvider
   - EscolaLms\Courses\EscolaLmsCourseServiceProvider
   - EscolaLms\Tags\EscolaLmsTagsServiceProvider
+  - EscolaLms\Settings\EscolaLmsSettingsServiceProvider
   - EscolaLms\Courses\Tests\EscolaLmsTopicTypeTestServiceProvider
+  - EscolaLms\Files\EscolaLmsFilesServiceProvider
   - EscolaLms\ModelFields\ModelFieldsServiceProvider
