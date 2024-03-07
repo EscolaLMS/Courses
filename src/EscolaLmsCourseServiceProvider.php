@@ -64,7 +64,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         $router->aliasMiddleware('cacheResponse', CacheResponse::class);
 
         Topic::observe(TopicObserver::class);
-        Lesson::observe(LessonObserver::class);
+//        Lesson::observe(LessonObserver::class);
     }
 
     protected function bootForConsole(): void
