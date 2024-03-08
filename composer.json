@@ -5,7 +5,7 @@
   "require": {
     "php": ">=7.4",
     "davidbadura/faker-markdown-generator": "^1.1",
-    "devianl2/laravel-scorm": "^4.0",
+    "devianl2/laravel-scorm": ">=2.0",
     "escolalms/auth": "^0",
     "escolalms/categories": "^0",
     "escolalms/core": "^1",
