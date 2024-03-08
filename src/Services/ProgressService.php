@@ -156,7 +156,7 @@ class ProgressService implements ProgressServiceContract
 
     private function getBaseQuery(int $userId): Builder
     {
-        return Course::query()
+        return Course::dontCache()
             ->leftJoinSub('SELECT course_id, MAX(created_at) as user_pivot_created_at FROM course_user GROUP BY course_id', 'course_user', function ($join) {
                 $join->on('courses.id', '=', 'course_user.course_id');
             })
