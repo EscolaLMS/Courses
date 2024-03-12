@@ -217,7 +217,7 @@ class CourseAdminApiTest extends TestCase
             'PUT',
             '/api/admin/courses/' . $course->id,
             [
-                'extra_field' => 'update value'
+                'extra_field' => 'updated value'
             ]
         )
             ->assertJsonFragment(['extra_field' => 'updated value']);
