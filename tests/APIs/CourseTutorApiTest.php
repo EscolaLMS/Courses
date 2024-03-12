@@ -33,7 +33,7 @@ class CourseTutorApiTest extends TestCase
         $this->user->assignRole('tutor');
     }
 
-    public function test_create_course()
+    public function test_create_course(): void
     {
         $course = Course::factory()->make([
             'status' => CourseStatusEnum::PUBLISHED
@@ -79,11 +79,40 @@ class CourseTutorApiTest extends TestCase
         $this->assertTrue($this->response->getData()->data->id === $userId);
     }
 
+    public function test_create_course_with_additional_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->make([
+            'status' => CourseStatusEnum::PUBLISHED,
+        ])->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses',
+            array_merge($course, ['extra_field' => 'value']),
+        );
+
+        $course['author_id'] = $this->user->id;
+
+        $this->response
+            ->assertStatus(201)
+            ->assertJsonFragment(['extra_field' => 'value']);
+
+        $this->assertApiResponse($course);
+    }
+
 
     /**
      * @test
      */
-    public function test_read_course()
+    public function test_read_course(): void
     {
         $course = Course::factory()->create([
             'status' => CourseStatusEnum::PUBLISHED,
@@ -97,7 +126,31 @@ class CourseTutorApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
-    public function test_read_owned_inactive_course()
+    public function test_read_course_with_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'extra_field' => 'value',
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/' . $course->id
+        )
+            ->assertJsonFragment(['extra_field' => 'value']);
+
+        $this->assertApiResponse($course->toArray());
+    }
+
+    public function test_read_owned_inactive_course(): void
     {
         $course = Course::factory()->create([
             'status' => CourseStatusEnum::ARCHIVED,
@@ -115,7 +168,7 @@ class CourseTutorApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_course()
+    public function test_update_course(): void
     {
         $course = Course::factory()->create([
             'author_id' => $this->user->id
@@ -132,10 +185,35 @@ class CourseTutorApiTest extends TestCase
         $this->assertApiResponse($editedCourse);
     }
 
+    public function test_update_course_with_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'extra_field' => 'value',
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            [
+                'extra_field' => 'update value'
+            ]
+        )
+            ->assertJsonFragment(['extra_field' => 'updated value']);
+    }
+
     /**
      * @test
      */
-    public function test_delete_course()
+    public function test_delete_course(): void
     {
         $course = Course::factory()->create([
             'author_id' => $this->user->id
@@ -156,7 +234,7 @@ class CourseTutorApiTest extends TestCase
         $this->response->assertStatus(404);
     }
 
-    public function test_category_course()
+    public function test_category_course(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -182,7 +260,7 @@ class CourseTutorApiTest extends TestCase
         }
     }
 
-    public function test_categories_course()
+    public function test_categories_course(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -213,7 +291,7 @@ class CourseTutorApiTest extends TestCase
         }
     }
 
-    public function test_categories_and_category_course_unprocessable()
+    public function test_categories_and_category_course_unprocessable(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -236,7 +314,7 @@ class CourseTutorApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course_program()
+    public function test_read_course_program(): void
     {
         $course = Course::factory()->create([
             'author_id' => $this->user->id
@@ -250,7 +328,7 @@ class CourseTutorApiTest extends TestCase
         $this->response->assertStatus(200);
     }
 
-    public function test_assign_tutor()
+    public function test_assign_tutor(): void
     {
         $admin = $this->makeAdmin();
 
@@ -270,7 +348,7 @@ class CourseTutorApiTest extends TestCase
         $this->assertTrue($course->hasAuthor($this->user));
     }
 
-    public function test_unassign_tutor()
+    public function test_unassign_tutor(): void
     {
         $admin = $this->makeAdmin();
 
@@ -290,7 +368,7 @@ class CourseTutorApiTest extends TestCase
         $this->assertFalse($course->hasAuthor($this->user));
     }
 
-    public function test_update_course_status()
+    public function test_update_course_status(): void
     {
         Event::fake([CourseStatusChanged::class]);
 
@@ -367,7 +445,7 @@ class CourseTutorApiTest extends TestCase
                 ]);
     }
 
-    public function test_list_only_author_courses()
+    public function test_list_only_author_courses(): void
     {
         $admin = $this->makeAdmin();
 
