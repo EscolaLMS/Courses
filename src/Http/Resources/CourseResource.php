@@ -4,8 +4,6 @@ namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\ValueObjects\CourseContent;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
@@ -52,7 +50,6 @@ class CourseResource extends JsonResource
             'image_url' => $course->image_url,
             'video_url' => $course->video_url,
             'poster_url' => $course->poster_url,
-            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC),
         ];
     }
 }
