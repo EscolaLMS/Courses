@@ -99,6 +99,7 @@ class CoursesPolicy
         if ($user->can(CoursesPermissionsEnum::COURSE_ATTEND_OWNED)) {
             return $course->hasAuthor($user);
         }
+
         return $course->is_published && $course->hasUser($user);
     }
 

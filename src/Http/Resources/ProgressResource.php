@@ -40,6 +40,7 @@ class ProgressResource extends JsonResource
             'start_date' => $this->getResource()->getStartDate(),
             'finish_date' => $this->getResource()->isFinished() ? $this->getResource()->getFinishDate() : null,
             'deadline' => $this->getResource()->getDeadline(),
+            'end_date' => $this->getResource()->getEndDate(),
             'total_spent_time' => $this->getResource()->getTotalSpentTime() ?? 0,
         ];
     }

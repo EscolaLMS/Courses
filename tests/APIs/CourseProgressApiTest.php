@@ -39,7 +39,7 @@ class CourseProgressApiTest extends TestCase
     use CreatesUsers, WithFaker, ProgressConfigurable, MakeServices;
     use DatabaseTransactions;
 
-    public function test_show_progress_courses()
+    public function test_show_progress_courses(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -74,7 +74,7 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
-    public function test_show_progress_courses_paginated_ordered()
+    public function test_show_progress_courses_paginated_ordered(): void
     {
         $user = User::factory()->create();
 
@@ -200,7 +200,7 @@ class CourseProgressApiTest extends TestCase
         $this->assertTrue($this->response->json('data.3.course.id') === $course1->getKey());
     }
 
-    public function test_show_progress_courses_paginated_filtered_planned()
+    public function test_show_progress_courses_paginated_filtered_planned(): void
     {
         $user = User::factory()->create();
 
@@ -269,7 +269,7 @@ class CourseProgressApiTest extends TestCase
             ]);
     }
 
-    public function test_show_progress_courses_paginated_filtered_finished()
+    public function test_show_progress_courses_paginated_filtered_finished(): void
     {
         $user = User::factory()->create();
 
@@ -325,7 +325,7 @@ class CourseProgressApiTest extends TestCase
             ]);
     }
 
-    public function test_show_progress_courses_paginated_filtered_started()
+    public function test_show_progress_courses_paginated_filtered_started(): void
     {
         $user = User::factory()->create();
 
@@ -395,7 +395,7 @@ class CourseProgressApiTest extends TestCase
             ]);
     }
 
-    public function test_show_progress_courses_ordered_by_latest_purchased()
+    public function test_show_progress_courses_ordered_by_latest_purchased(): void
     {
         $user = User::factory()->create();
         $courseOne = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -415,7 +415,7 @@ class CourseProgressApiTest extends TestCase
         $this->assertEquals($courseOne->getKey(), $this->response->json('data.1.course.id'));
     }
 
-    public function test_show_progress_course_from_group()
+    public function test_show_progress_course_from_group(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -460,6 +460,51 @@ class CourseProgressApiTest extends TestCase
                 'data' => [[
                     'course',
                     'progress',
+                ]]
+            ]);
+    }
+
+    public function test_show_progress_courses_with_end_date(): void
+    {
+        $student1 = $this->makeStudent();
+        $student2 = $this->makeStudent();
+        $endDate = Carbon::now()->startOfDay()->subDay();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+
+        $student1->courses()->attach($course->getKey(), ['end_date' => $endDate]);
+        $student2->courses()->attach($course->getKey());
+
+        $this->actingAs($student1, 'api')
+            ->getJson('/api/courses/progress')
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'end_date' => $endDate
+            ])
+            ->assertJsonStructure([
+                'data' => [[
+                    'course',
+                    'progress',
+                    'categories',
+                    'tags',
+                    'finish_date',
+                    'end_date'
+                ]]
+            ]);
+
+        $this->actingAs($student2, 'api')
+            ->getJson('/api/courses/progress')
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'end_date' => null
+            ])
+            ->assertJsonStructure([
+                'data' => [[
+                    'course',
+                    'progress',
+                    'categories',
+                    'tags',
+                    'finish_date',
+                    'end_date'
                 ]]
             ]);
     }
@@ -682,7 +727,7 @@ class CourseProgressApiTest extends TestCase
         Event::assertDispatched(CourseAccessStarted::class);
     }
 
-    public function test_ping_progress_course()
+    public function test_ping_progress_course(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -753,7 +798,7 @@ class CourseProgressApiTest extends TestCase
         Event::assertNotDispatched(TopicFinished::class);
     }
 
-    public function test_ping_complete_topic()
+    public function test_ping_complete_topic(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -812,6 +857,92 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
+    public function test_ping_complete_topic_when_end_date_is_overdue(): void
+    {
+        $user = $this->makeStudent();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create([
+            'active' => true,
+            'lesson_id' => $lesson->getKey(),
+        ]);
+
+        $user->courses()->attach($course->getKey(), ['end_date' => Carbon::now()->subDay()]);
+
+        CourseProgress::create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 10,
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
+            ->assertOk()
+            ->assertJsonFragment([
+                'status' => true
+            ]);
+
+        sleep(5);
+
+        $this->actingAs($user, 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
+            ->assertOk()
+            ->assertJsonFragment([
+                'status' => true
+            ]);
+
+        $this->assertDatabaseHas('course_progress', [
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 10,
+        ]);
+    }
+
+    public function test_ping_complete_topic_when_end_date_is_current(): void
+    {
+        $user = $this->makeStudent();
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $topic = Topic::factory()->create([
+            'active' => true,
+            'lesson_id' => $lesson->getKey(),
+        ]);
+
+        $user->courses()->syncWithPivotValues($course->getKey(), ['end_date' => Carbon::now()->addDay()]);
+
+        CourseProgress::create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 10,
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
+            ->assertOk()
+            ->assertJsonFragment([
+                'status' => true
+            ]);
+
+        sleep(5);
+
+        $this->actingAs($user, 'api')
+            ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
+            ->assertOk()
+            ->assertJsonFragment([
+                'status' => true
+            ]);
+
+        $this->assertDatabaseHas('course_progress', [
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic->getKey(),
+            'status' => ProgressStatus::COMPLETE,
+            'seconds' => 15,
+        ]);
+    }
+
     public function test_adding_new_topic_will_reset_finished_status(): void
     {
         Mail::fake();
@@ -859,7 +990,7 @@ class CourseProgressApiTest extends TestCase
         $this->assertFalse($courseProgress->isFinished());
     }
 
-    public function test_active_to()
+    public function test_active_to(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->subDay()]);
@@ -904,7 +1035,7 @@ class CourseProgressApiTest extends TestCase
         $this->assertEquals($this->response->json('data.0.course.active_to'), $this->response->json('data.0.deadline'));
     }
 
-    public function test_deadline()
+    public function test_deadline(): void
     {
         $user = User::factory()->create();
 

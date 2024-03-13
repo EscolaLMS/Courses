@@ -90,4 +90,15 @@ class CourseProgramApiTest extends TestCase
                 'topicable' => null,
             ]);
     }
+
+    public function testCannotShowCourseProgramWhenEndDateIsOverdue(): void
+    {
+        $student = $this->makeStudent();
+        $course = Course::factory()->state(['status' => CourseStatusEnum::PUBLISHED])->create();
+        $course->users()->attach($student, ['end_date' => Carbon::now()->subDay()]);
+
+        $this->actingAs($student, 'api')
+            ->getJson('api/courses/' . $course->getKey() . '/program')
+            ->assertForbidden();
+    }
 }
