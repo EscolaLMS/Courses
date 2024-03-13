@@ -423,7 +423,8 @@ class Course extends Model
         return $this->users()
                 ->where('users.id', $user->getKey())
                 ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', Carbon::now()))
-                ->exists() || $inGroup; // todo sprawdzić dostęp do kursu
+                ->exists()
+            || $inGroup;
     }
 
     private function getChildGroups(array $groupIds): array

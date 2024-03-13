@@ -101,4 +101,15 @@ class CourseProgramApiTest extends TestCase
             ->getJson('api/courses/' . $course->getKey() . '/program')
             ->assertForbidden();
     }
+
+    public function testCannotShowCourseProgramWhenEndDateIsCurrent(): void
+    {
+        $student = $this->makeStudent();
+        $course = Course::factory()->state(['status' => CourseStatusEnum::PUBLISHED])->create();
+        $course->users()->attach($student, ['end_date' => Carbon::now()->addDay()]);
+
+        $this->actingAs($student, 'api')
+            ->getJson('api/courses/' . $course->getKey() . '/program')
+            ->assertOk();
+    }
 }
