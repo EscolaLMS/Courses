@@ -34,6 +34,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     private ?Carbon $startDate;
     private ?Carbon $finishDate;
     private ?Carbon $deadline;
+    private ?Carbon $endDate;
 
     public function __construct(
         CourseProgressRepositoryContract $courseProgressRepositoryContract
@@ -50,6 +51,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->finishDate = null;
         $this->pivot = CourseUserPivot::query()->where('user_id', $user->getKey())->where('course_id', $course->getKey())->first();
         $this->deadline = $this->pivot ? $this->pivot->deadline : null;
+        $this->endDate = $this->pivot ? $this->pivot->end_date : null;
         $this->topics = $this->getActiveTopicIdsFromCourses();
         $this->progress = $this->buildProgress();
 
@@ -205,9 +207,19 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         return $this->deadline;
     }
 
+    public function getEndDate(): ?Carbon
+    {
+        return $this->endDate;
+    }
+
     public function afterDeadline(): bool
     {
-        return $this->getDeadline() ? Carbon::now()->greaterThanOrEqualTo($this->getDeadline()) : false;
+        return $this->getDeadline() && Carbon::now()->greaterThanOrEqualTo($this->getDeadline());
+    }
+
+    public function afterEndDate(): bool
+    {
+        return $this->getEndDate() && Carbon::now()->greaterThanOrEqualTo($this->getEndDate());
     }
 
     public function toArray(): array
@@ -217,7 +229,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
 
     public function topicCanBeProgressed(Topic $topic): bool
     {
-        return $this->courseCanBeProgressed() && $topic->active;
+        return $this->courseCanBeProgressed() && $topic->active && !$this->afterEndDate();
     }
 
     public function courseCanBeProgressed(): bool

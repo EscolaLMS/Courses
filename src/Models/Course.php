@@ -420,7 +420,11 @@ class Course extends Model
             ->where('user_id', $user->getKey())
             ->exists();
 
-        return $this->users()->where('users.id', $user->getKey())->exists() || $inGroup;
+        return $this->users()
+                ->where('users.id', $user->getKey())
+                ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', Carbon::now()))
+                ->exists()
+            || $inGroup;
     }
 
     private function getChildGroups(array $groupIds): array
