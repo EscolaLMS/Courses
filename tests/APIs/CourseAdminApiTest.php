@@ -12,6 +12,7 @@ use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -36,7 +37,7 @@ class CourseAdminApiTest extends TestCase
         $this->user->assignRole('admin');
     }
 
-    public function test_create_course()
+    public function test_create_course(): void
     {
         $course = Course::factory()->make()->toArray();
 
@@ -53,7 +54,34 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-    public function test_create_course_published()
+    public function test_create_course_with_additional_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses',
+            array_merge($course, ['extra_field' => 'value']),
+        );
+
+        $course['author_id'] = $this->user->id;
+
+        $this->response
+            ->assertStatus(201)
+            ->assertJsonFragment(['extra_field' => 'value']);
+
+        $this->assertApiResponse($course);
+    }
+
+    public function test_create_course_published(): void
     {
         Event::fake();
         $course = Course::factory([
@@ -74,7 +102,7 @@ class CourseAdminApiTest extends TestCase
         Event::assertDispatched(CoursedPublished::class);
     }
 
-    public function test_create_and_update_course_with_deadline()
+    public function test_create_and_update_course_with_deadline(): void
     {
         $course = Course::factory()->make([
             'status' => CourseStatusEnum::PUBLISHED,
@@ -113,7 +141,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course()
+    public function test_read_course(): void
     {
         $course = Course::factory()->create();
 
@@ -128,7 +156,33 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_course()
+    public function test_read_course_with_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->create([
+            'extra_field' => 'value',
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/admin/courses/' . $course->id
+        )
+            ->assertJsonFragment(['extra_field' => 'value']);
+
+        $this->assertApiResponse($course->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_course(): void
     {
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
@@ -142,7 +196,34 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($editedCourse);
     }
 
-    public function test_active_course()
+    /**
+     * @test
+     */
+    public function test_update_course_with_model_fields(): void
+    {
+        ModelFields::addOrUpdateMetadataField(
+            Course::class,
+            'extra_field',
+            'text',
+            '',
+            ['required', 'string', 'max:255']
+        );
+
+        $course = Course::factory()->create([
+            'extra_field' => 'value',
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            [
+                'extra_field' => 'updated value'
+            ]
+        )
+            ->assertJsonFragment(['extra_field' => 'updated value']);
+    }
+
+    public function test_active_course(): void
     {
         Event::fake();
         $course = Course::factory([
@@ -165,7 +246,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_course_with_correct_author()
+    public function test_update_course_with_correct_author(): void
     {
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
@@ -186,7 +267,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_course_with_wrong_author()
+    public function test_update_course_with_wrong_author(): void
     {
         $course = Course::factory()->create();
         $editedCourse = Course::factory()->make()->toArray();
@@ -204,7 +285,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertInvalid('authors.0');
     }
 
-    public function test_update_course_remove_authors()
+    public function test_update_course_remove_authors(): void
     {
         $course = Course::factory()->create([
             'author_id' => $this->user->getKey()
@@ -230,7 +311,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_delete_course()
+    public function test_delete_course(): void
     {
         $course = Course::factory()->create();
 
@@ -248,7 +329,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(404);
     }
 
-    public function test_category_course()
+    public function test_category_course(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -277,7 +358,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    public function test_categories_course()
+    public function test_categories_course(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -310,7 +391,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    public function test_categories_and_category_course_unprocessable()
+    public function test_categories_and_category_course_unprocessable(): void
     {
         $category = Category::factory()->create();
         $category2 = Category::factory()->create();
@@ -330,7 +411,7 @@ class CourseAdminApiTest extends TestCase
         )->assertUnprocessable();
     }
 
-    public function test_attach_categories_course()
+    public function test_attach_categories_course(): void
     {
         $course = Course::factory()->create();
         $categoriesIds = Category::factory(5)->create()->pluck('id')->toArray();
@@ -353,7 +434,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    public function test_attach_tags_course()
+    public function test_attach_tags_course(): void
     {
         $course = Course::factory()->create();
 
@@ -372,7 +453,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    public function test_search_course_by_tag()
+    public function test_search_course_by_tag(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true]);
         $course2 = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'findable' => true]);
@@ -464,7 +545,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course_program()
+    public function test_read_course_program(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
@@ -488,7 +569,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course_program_topics_count()
+    public function test_read_course_program_topics_count(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->id]);
@@ -509,7 +590,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course_program_scorm()
+    public function test_read_course_program_scorm(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
 
@@ -521,7 +602,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertStatus(200);
     }
 
-    public function test_public_endpoint_displays_draft_and_archived_for_admins()
+    public function test_public_endpoint_displays_draft_and_archived_for_admins(): void
     {
         Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
@@ -544,7 +625,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertJsonCount(3, 'data');
     }
 
-    public function test_admin_status_search()
+    public function test_admin_status_search(): void
     {
         Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         Course::factory()->create(['status' => CourseStatusEnum::DRAFT]);
@@ -594,7 +675,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_create_admin_course_poster()
+    public function test_create_admin_course_poster(): void
     {
         Storage::fake('local');
         $poster = UploadedFile::fake()->image('poster.jpg');
@@ -618,7 +699,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    public function test_delete_admin_course_poster()
+    public function test_delete_admin_course_poster(): void
     {
         Storage::fake('local');
         $poster = UploadedFile::fake()->image('poster.jpg');
@@ -654,7 +735,7 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_admin_course_poster()
+    public function test_update_admin_course_poster(): void
     {
         Storage::fake('local');
         $course = Course::factory()->create();
@@ -678,7 +759,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    public function test_update_admin_course_image()
+    public function test_update_admin_course_image(): void
     {
         Storage::fake();
         $course = Course::factory()->create();

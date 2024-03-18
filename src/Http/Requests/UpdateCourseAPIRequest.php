@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Rules\ValidAuthor;
 use EscolaLms\Files\Rules\FileOrStringRule;
+use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCourseAPIRequest extends FormRequest
@@ -36,6 +37,6 @@ class UpdateCourseAPIRequest extends FormRequest
                 'image' => [new FileOrStringRule(['image'], $prefixPath)],
                 'video' => [new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath)],
                 'poster' => [new FileOrStringRule(['image'], $prefixPath)],
-            ]);
+            ], ModelFields::getFieldsMetadataRules(Course::class));
     }
 }
