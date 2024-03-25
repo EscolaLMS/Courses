@@ -66,7 +66,7 @@ class CourseFactory extends Factory
             $filename_video = "course/$id/" . $word . ".mp4";
             $filename_poster = "course/$id/" . $word . "poster.jpg";
 
-            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.jpg'), filename_image);
+            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.jpg'), $filename_image);
             Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.mp4'), $filename_video);
             Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/poster.jpg'), $filename_poster);        
 
