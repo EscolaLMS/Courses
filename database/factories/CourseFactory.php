@@ -65,13 +65,6 @@ class CourseFactory extends Factory
             $filename_image = "course/$id/" . $word . ".jpg";
             $filename_video = "course/$id/" . $word . ".mp4";
             $filename_poster = "course/$id/" . $word . "poster.jpg";
-            $dest_image = Storage::disk('public')->path($filename_image);
-            $dest_video = Storage::disk('public')->path($filename_video);
-            $dest_poster = Storage::disk('public')->path($filename_poster);
-            $destDir = dirname($dest_image);
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0777, true);
-            }
 
             Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.jpg'), filename_image);
             Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.mp4'), $filename_video);
