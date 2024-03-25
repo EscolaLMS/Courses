@@ -9,6 +9,7 @@ use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 
 class CourseFactory extends Factory
 {
@@ -64,16 +65,10 @@ class CourseFactory extends Factory
             $filename_image = "course/$id/" . $word . ".jpg";
             $filename_video = "course/$id/" . $word . ".mp4";
             $filename_poster = "course/$id/" . $word . "poster.jpg";
-            $dest_image = Storage::disk('public')->path($filename_image);
-            $dest_video = Storage::disk('public')->path($filename_video);
-            $dest_poster = Storage::disk('public')->path($filename_poster);
-            $destDir = dirname($dest_image);
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0777, true);
-            }
-            copy(realpath(__DIR__ . "/../mocks/1.jpg"), $dest_image);
-            copy(realpath(__DIR__ . "/../mocks/1.mp4"), $dest_video);
-            copy(realpath(__DIR__ . "/../mocks/poster.jpg"), $dest_poster);
+
+            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.jpg'), $filename_image);
+            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.mp4'), $filename_video);
+            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/poster.jpg'), $filename_poster);        
 
             $course->update([
                 'image_path' =>  $filename_image,
