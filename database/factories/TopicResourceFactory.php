@@ -6,6 +6,7 @@ use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\TopicResource;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 
 class TopicResourceFactory extends Factory
 {
@@ -38,10 +39,8 @@ class TopicResourceFactory extends Factory
             $path = "course/{$course_id}/topic/{$topic_id}/resources/{$filename}";
             $dest = Storage::disk('public')->path($path);
             $destDir = dirname($dest);
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0777, true);
-            }
-            copy(realpath(__DIR__ . '/../mocks/1.pdf'), $dest);
+            Storage::putFileAs("course/{$course_id}/topic/{$topic_id}/resources", new File(__DIR__ . '/../mocks/1.pdf'), $filename);
+          
             return [
                 'topic_id' => $topic,
                 'path'     => $path,
