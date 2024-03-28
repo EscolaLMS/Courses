@@ -6,8 +6,6 @@ use EscolaLms\Auth\Traits\ResourceExtandable;
 use EscolaLms\Courses\Http\Resources\ScormScoResource;
 use EscolaLms\Courses\Http\Resources\TutorResource;
 use EscolaLms\Courses\Models\Course;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseWithProgramAdminResource extends JsonResource
@@ -63,7 +61,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'target_group' => $course->target_group,
             'teaser_url' => $course->teaser_url,
             'public' => $course->public,
-            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC),
+            'fields' => $course->fields,
         ];
 
         return self::apply($fields, $this);

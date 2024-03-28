@@ -12,7 +12,6 @@ use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -54,31 +53,27 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-    public function test_create_course_with_additional_model_fields(): void
+    public function test_create_course_fields(): void
     {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
         $course = Course::factory()->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'POST',
             '/api/admin/courses',
-            array_merge($course, ['extra_field' => 'value']),
-        );
-
-        $course['author_id'] = $this->user->id;
-
-        $this->response
+            array_merge($course, [
+                'fields' => [
+                    'custom_field' => 'value',
+                    'custom_name' => 'course 1',
+                ],
+            ])
+        )
             ->assertStatus(201)
-            ->assertJsonFragment(['extra_field' => 'value']);
-
-        $this->assertApiResponse($course);
+            ->assertJsonFragment([
+                'fields' => [
+                    'custom_field' => 'value',
+                    'custom_name' => 'course 1',
+                ],
+            ]);
     }
 
     public function test_create_course_published(): void
@@ -143,39 +138,16 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_read_course(): void
     {
-        $course = Course::factory()->create();
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'GET',
-            '/api/admin/courses/' . $course->id
-        );
-
-        $this->assertApiResponse($course->toArray());
-    }
-
-    /**
-     * @test
-     */
-    public function test_read_course_with_model_fields(): void
-    {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
         $course = Course::factory()->create([
-            'extra_field' => 'value',
+            'fields' => [
+                'custom_fields' => 'value',
+            ],
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/' . $course->id
-        )
-            ->assertJsonFragment(['extra_field' => 'value']);
-
+        );
         $this->assertApiResponse($course->toArray());
     }
 
@@ -199,28 +171,22 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_update_course_with_model_fields(): void
+    public function test_update_course_fields(): void
     {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
-        $course = Course::factory()->create([
-            'extra_field' => 'value',
-        ]);
+        $course = Course::factory()->create();
+        $editedCourse = Course::factory()->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'PUT',
             '/api/admin/courses/' . $course->id,
-            [
-                'extra_field' => 'updated value'
-            ]
-        )
-            ->assertJsonFragment(['extra_field' => 'updated value']);
+            array_merge($editedCourse, [
+                'fields' => [
+                    'custom_field' => 'value',
+                ],
+            ])
+        );
+
+        $this->assertApiResponse($editedCourse);
     }
 
     public function test_active_course(): void

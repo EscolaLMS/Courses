@@ -4,7 +4,6 @@ namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
 use EscolaLms\Courses\Rules\ValidAuthor;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateCourseAPIRequest extends FormRequest
@@ -29,7 +28,7 @@ class CreateCourseAPIRequest extends FormRequest
     {
         $rules = array_merge(Course::rules(), [
             'title' => ['required', 'string', "min:3"],
-        ], ModelFields::getFieldsMetadataRules(Course::class));
+        ]);
         $rules['authors.*'][] = new ValidAuthor();
         return $rules;
     }

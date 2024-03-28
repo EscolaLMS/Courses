@@ -155,10 +155,7 @@ interface CourseAPISwagger
      *              )
      *          )
      *      )
-     * )
-     */
-
-    /**
+     * ),
      * @OA\Get(
      *      path="/api/admin/courses",
      *      summary="Get a listing of the Courses.",

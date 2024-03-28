@@ -3,8 +3,6 @@
 namespace EscolaLms\Courses\Http\Resources;
 
 use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseSimpleResource extends JsonResource
@@ -46,7 +44,7 @@ class CourseSimpleResource extends JsonResource
             'poster_url' => $this->poster_url,
             'teaser_url' => $this->teaser_url,
             'public' => $this->public ?? false,
-            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC),
+            'fields' => $this->fields,
         ];
         return self::apply($fields, $this);
     }
