@@ -53,6 +53,29 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
+    public function test_create_course_fields(): void
+    {
+        $course = Course::factory()->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            '/api/admin/courses',
+            array_merge($course, [
+                'fields' => [
+                    'custom_field' => 'value',
+                    'custom_name' => 'course 1',
+                ],
+            ])
+        )
+            ->assertStatus(201)
+            ->assertJsonFragment([
+                'fields' => [
+                    'custom_field' => 'value',
+                    'custom_name' => 'course 1',
+                ],
+            ]);
+    }
+
     public function test_create_course_published(): void
     {
         Event::fake();
@@ -115,14 +138,16 @@ class CourseAdminApiTest extends TestCase
      */
     public function test_read_course(): void
     {
-        $course = Course::factory()->create();
+        $course = Course::factory()->create([
+            'fields' => [
+                'custom_fields' => 'value',
+            ],
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/' . $course->id
-        );
-
-        $this->assertApiResponse($course->toArray());
+        )->assertApiResponse($course->toArray());
     }
 
     /**
@@ -137,6 +162,27 @@ class CourseAdminApiTest extends TestCase
             'PUT',
             '/api/admin/courses/' . $course->id,
             $editedCourse
+        );
+
+        $this->assertApiResponse($editedCourse);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_course_fields(): void
+    {
+        $course = Course::factory()->create();
+        $editedCourse = Course::factory()->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->json(
+            'PUT',
+            '/api/admin/courses/' . $course->id,
+            array_merge($editedCourse, [
+                'fields' => [
+                    'custom_field' => 'value',
+                ],
+            ])
         );
 
         $this->assertApiResponse($editedCourse);

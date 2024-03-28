@@ -50,6 +50,7 @@ class CourseResource extends JsonResource
             'image_url' => $course->image_url,
             'video_url' => $course->video_url,
             'poster_url' => $course->poster_url,
+            'fields' => $course->fields,
         ];
     }
 }

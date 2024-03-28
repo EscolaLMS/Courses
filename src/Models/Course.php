@@ -158,6 +158,11 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          description="free access, public audience ",
  *          type="boolean",
  *      ),
+ *      @OA\Property(
+ *          property="fields",
+ *          description="additional fields",
+ *          type="json",
+ *      ),
  * )
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
@@ -194,7 +199,8 @@ class Course extends Model
         'findable',
         'target_group',
         'teaser_url',
-        'public'
+        'public',
+        'fields',
     ];
 
     /**
@@ -223,7 +229,7 @@ class Course extends Model
         'target_group' => 'string',
         'teaser_url' => 'string',
         'public' => 'boolean',
-
+        'fields' => 'json',
     ];
 
     /**
@@ -258,6 +264,7 @@ class Course extends Model
             'target_group' => 'nullable|string|max:100',
             'teaser_url' => 'nullable|string',
             'public' => 'nullable|boolean',
+            'fields' => 'nullable|array',
         ];
     }
 

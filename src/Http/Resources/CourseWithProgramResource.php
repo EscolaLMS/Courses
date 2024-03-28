@@ -56,6 +56,7 @@ class CourseWithProgramResource extends JsonResource
             'target_group' => $course->target_group,
             'teaser_url' => $course->teaser_url,
             'public' => $this->public ?? false,
+            'fields' => $this->fields,
         ];
     }
 }

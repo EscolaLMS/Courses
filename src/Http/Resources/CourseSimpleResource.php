@@ -44,6 +44,7 @@ class CourseSimpleResource extends JsonResource
             'poster_url' => $this->poster_url,
             'teaser_url' => $this->teaser_url,
             'public' => $this->public ?? false,
+            'fields' => $this->fields,
         ];
         return self::apply($fields, $this);
     }

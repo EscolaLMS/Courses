@@ -61,6 +61,7 @@ class CourseWithProgramAdminResource extends JsonResource
             'target_group' => $course->target_group,
             'teaser_url' => $course->teaser_url,
             'public' => $course->public,
+            'fields' => $course->fields,
         ];
 
         return self::apply($fields, $this);
