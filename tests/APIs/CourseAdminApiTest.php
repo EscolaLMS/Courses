@@ -147,7 +147,8 @@ class CourseAdminApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/courses/' . $course->id
-        )->assertApiResponse($course->toArray());
+        );
+        $this->assertApiResponse($course->toArray());
     }
 
     /**
