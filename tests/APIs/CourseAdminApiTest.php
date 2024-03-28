@@ -12,7 +12,6 @@ use EscolaLms\Courses\Models\Group;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\ModelFields\Facades\ModelFields;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -50,33 +49,6 @@ class CourseAdminApiTest extends TestCase
         $course['author_id'] = $this->user->id;
 
         $this->response->assertStatus(201);
-
-        $this->assertApiResponse($course);
-    }
-
-    public function test_create_course_with_additional_model_fields(): void
-    {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
-        $course = Course::factory()->make()->toArray();
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'POST',
-            '/api/admin/courses',
-            array_merge($course, ['extra_field' => 'value']),
-        );
-
-        $course['author_id'] = $this->user->id;
-
-        $this->response
-            ->assertStatus(201)
-            ->assertJsonFragment(['extra_field' => 'value']);
 
         $this->assertApiResponse($course);
     }
@@ -156,32 +128,6 @@ class CourseAdminApiTest extends TestCase
     /**
      * @test
      */
-    public function test_read_course_with_model_fields(): void
-    {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
-        $course = Course::factory()->create([
-            'extra_field' => 'value',
-        ]);
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'GET',
-            '/api/admin/courses/' . $course->id
-        )
-            ->assertJsonFragment(['extra_field' => 'value']);
-
-        $this->assertApiResponse($course->toArray());
-    }
-
-    /**
-     * @test
-     */
     public function test_update_course(): void
     {
         $course = Course::factory()->create();
@@ -194,33 +140,6 @@ class CourseAdminApiTest extends TestCase
         );
 
         $this->assertApiResponse($editedCourse);
-    }
-
-    /**
-     * @test
-     */
-    public function test_update_course_with_model_fields(): void
-    {
-        ModelFields::addOrUpdateMetadataField(
-            Course::class,
-            'extra_field',
-            'text',
-            '',
-            ['required', 'string', 'max:255']
-        );
-
-        $course = Course::factory()->create([
-            'extra_field' => 'value',
-        ]);
-
-        $this->response = $this->actingAs($this->user, 'api')->json(
-            'PUT',
-            '/api/admin/courses/' . $course->id,
-            [
-                'extra_field' => 'updated value'
-            ]
-        )
-            ->assertJsonFragment(['extra_field' => 'updated value']);
     }
 
     public function test_active_course(): void

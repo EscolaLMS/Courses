@@ -9,7 +9,6 @@ use EscolaLms\Courses\Database\Factories\CourseFactory;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
 use EscolaLms\Courses\Enum\PlatformVisibility;
 use EscolaLms\Courses\Events\CourseStatusChanged;
-use EscolaLms\ModelFields\Traits\ModelFields;
 use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -169,7 +168,6 @@ class Course extends Model
 {
     use HasFactory;
     use QueryCacheable;
-    use ModelFields;
 
     public $table = 'courses';
 
