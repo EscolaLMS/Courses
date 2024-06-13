@@ -17,31 +17,31 @@ class TopicAdminResource extends JsonResource
      */
     public function toArray($request)
     {
-        $topicable = $this->topicable;
+        $topicable = $this->resource->topicable;
 
-        if (Topic::getResourceClass($this->topicable_type, 'admin')) {
-            $resourceClass = Topic::getResourceClass($this->topicable_type, 'admin');
-            $resource = new $resourceClass($this->topicable);
+        if (Topic::getResourceClass($this->resource->topicable_type, 'admin')) {
+            $resourceClass = Topic::getResourceClass($this->resource->topicable_type, 'admin');
+            $resource = new $resourceClass($this->resource->topicable);
             $topicable = $resource->toArray($request);
         }
 
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'lesson_id' => $this->lesson_id,
-            'active' => $this->active,
-            'preview' => $this->preview,
-            'topicable_id' => $this->topicable_id,
-            'topicable_type' => $this->topicable_type,
+            'id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'lesson_id' => $this->resource->lesson_id,
+            'active' => $this->resource->active,
+            'preview' => $this->resource->preview,
+            'topicable_id' => $this->resource->topicable_id,
+            'topicable_type' => $this->resource->topicable_type,
             'topicable' => $topicable,
-            'summary' => $this->summary,
-            'introduction' => $this->introduction,
-            'description' => $this->description,
-            'resources' => TopicResourceResource::collection($this->resources),
-            'order' => $this->order,
-            'json' => $this->json,
-            'can_skip' => $this->can_skip,
-            'duration' => $this->duration,
+            'summary' => $this->resource->summary,
+            'introduction' => $this->resource->introduction,
+            'description' => $this->resource->description,
+            'resources' => TopicResourceResource::collection($this->resource->resources),
+            'order' => $this->resource->order,
+            'json' => $this->resource->json,
+            'can_skip' => $this->resource->can_skip,
+            'duration' => $this->resource->duration,
         ];
     }
 }

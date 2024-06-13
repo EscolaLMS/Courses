@@ -30,17 +30,17 @@ class LessonWithTopicsAdminResource extends JsonResource
         $lesson = $this->getResource();
 
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'summary' => $this->summary,
-            'duration' => $this->duration,
-            'active' => $this->active,
+            'id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'summary' => $this->resource->summary,
+            'duration' => $this->resource->duration,
+            'active' => $this->resource->active,
             'topics' => TopicAdminResource::collection($lesson->topics->sortBy('order')),
             'topics_count' => $lesson->topics->count(),
-            'order' => $this->order,
+            'order' => $this->resource->order,
             'lessons' => LessonWithTopicsAdminResource::collection($lesson->lessons->sortBy('order')),
-            'active_from' => $this->active_from,
-            'active_to' => $this->active_to,
+            'active_from' => $this->resource->active_from,
+            'active_to' => $this->resource->active_to,
             ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }

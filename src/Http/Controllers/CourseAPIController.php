@@ -105,6 +105,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
     public function program($id, GetCourseCurriculumAPIRequest $request): JsonResponse
     {
+        /** @var Course $course */
         $course = $this->courseRepository->findWith(
             $id,
             ['*'],
@@ -135,7 +136,7 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
     {
         $input = $request->all();
 
-        /** @var Course $course */
+        /** @var Course|null $course */
         $course = $this->courseRepository->find($id);
 
         if (empty($course)) {

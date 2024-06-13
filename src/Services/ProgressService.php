@@ -41,11 +41,12 @@ class ProgressService implements ProgressServiceContract
     {
         $progresses = new Collection();
         if (!$user instanceof CoursesUser) {
+            /** @var CoursesUser $user */
             $user = CoursesUser::find($user->getKey());
         }
 
         $courses = $user->courses()->where('status', '=', CourseStatusEnum::PUBLISHED)->get();
-        /** @var CoursesUser $user */
+        /** @var Course $course */
         foreach ($courses as $course) {
             $progresses->push(CourseProgressCollection::make($user, $course));
         }
@@ -136,6 +137,10 @@ class ProgressService implements ProgressServiceContract
         if ($courseProgressCollection->topicCanBeProgressed($topic)) {
             $courseProgressCollection->ping($topic);
 
+            if (!$user instanceof CoursesUser) {
+                /** @var CoursesUser $user */
+                $user = CoursesUser::find($user->getKey());
+            }
             if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey())) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
             }

@@ -5,6 +5,7 @@ namespace EscolaLms\Courses\Http\Requests;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Models\Lesson;
 use EscolaLms\Courses\Models\Course;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SortAPIRequest extends FormRequest
@@ -26,6 +27,7 @@ class SortAPIRequest extends FormRequest
                         && $lessons->pluck('course_id')->unique()->count() === 1
                         && $lessons->pluck('parent_lesson_id')->unique()->count() === 1;
                 case 'Topic':
+                    /** @var Collection<int, Topic> $topics */
                     $topics = Topic::whereIn('id', $ids)->get();
 
                     if ($topics->count() !== count($ids) || $topics->pluck('lesson_id')->unique()->count() != 1) {
