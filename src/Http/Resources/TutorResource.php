@@ -23,7 +23,7 @@ class TutorResource extends JsonResource
         return array_merge(
             $fields,
             ['categories' => $this->resource->categories],
-            ModelFields::getExtraAttributesValues($this->resource->resource, MetaFieldVisibilityEnum::PUBLIC)
+            ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         );
     }
 }

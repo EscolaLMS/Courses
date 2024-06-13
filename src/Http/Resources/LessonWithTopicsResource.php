@@ -41,7 +41,7 @@ class LessonWithTopicsResource extends JsonResource
             'active_from' => $this->resource->active_from,
             'active_to' => $this->resource->active_to,
             'lessons' => LessonWithTopicsResource::collection($lessons),
-            ...ModelFields::getExtraAttributesValues($this->resource->resource, MetaFieldVisibilityEnum::PUBLIC)
+            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }
 }

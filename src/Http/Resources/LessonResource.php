@@ -25,7 +25,7 @@ class LessonResource extends JsonResource
             'active_from' => $this->resource->active_from,
             'active_to' => $this->resource->active_to,
             'lessons' => LessonSimpleResource::collection($this->resource->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order')),
-            ...ModelFields::getExtraAttributesValues($this->resource->resource, MetaFieldVisibilityEnum::PUBLIC)
+            ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }
 }
