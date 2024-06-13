@@ -53,6 +53,7 @@ class TopicResourceRepository extends BaseRepository implements TopicResourceRep
 
     public function delete(int $id): ?bool
     {
+        /** @var TopicResource $topicResource */
         $topicResource = $this->model->query()->findOrFail($id);
         $path = $topicResource->path;
 

@@ -15,16 +15,16 @@ class LessonResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'summary' => $this->summary,
-            'duration' => $this->duration,
-            'active' => $this->active,
-            'order' => $this->order,
-            'course_id' => $this->course_id,
-            'active_from' => $this->active_from,
-            'active_to' => $this->active_to,
-            'lessons' => LessonSimpleResource::collection($this->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order')),
+            'id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'summary' => $this->resource->summary,
+            'duration' => $this->resource->duration,
+            'active' => $this->resource->active,
+            'order' => $this->resource->order,
+            'course_id' => $this->resource->course_id,
+            'active_from' => $this->resource->active_from,
+            'active_to' => $this->resource->active_to,
+            'lessons' => LessonSimpleResource::collection($this->resource->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order')),
             ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
     }

@@ -24,6 +24,7 @@ class ScormResource extends JsonResource
             'id' => $this->getResource()->getKey(),
             'uuid' => $this->getResource()->uuid,
             'version' => $this->getResource()->version,
+            // @phpstan-ignore-next-line
             'scos' => ScormScoResource::collection($this->getResource()->scos),
         ];
     }

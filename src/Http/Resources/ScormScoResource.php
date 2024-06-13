@@ -22,8 +22,11 @@ class ScormScoResource extends JsonResource
     {
         return [
             'id' => $this->getResource()->getKey(),
+            // @phpstan-ignore-next-line
             'uuid' => $this->getResource()->uuid,
+            // @phpstan-ignore-next-line
             'entry_url' => $this->getResource()->entry_url,
+            // @phpstan-ignore-next-line
             'title' => $this->getResource()->title,
         ];
     }

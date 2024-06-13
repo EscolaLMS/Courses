@@ -35,19 +35,20 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        /** @var Collection $futureDeadlines */
         $startDate = Carbon::now()
             ->modify('+ ' . config('escolalms_courses.reminder_of_deadline_count_days') . ' days')
             ->subMinutes(30);
         $endDate = Carbon::now()
             ->modify('+ ' . config('escolalms_courses.reminder_of_deadline_count_days') . ' days')
             ->addMinutes(30);
+        /** @var Collection<int, CourseUserPivot> $futureDeadlines */
         $futureDeadlines = CourseUserPivot::where('deadline', '>=', $startDate)
             ->where('deadline', '<', $endDate)
             ->get();
 
         Log::debug('Checking for deadlines');
 
+        /** @var CourseUserPivot $courseUserPivot */
         foreach ($futureDeadlines as $courseUserPivot) {
             event(new CourseDeadlineSoon($courseUserPivot->user, $courseUserPivot->course));
         }

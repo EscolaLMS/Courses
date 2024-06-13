@@ -105,14 +105,14 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     public function allQueryBuilder(array $search = [], array $criteria = []): Builder
     {
         /** search main category and all subcategories */
-        if (isset($search) && isset($search['category_id'])) {
+        if (isset($search['category_id'])) {
             $collection = Category::where('id', $search['category_id'])->with('children')->get();
             $flat = self::flatten($collection, 'children');
             $flat_ids = array_map(fn($cat) => $cat->id, $flat);
             unset($search['category_id']);
         }
 
-        if (isset($search) && isset($search['categories'])) {
+        if (isset($search['categories'])) {
             $flat_ids = [];
             foreach ($search['categories'] as $category_id) {
                 $collection = Category::where('id', $category_id)->with('children')->get();
@@ -166,12 +166,13 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
      */
     public function create(array $input): Model
     {
+        /** @var Course $model */
         $model = $this->model->newInstance($input);
 
         $model->save();
 
         $update = [];
-        $courseId = $model->id;
+        $courseId = $model->getKey();
 
         if (isset($input['video'])) {
             /** @var UploadedFile $video */
@@ -213,6 +214,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
     {
         $query = $this->model->newQuery();
 
+        /** @var Course $model */
         $model = $query->findOrFail($id);
 
         $isActive = $model->is_active;

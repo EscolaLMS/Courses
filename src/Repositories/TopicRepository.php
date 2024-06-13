@@ -168,12 +168,13 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     /**
      * Update model record for given id.
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     * @return Topic
      */
     public function update(array $input, int $id): Topic
     {
         $query = $this->model->newQuery();
 
+        /** @var Topic $model */
         $model = $query->with('topicable')->findOrFail($id);
 
         $model->fill($input);
@@ -237,8 +238,6 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     }
 
     /**
-     * @return TopicContentContract|TopicFileContentContract|Model
-     *
      * @throws TopicException
      */
     private function createTopicContentModelFromRequest(FormRequest $request, Topic $topic): Model
@@ -319,6 +318,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
                 if (!$request->has($fileKeyName)) {
                     unset($partialRules[$fileKeyName]);
                 } else {
+                    // @phpstan-ignore-next-line
                     $prefixPath = 'course/' . $topicContent->topic->course->getKey();
                     $partialRules[$fileKeyName] = new FileOrStringRule($partialRules[$fileKeyName], $prefixPath);
                 }

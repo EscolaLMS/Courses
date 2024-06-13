@@ -35,6 +35,9 @@ use Illuminate\Support\Facades\Storage;
  * )
  *
  * @property \EscolaLms\Courses\Models\Topic|null $topic
+ * @property string $path
+ * @property string $name
+ * @property int $topic_id
  */
 class TopicResource extends Model
 {

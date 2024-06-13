@@ -67,7 +67,7 @@ class LessonAPIController extends AppBaseController implements LessonAPISwagger
     {
         $input = $request->all();
 
-        /** @var Lesson $lesson */
+        /** @var Lesson|null $lesson */
         $lesson = $this->lessonRepository->find($id);
 
         if (empty($lesson)) {

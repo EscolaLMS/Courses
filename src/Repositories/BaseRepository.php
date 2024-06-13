@@ -13,8 +13,6 @@ abstract class BaseRepository extends BaseEscolaRepository
      * @param int $id
      * @param array $columns
      * @param array $with relations
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
      */
     public function findWith(int $id, array $columns = ['*'], array $with = [], array $withCount = []): Model
     {

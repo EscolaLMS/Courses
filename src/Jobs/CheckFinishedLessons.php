@@ -7,6 +7,8 @@ use EscolaLms\Courses\Enum\ProgressStatus;
 use EscolaLms\Courses\Events\LessonFinished;
 use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\Lesson;
+use EscolaLms\Courses\Models\Topic;
+use EscolaLms\Courses\Models\User;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Bus\Queueable;
@@ -31,7 +33,9 @@ class CheckFinishedLessons implements ShouldQueue
 
     public function handle(TopicRepositoryContract $topicRepository, UserRepositoryContract $userRepository): void
     {
+        /** @var Topic $topic */
         $topic = $topicRepository->find($this->topicId);
+        /** @var User $user */
         $user = $userRepository->find($this->userId);
 
         if (!$user || !$topic || !$topic->course) {

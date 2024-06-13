@@ -8,6 +8,7 @@ use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
 use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 interface TopicAPISwagger
@@ -51,7 +52,7 @@ interface TopicAPISwagger
 
     /**
      * @param CreateTopicAPIRequest $request
-     * @return Response
+     * @return JsonResponse
      *
      * @OA\Post(
      *      path="/api/admin/topics",
@@ -94,7 +95,7 @@ interface TopicAPISwagger
      * )
      */
 
-    public function store(CreateTopicAPIRequest $request);
+    public function store(CreateTopicAPIRequest $request): JsonResponse;
 
     /**
      * @OA\Get(
@@ -240,8 +241,7 @@ interface TopicAPISwagger
     public function destroy($id, DeleteTopicAPIRequest $request);
 
     /**
-     * @param Request $request
-     * @return Response
+     * @return JsonResponse
      *
      * @OA\Get(
      *      path="/api/admin/topics/types",
@@ -276,12 +276,11 @@ interface TopicAPISwagger
      *      )
      * )
      */
-
-    public function classes();
+    public function classes(): JsonResponse;
 
     /**
      * @param CloneTopicAPIRequest $request
-     * @return Response
+     * @return JsonResponse
      *
      * @OA\Post(
      *      path="/api/admin/topics/{id}/clone",
@@ -324,6 +323,5 @@ interface TopicAPISwagger
      *      )
      * )
      */
-
-    public function clone(CloneTopicAPIRequest $request);
+    public function clone(CloneTopicAPIRequest $request): JsonResponse;
 }

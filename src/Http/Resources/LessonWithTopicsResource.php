@@ -31,15 +31,15 @@ class LessonWithTopicsResource extends JsonResource
         $lessons = $lesson->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order');
 
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'summary' => $this->summary,
-            'duration' => $this->duration,
-            'active' => $this->active,
+            'id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'summary' => $this->resource->summary,
+            'duration' => $this->resource->duration,
+            'active' => $this->resource->active,
             'topics' => TopicResource::collection($topics),
-            'order' => $this->order,
-            'active_from' => $this->active_from,
-            'active_to' => $this->active_to,
+            'order' => $this->resource->order,
+            'active_from' => $this->resource->active_from,
+            'active_to' => $this->resource->active_to,
             'lessons' => LessonWithTopicsResource::collection($lessons),
             ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];

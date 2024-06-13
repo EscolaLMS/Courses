@@ -167,6 +167,27 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
+ * @property string $status
+ * @property ?Carbon $active_from
+ * @property ?Carbon $active_to
+ * @property bool $is_active
+ * @property string $title
+ * @property ?string $summary
+ * @property ?string $image_path
+ * @property ?string $video_path
+ * @property ?string $duration
+ * @property ?int $scorm_sco_id
+ * @property ?string $subtitle
+ * @property ?string $language
+ * @property ?string $description
+ * @property ?string $level
+ * @property ?string $poster_path
+ * @property int $hours_to_complete
+ * @property bool $findable
+ * @property ?string $target_group
+ * @property ?string $teaser_url
+ * @property ?bool $public
+ * @property array $fields
  */
 
 class Course extends Model
@@ -235,7 +256,7 @@ class Course extends Model
     /**
      * Validation rules
      *
-     * @var array
+     * @return array<string, string>
      */
     public static function rules(): array
     {

@@ -2,10 +2,15 @@
 
 namespace EscolaLms\Courses\Models;
 
+use Carbon\Carbon;
 use EscolaLms\Core\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @property Carbon|null $deadline
+ * @property Carbon|null $end_date
+ */
 class CourseUserPivot extends Pivot
 {
     protected $table = 'course_user';
