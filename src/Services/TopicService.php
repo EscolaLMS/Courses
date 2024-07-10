@@ -28,6 +28,7 @@ class TopicService implements TopicServiceContract
     {
         $clonedTopicArray = $topic->replicate()->toArray();
         unset($clonedTopicArray['order']);
+        /** @var Topic $clonedTopic */
         $clonedTopic = $this->topicRepository->create($clonedTopicArray);
         $clonedTopicable = $topic->topicable->replicate();
 
@@ -55,7 +56,7 @@ class TopicService implements TopicServiceContract
         return $clonedTopic;
     }
 
-    private function cloneTopicResource(Model $clonedTopic, TopicResource $topicResource): Model
+    private function cloneTopicResource(Topic $clonedTopic, TopicResource $topicResource): Model
     {
         $pathFrom = $topicResource->path;
         $pathTo = $clonedTopic->getStorageDirectoryAttribute() . 'resources' . DIRECTORY_SEPARATOR . $topicResource->name;

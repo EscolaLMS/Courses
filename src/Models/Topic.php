@@ -96,6 +96,11 @@ use Illuminate\Validation\Rule;
  *
  * @property bool                                  $active
  * @property \EscolaLms\Courses\Models\Lesson|null $lesson
+ * @property int $lesson_id
+ * @property int $topic_id
+ * @property int $order
+ * @property int $topicable_id
+ * @property string $topicable_type
  */
 class Topic extends Model
 {

@@ -14,6 +14,7 @@ use EscolaLms\Courses\Http\Resources\Admin\TopicAdminResource;
 use EscolaLms\Courses\Http\Resources\TopicResource;
 use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
 use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -22,8 +23,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class TopicAPIController extends AppBaseController implements TopicAPISwagger
 {
-    /** @var TopicRepository */
-    private $topicRepository;
+    private TopicRepositoryContract $topicRepository;
 
     private TopicServiceContract $topicService;
 
@@ -44,7 +44,7 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendResponseForResource(TopicResource::collection($topics), __('Topics retrieved successfully'));
     }
 
-    public function store(CreateTopicAPIRequest $request)
+    public function store(CreateTopicAPIRequest $request): JsonResponse
     {
         try {
             $topic = $this->topicRepository->createFromRequest($request);
@@ -110,14 +110,14 @@ class TopicAPIController extends AppBaseController implements TopicAPISwagger
         return $this->sendSuccess(__('Topic deleted successfully'));
     }
 
-    public function classes()
+    public function classes(): JsonResponse
     {
         $classes = $this->topicRepository->availableContentClasses();
 
         return $this->sendResponse($classes, __('Topic content available list'));
     }
 
-    public function clone(CloneTopicAPIRequest $request)
+    public function clone(CloneTopicAPIRequest $request): JsonResponse
     {
         $topic = $request->getTopic();
 

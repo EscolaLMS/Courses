@@ -19,8 +19,8 @@
   },
   "require-dev": {
     "orchestra/testbench": ">=5.0",
-    "phpstan/phpstan": "^1.10",
-    "phpunit/phpunit": "^9.0"
+    "phpunit/phpunit": "^9.0",
+    "nunomaduro/larastan": "^2.0"
   },
   "license": "MIT",
   "authors": [

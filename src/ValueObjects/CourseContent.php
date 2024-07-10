@@ -46,26 +46,8 @@ class CourseContent extends ValueObject implements DtoContract, ValueObjectContr
         return $this->course;
     }
 
-    /**
-     * @return Collection
-     */
-    public function getSections(): Collection
-    {
-        return $this->course->sections;
-    }
-
-    public function getRelated(): Collection
-    {
-        return $this->courseService->related($this->course);
-    }
-
     public function countCertificates(): int
     {
         return 1;
-    }
-
-    public function countFlashcards(): int
-    {
-        return $this->getCourse()->flashcards()->count();
     }
 }

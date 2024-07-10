@@ -68,6 +68,12 @@ use Illuminate\Support\Carbon;
  * @property bool $active
  * @property Carbon $active_from
  * @property Carbon $active_to
+ * @property int $course_id
+ * @property int $order
+ * @property int $parent_lesson_id
+ * @property string $title
+ * @property string $summary
+ * @property string $duration
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
  * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
  * @property-read \EscolaLms\Courses\Models\Lesson|null $parentLesson

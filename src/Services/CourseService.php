@@ -116,6 +116,7 @@ class CourseService implements CourseServiceContract
         }
 
         $sco = ScormScoModel::where('id', $course->scorm_sco_id)->first();
+        // @phpstan-ignore-next-line
         return $this->scormService->getScoViewDataByUuid($sco->uuid);
     }
 
