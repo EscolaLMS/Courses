@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Class CourseRepository
@@ -218,6 +219,18 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
         $model = $query->findOrFail($id);
 
         $isActive = $model->is_active;
+
+        if (isset($input['video_path'])) {
+            $input['video_path'] = Str::after($input['video_path'], env('AWS_ACCESS_KEY_ID') . '/');
+        }
+
+        if (isset($input['image_path'])) {
+            $input['image_path'] = Str::after($input['image_path'], env('AWS_ACCESS_KEY_ID') . '/');
+        }
+
+        if (isset($input['poster_path'])) {
+            $input['poster_path'] = Str::after($input['poster_path'], env('AWS_ACCESS_KEY_ID') . '/');
+        }
 
         if (isset($input['video'])) {
             $input['video_path'] = FileHelper::getFilePath($input['video'], "course/$id/videos");

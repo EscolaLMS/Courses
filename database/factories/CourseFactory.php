@@ -62,18 +62,18 @@ class CourseFactory extends Factory
             //
             $id = $course->id;
             $word = $this->faker->word;
-            $filename_image = "course/$id/" . $word . ".jpg";
-            $filename_video = "course/$id/" . $word . ".mp4";
-            $filename_poster = "course/$id/" . $word . "poster.jpg";
+            $filename_image = $word . ".jpg";
+            $filename_video = $word . ".mp4";
+            $filename_poster = $word . "poster.jpg";
 
-            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.jpg'), $filename_image);
-            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/1.mp4'), $filename_video);
-            Storage::putFileAs("course/{$id}", new File(__DIR__ . '/../mocks/poster.jpg'), $filename_poster);        
+            Storage::putFileAs("course/{$id}/images", new File(__DIR__ . '/../mocks/1.jpg'), $filename_image);
+            Storage::putFileAs("course/{$id}/videos", new File(__DIR__ . '/../mocks/1.mp4'), $filename_video);
+            Storage::putFileAs("course/{$id}/posters", new File(__DIR__ . '/../mocks/poster.jpg'), $filename_poster);
 
             $course->update([
-                'image_path' =>  $filename_image,
-                'video_path' => $filename_video,
-                'poster_path' => $filename_poster,
+                'image_path' => "course/{$id}/images/" . $filename_image,
+                'video_path' => "course/{$id}/videos/" . $filename_video,
+                'poster_path' => "course/{$id}/posters/" . $filename_poster,
             ]);
         });
     }
