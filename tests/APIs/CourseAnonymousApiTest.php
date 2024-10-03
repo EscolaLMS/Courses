@@ -332,7 +332,6 @@ class CourseAnonymousApiTest extends TestCase
             '/api/courses/?order_by=id&order=ASC'
         );
 
-        dd($this->response);
         $this->assertEquals($this->response->getData()->data[0]->id, $course1->getKey());
         $this->response->assertStatus(200);
 
