@@ -236,7 +236,12 @@ class ProgressService implements ProgressServiceContract
                     })
                     ->whereColumn('lessons.course_id', 'courses.id')
                     ->where('course_progress.status', ProgressStatus::IN_PROGRESS)
-                    ->orWhereNull('course_progress.finished_at');
+                    ->orWhere(function (QueryBuilder $query) {
+                        $query->groupBy('topic.id')
+                            ->selectRaw('COUNT(CASE WHEN status = ? THEN 1 END) as completed_count', [ProgressStatus::COMPLETE])
+                            ->selectRaw('COUNT(CASE WHEN status = ? THEN 1 END) as in_completed_count', [ProgressStatus::INCOMPLETE])
+                            ->havingRaw('completed_count > 0 AND in_completed_count > 0');
+                    });
             });
     }
 
