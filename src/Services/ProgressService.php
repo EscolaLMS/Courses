@@ -235,7 +235,8 @@ class ProgressService implements ProgressServiceContract
                             ->where('course_progress.user_id', $userId);
                     })
                     ->whereColumn('lessons.course_id', 'courses.id')
-                    ->where('course_progress.status', ProgressStatus::IN_PROGRESS);
+                    ->where('course_progress.status', ProgressStatus::IN_PROGRESS)
+                    ->orWhereNull('course_progress.finished_at');
             });
     }
 
