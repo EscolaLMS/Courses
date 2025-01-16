@@ -10,19 +10,7 @@ services:
       - "COMPOSER_ROOT_VERSION=0.9.9"
     volumes:
       - ./:/var/www/html
-    command:
-      bash -c "COMPOSER_ROOT_VERSION=0.9.9 composer install && vendor/bin/testbench migrate:fresh && vendor/bin/phpunit"
-      # [
-      #   '/bin/sh -c "',
-      #   "composer",
-      #   "install",
-      #   "&&",
-      #   "vendor/bin/testbench",
-      #   "migrate:fresh",
-      #   "&&",
-      #   "vendor/bin/phpunit",
-      #   "'",
-      # ]
+    command: bash -c "COMPOSER_ROOT_VERSION=0.9.9 composer install && vendor/bin/testbench migrate:fresh && vendor/bin/phpunit"
     networks:
       - escola_lms_tests
 
