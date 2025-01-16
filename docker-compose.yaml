@@ -1,0 +1,37 @@
+networks:
+  escola_lms_tests:
+    name: escola_lms_tests
+    driver: bridge
+
+services:
+  courses_tests:
+    image: escolalms/php:8.3-alpine
+    environment:
+      - "COMPOSER_ROOT_VERSION=0.9.9"
+    volumes:
+      - ./:/var/www/html
+    command:
+      bash -c "COMPOSER_ROOT_VERSION=0.9.9 composer install && vendor/bin/testbench migrate:fresh && vendor/bin/phpunit"
+      # [
+      #   '/bin/sh -c "',
+      #   "composer",
+      #   "install",
+      #   "&&",
+      #   "vendor/bin/testbench",
+      #   "migrate:fresh",
+      #   "&&",
+      #   "vendor/bin/phpunit",
+      #   "'",
+      # ]
+    networks:
+      - escola_lms_tests
+
+  postgres:
+    image: postgres:16
+    networks:
+      - escola_lms_tests
+    environment:
+      - "POSTGRES_DB=${POSTGRES_DB:-default}"
+      - "POSTGRES_USER=${POSTGRES_USER:-default}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}"
+      - TZ=Europe/Warsaw
