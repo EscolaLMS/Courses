@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Courses\Http\Controllers;
 
+use EscolaLms\Courses\Http\Resources\TopicResource;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
 use EscolaLms\Courses\Enum\CourseStatusEnum;
@@ -73,7 +74,9 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
 
         return $this->sendResponseForResource(CourseListResource::collection(
             $this->courseRepository->getAuthoredCourses(
-                $user->getKey(), OrderDto::instantiateFromRequest($request))->paginate($request->get('per_page', 20))
+                $user->getKey(),
+                OrderDto::instantiateFromRequest($request)
+            )->paginate($request->get('per_page', 20))
         ), __('Courses retrieved successfully'));
     }
 
@@ -175,5 +178,22 @@ class CourseAPIController extends AppBaseController implements CourseAPISwagger
         return $tags ?
             $this->sendResponse($tags, 'Tags unique fetched successfully') :
             $this->sendError('Tags not found', 404);
+    }
+
+    public function preview($id, $topic_id, GetCourseAPIRequest $request): JsonResponse
+    {
+        $course = $request->getCourse();
+
+        if (empty($course)) {
+            return $this->sendError(__('Course not found'));
+        }
+
+        $topic = $request->getTopic();
+
+        if (empty($topic) || !$topic->preview) {
+            return $this->sendError(__('Topic not found or not able to preview'));
+        }
+
+        return $this->sendResponseForResource(TopicResource::make($topic), __('Topic preview retrieved successfully'));
     }
 }

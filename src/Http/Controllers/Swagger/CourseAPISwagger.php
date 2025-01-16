@@ -861,4 +861,56 @@ interface CourseAPISwagger
      * )
      */
     public function uniqueTags(): JsonResponse;
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/courses/{id}/preview/{topic_id}",
+     *      summary="Preview the specified Course Topic is set to preview",
+     *      tags={"Courses"},
+     *      description="Get Topic with Topicable",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="id of Course",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Parameter(
+     *          name="topic_id",
+     *          description="id of Topic",
+     *          @OA\Schema(
+     *             type="integer",
+     *         ),
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  ref="#/components/schemas/Topic"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+
+    public function preview($id, $topic_id, GetCourseAPIRequest $request);
 }
