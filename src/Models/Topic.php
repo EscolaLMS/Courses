@@ -101,7 +101,7 @@ use Illuminate\Validation\Rule;
  * @property int $order
  * @property int $topicable_id
  * @property string $topicable_type
- * @property bool $previe
+ * @property bool $preview
  */
 class Topic extends Model
 {
