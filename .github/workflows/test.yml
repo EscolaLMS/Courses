@@ -3,10 +3,10 @@ name: Tests PHPUnit in environments
 on: [pull_request]
 
 jobs:
-  php8-laravel-latest-phpunit-mysql:
+  php83-laravel-latest-phpunit-mysql:
     runs-on: ubuntu-latest
     container:
-      image: escolalms/php:8
+      image: escolalms/php:8.3-alpine
 
     services:
       mysql:
@@ -144,5 +144,4 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
-
 ### TODO add behat tests here

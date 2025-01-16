@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 // user endpoints
 Route::group(['prefix' => 'api/courses'], function () {
     Route::get('/{course}/program', [CourseAPIController::class, 'program'])->middleware('cacheResponse');
+    Route::get('/{course}/preview/{topic_id}', [CourseAPIController::class, 'preview']);
 
     Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/{course}/scorm', [CourseAPIController::class, 'scorm']);

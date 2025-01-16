@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Http\Requests;
 
 use EscolaLms\Courses\Models\Course;
+use EscolaLms\Courses\Models\Topic;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -36,5 +37,10 @@ class GetCourseAPIRequest extends FormRequest
     public function getCourse(): ?Course
     {
         return Course::find($this->route('course'));
+    }
+
+    public function getTopic(): ?Topic
+    {
+        return Topic::find($this->route('topic_id'));
     }
 }
