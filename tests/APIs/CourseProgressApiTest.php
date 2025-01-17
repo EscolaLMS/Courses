@@ -377,9 +377,34 @@ class CourseProgressApiTest extends TestCase
             'status' => ProgressStatus::COMPLETE,
         ]);
 
+        $course3 = Course::factory()->create([
+            'status' => CourseStatusEnum::PUBLISHED,
+            'title' => 'B Course',
+        ]);
+        $lesson3 = Lesson::factory()->create(['course_id' => $course2->getKey()]);
+        $topic4 = Topic::factory()->create(['lesson_id' => $lesson3->getKey(), 'active' => true]);
+        $topic5 = Topic::factory()->create(['lesson_id' => $lesson3->getKey(), 'active' => true]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic4->getKey(),
+            'finished_at' => now(),
+            'seconds' => 50,
+            'status' => ProgressStatus::COMPLETE,
+        ]);
+
+        CourseProgress::factory()->create([
+            'user_id' => $user->getKey(),
+            'topic_id' => $topic5->getKey(),
+            'finished_at' => now(),
+            'seconds' => 50,
+            'status' => ProgressStatus::INCOMPLETE,
+        ]);
+
 
         $user->courses()->save($course1); //Course A
         $user->courses()->save($course2); //Course B
+        $user->courses()->save($course3); //Course C
 
         $this->response = $this->actingAs($user, 'api')->json(
             'GET',
@@ -389,9 +414,12 @@ class CourseProgressApiTest extends TestCase
         );
 
         $this->response
-            ->assertJsonCount(1, 'data')
+            ->assertJsonCount(2, 'data')
             ->assertJsonFragment([
                 'title' => $course1->title,
+            ])
+            ->assertJsonFragment([
+                'title' => $course3->title,
             ]);
     }
 
