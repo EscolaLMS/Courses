@@ -1,15 +1,29 @@
 name: Generate Swagger Documentation
 
-on:
-  push:
-    branches:
-      - main
+#on:
+#  push:
+#    branches:
+#      - main
+
+on: [pull_request]
 
 jobs:
   swagger-gh-pages:
     runs-on: ubuntu-latest
     container:
       image: escolalms/php:8.2
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: database
+          MYSQL_PASSWORD: password
+          MYSQL_USER: username
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Instantiate package
@@ -35,6 +49,8 @@ jobs:
 
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: swagger-ui
           spec-file: openapi.json
