@@ -226,21 +226,30 @@ class ProgressService implements ProgressServiceContract
     private function filterForStartedCourses(Builder $query, int $userId): Builder
     {
         return $query
-            ->whereExists(function (QueryBuilder $query) use ($userId) {
-                $query->select(DB::raw(1))
-                    ->from('topics')
-                    ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
-                    ->leftJoin('course_progress', function (JoinClause $join) use ($userId) {
-                        $join->on('topics.id', '=', 'course_progress.topic_id')
-                            ->where('course_progress.user_id', $userId);
-                    })
-                    ->whereColumn('lessons.course_id', 'courses.id')
-                    ->where('course_progress.status', ProgressStatus::IN_PROGRESS)
-                    ->orWhere(function (QueryBuilder $query) {
-                        $query->groupBy('topic.id')
-                            ->selectRaw('COUNT(CASE WHEN status = ? THEN 1 END) as completed_count', [ProgressStatus::COMPLETE])
-                            ->selectRaw('COUNT(CASE WHEN status = ? THEN 1 END) as in_completed_count', [ProgressStatus::INCOMPLETE])
-                            ->havingRaw('completed_count > 0 AND in_completed_count > 0');
+            ->where(function (Builder $query) use ($userId) {
+                $query->whereExists(function (QueryBuilder $query) use ($userId) {
+                    $query->select(DB::raw(1))
+                        ->from('topics')
+                        ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                        ->leftJoin('course_progress', function (JoinClause $join) use ($userId) {
+                            $join->on('topics.id', '=', 'course_progress.topic_id')
+                                ->where('course_progress.user_id', $userId);
+                        })
+                        ->whereColumn('lessons.course_id', 'courses.id')
+                        ->where('course_progress.status', ProgressStatus::IN_PROGRESS);
+                })
+                    ->orWhereExists(function (QueryBuilder $query) use ($userId) {
+                        $query->select(DB::raw(1))
+                            ->from('topics')
+                            ->join('lessons', 'lessons.id', '=', 'topics.lesson_id')
+                            ->leftJoin('course_progress', function (JoinClause $join) use ($userId) {
+                                $join->on('topics.id', '=', 'course_progress.topic_id')
+                                    ->where('course_progress.user_id', $userId);
+                            })
+                            ->whereColumn('lessons.course_id', 'courses.id')
+                            ->whereIn('course_progress.status', [ProgressStatus::COMPLETE, ProgressStatus::INCOMPLETE])
+                            ->groupBy('lessons.course_id')
+                            ->havingRaw('COUNT(DISTINCT course_progress.status) = 2');
                     });
             });
     }
