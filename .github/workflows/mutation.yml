@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  php81-mysql:
+  php82-mysql:
     runs-on: ubuntu-latest
     container:
       image: escolalms/php:8.2-work
