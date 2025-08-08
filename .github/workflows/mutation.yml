@@ -11,7 +11,7 @@ jobs:
   php81-mysql:
     runs-on: ubuntu-latest
     container:
-      image: escolalms/php:8.2-alpine
+      image: escolalms/php:8.2-work
 
     services:
       mysql:
