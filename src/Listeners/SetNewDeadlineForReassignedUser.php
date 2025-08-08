@@ -3,6 +3,7 @@
 namespace EscolaLms\Courses\Listeners;
 
 use EscolaLms\Courses\Events\CourseAssigned;
+use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 
@@ -22,12 +23,14 @@ class SetNewDeadlineForReassignedUser
             ->where('course_id', $course->getKey())
             ->first();
 
-        if (!$pivot) {
-            return;
+        $progressExists = CourseProgress::query()
+            ->where('user_id', $user->getKey())
+            ->whereIn('topic_id', $course->topics()->pluck('topics.id')->toArray())
+            ->exists();
+
+        if ($pivot && $progressExists) {
+            $pivot->deadline = $this->deadlineCalculatorServvice->calculate($course);
+            $pivot->save();
         }
-
-        $pivot->deadline = $this->deadlineCalculatorServvice->calculate($course);
-
-        $pivot->save();
     }
 }
