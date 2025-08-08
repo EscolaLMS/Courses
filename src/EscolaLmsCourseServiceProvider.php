@@ -21,10 +21,12 @@ use EscolaLms\Courses\Repositories\LessonRepository;
 use EscolaLms\Courses\Repositories\TopicRepository;
 use EscolaLms\Courses\Repositories\TopicResourceRepository;
 use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 use EscolaLms\Courses\Services\Contracts\LessonServiceContract;
 use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
 use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
 use EscolaLms\Courses\Services\CourseService;
+use EscolaLms\Courses\Services\DeadlineCalculatorService;
 use EscolaLms\Courses\Services\LessonService;
 use EscolaLms\Courses\Services\ProgressService;
 use EscolaLms\Courses\Services\TopicService;
@@ -48,6 +50,7 @@ class EscolaLmsCourseServiceProvider extends ServiceProvider
         LessonRepositoryContract::class => LessonRepository::class,
         TopicServiceContract::class => TopicService::class,
         LessonServiceContract::class => LessonService::class,
+        DeadlineCalculatorServiceContract::class => DeadlineCalculatorService::class,
     ];
 
     public function boot()

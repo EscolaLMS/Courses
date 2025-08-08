@@ -9,18 +9,19 @@ use EscolaLms\Courses\Models\CourseProgress;
 use EscolaLms\Courses\Models\CourseUserPivot;
 use EscolaLms\Courses\Models\Topic;
 use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
 use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
-use RuntimeException;
 
 class CourseProgressCollection extends ValueObject implements ValueObjectContract, CourseProgressCollectionContract
 {
     public const FORGET_TRACKING_SESSION_AFTER_MINUTES = 60;
 
     private CourseProgressRepositoryContract $courseProgressRepositoryContract;
+    private DeadlineCalculatorServiceContract $deadlineCalculatorService;
 
     private Authenticatable $user;
     private Course $course;
@@ -37,9 +38,11 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
     private ?Carbon $endDate;
 
     public function __construct(
-        CourseProgressRepositoryContract $courseProgressRepositoryContract
+        CourseProgressRepositoryContract $courseProgressRepositoryContract,
+        DeadlineCalculatorServiceContract $deadlineCalculatorServiceContract
     ) {
         $this->courseProgressRepositoryContract = $courseProgressRepositoryContract;
+        $this->deadlineCalculatorService = $deadlineCalculatorServiceContract;
     }
 
     public function build(Authenticatable $user, Course $course): self
@@ -83,17 +86,9 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $this->totalSpentTime = $courseProgresses->sum('seconds');
         $this->startDate = $courseProgresses->min('started_at');
         $this->finishDate = $courseProgresses->max('finished_at');
-        $this->deadline = null;
 
-        if (!is_null($this->course->hours_to_complete) && !is_null($this->startDate)) {
-            $this->deadline = $this->startDate->addHours($this->course->hours_to_complete);
-        }
-
-        if (!is_null($this->course->active_to) && (is_null($this->deadline) || $this->course->active_to->lessThan($this->deadline))) {
-            $this->deadline = $this->course->active_to;
-        }
-
-        if (!is_null($this->pivot)) {
+        if (!is_null($this->pivot) && $this->deadline === null) {
+            $this->deadline = $this->deadlineCalculatorService->calculate($this->course, $this->startDate);
             $this->pivot->deadline = $this->deadline;
             $this->pivot->save();
         }
